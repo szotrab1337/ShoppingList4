@@ -16,6 +16,7 @@ namespace ShoppingList4.Api.Entities
             CreatedOn = createdOn;
         }
 
+        public int ShoppingListId { get; set; }
         public virtual ShoppingList ShoppingList { get; set; }
     }
 }
