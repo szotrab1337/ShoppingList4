@@ -9,6 +9,8 @@ namespace ShoppingList4.Api
         public ShoppingListMappingProfile()
         {
             CreateMap<ShoppingListDto, ShoppingList>();
+
+            CreateMap<CreateEntryDto, Entry>();
         }
     }
 }

@@ -47,5 +47,13 @@ namespace ShoppingList4.Api.Controllers
 
             return NoContent();
         }
+
+        [HttpPut("{id}")]
+        public ActionResult UpdateShoppingList([FromBody] ShoppingListDto dto, [FromRoute] int id)
+        {
+            _shoppingListService.Update(id, dto);
+
+            return Ok();
+        }
     }
 }
