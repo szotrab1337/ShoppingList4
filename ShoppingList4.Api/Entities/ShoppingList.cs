@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+#pragma warning disable CS8618
 
 namespace ShoppingList4.Api.Entities
 {
@@ -9,12 +10,6 @@ namespace ShoppingList4.Api.Entities
         public string Name { get; set; }
         public DateTime CreatedOn { get; set; }
 
-        public ShoppingList(string name, DateTime createdOn)
-        {
-            Name = name;
-            CreatedOn = createdOn;
-        }
-
-        public virtual List<Entry> Entris { get; set; } = new();
+        public virtual List<Entry> Entries { get; set; } = new();
     }
 }
