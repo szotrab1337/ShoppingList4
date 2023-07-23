@@ -9,4 +9,5 @@ public interface IShoppingListService
     int Create(ShoppingListDto dto);
     ShoppingList GetById(int id);
     void Delete(int id);
+    void Update(int id, ShoppingListDto dto);
 }

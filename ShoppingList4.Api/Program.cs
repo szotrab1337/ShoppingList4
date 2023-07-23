@@ -30,8 +30,10 @@ builder.Services.AddScoped<IShoppingListService, ShoppingListService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddScoped<IDateTimeProvider, DateTimeProvider>();
 builder.Services.AddScoped<IValidator<ShoppingListDto>, ShoppingListDtoValidator>();
+builder.Services.AddScoped<IValidator<CreateEntryDto>, CreateEntryDtoValidator>();
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IEntryService, EntryService>();
 
 var app = builder.Build();
 

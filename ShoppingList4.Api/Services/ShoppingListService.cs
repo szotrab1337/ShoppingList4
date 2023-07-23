@@ -62,6 +62,14 @@ namespace ShoppingList4.Api.Services
 
         public void Delete(int id)
         {
+            var shoppingList = GetByIdWithoutRelationships(id);
+
+            _dbContext.ShoppingLists.Remove(shoppingList);
+            _dbContext.SaveChanges();
+        }
+
+        private ShoppingList GetByIdWithoutRelationships(int id)
+        {
             var shoppingList = _dbContext.ShoppingLists.FirstOrDefault(x => x.Id == id);
 
             if (shoppingList is null)
@@ -69,7 +77,14 @@ namespace ShoppingList4.Api.Services
                 throw new NotFoundException("Shopping list not found");
             }
 
-            _dbContext.ShoppingLists.Remove(shoppingList);
+            return shoppingList;
+        }
+
+        public void Update(int id, ShoppingListDto dto)
+        {
+            var shoppingList = GetByIdWithoutRelationships(id);
+            shoppingList.Name = dto.Name;
+
             _dbContext.SaveChanges();
         }
     }
