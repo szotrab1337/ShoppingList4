@@ -10,12 +10,6 @@ namespace ShoppingList4.Api.Entities
         public string Name { get; set; }
         public DateTime CreatedOn { get; set; }
 
-        public Entry(string name, DateTime createdOn)
-        {
-            Name = name;
-            CreatedOn = createdOn;
-        }
-
         public int ShoppingListId { get; set; }
         public virtual ShoppingList ShoppingList { get; set; }
     }
