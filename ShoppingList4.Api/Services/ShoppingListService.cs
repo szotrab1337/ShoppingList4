@@ -64,6 +64,8 @@ namespace ShoppingList4.Api.Services
         {
             var shoppingList = GetByIdWithoutRelationships(id);
 
+            _logger.LogInformation("Deleted shopping list: {@shoppingList}.", shoppingList);
+
             _dbContext.ShoppingLists.Remove(shoppingList);
             _dbContext.SaveChanges();
         }
@@ -83,7 +85,10 @@ namespace ShoppingList4.Api.Services
         public void Update(int id, ShoppingListDto dto)
         {
             var shoppingList = GetByIdWithoutRelationships(id);
+            _logger.LogInformation("Updating shopping list. Old object: {@oldShoppingList}.", shoppingList);
+
             shoppingList.Name = dto.Name;
+            _logger.LogInformation("New object: {@newShoppingList}.", shoppingList);
 
             _dbContext.SaveChanges();
         }

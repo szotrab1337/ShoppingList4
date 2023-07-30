@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using ShoppingList4.Api.Entities;
 using ShoppingList4.Api.Exceptions;
 using ShoppingList4.Api.Interfaces;
@@ -30,12 +29,16 @@ namespace ShoppingList4.Api.Services
             _dbContext.Entries.Add(entry);
             _dbContext.SaveChanges();
 
+            _logger.LogInformation("Added new entry: {@entry}.", entry);
+
             return entry.Id;
         }
 
         public void Delete(int id)
         {
             var entry = GetById(id);
+
+            _logger.LogInformation("Deleted entry: {@entry}.", entry);
 
             _dbContext.Entries.Remove(entry);
             _dbContext.SaveChanges();
@@ -58,7 +61,10 @@ namespace ShoppingList4.Api.Services
         public void Update(int id, UpdateEntryDto dto)
         {
             var entry = GetById(id);
+            _logger.LogInformation("Updating entry. Old object: {@oldEntry}.", entry);
+
             entry.Name = dto.Name;
+            _logger.LogInformation("New object: {@entry}.", entry);
 
             _dbContext.SaveChanges();
         }
