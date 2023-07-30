@@ -12,6 +12,7 @@ namespace ShoppingList4.Api.Entities
 
         public DbSet<ShoppingList> ShoppingLists { get; set; }
         public DbSet<Entry> Entries { get; set; }
+        public DbSet<User> Users { get; set; } 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +32,19 @@ namespace ShoppingList4.Api.Entities
 
             modelBuilder.Entity<Entry>()
                 .Property(x => x.CreatedOn)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.Name)
+                .IsRequired()
+                .HasMaxLength(35);
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.Email)
+                .IsRequired();
+
+            modelBuilder.Entity<User>()
+                .Property(x => x.PasswordHash)
                 .IsRequired();
         }
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using ShoppingList4.Api.Entities;
 using ShoppingList4.Api.Interfaces;
 using ShoppingList4.Api.Models;
@@ -7,6 +8,7 @@ namespace ShoppingList4.Api.Controllers
 {
     [Route("api/shoppinglist")]
     [ApiController]
+    [Authorize]
     public class ShoppingListController : ControllerBase
     {
         private readonly IShoppingListService _shoppingListService;
