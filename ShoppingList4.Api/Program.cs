@@ -1,7 +1,11 @@
+using System.Text;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using ShoppingList4.Api;
 using ShoppingList4.Api.Entities;
 using ShoppingList4.Api.Interfaces;
 using ShoppingList4.Api.Middlewares;
@@ -10,16 +14,35 @@ using ShoppingList4.Api.Models.Validators;
 using ShoppingList4.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+var authenticationSettings = builder.Configuration.GetSection("Authentication").Get<AuthenticationSettings>();
 
 var logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Destructure.ByTransforming<ShoppingList>(x => new {x.Id, x.Name, x.CreatedOn})
     .Destructure.ByTransforming<Entry>(x => new {x.Id, x.Name, x.CreatedOn, x.ShoppingListId})
     .CreateLogger();
-
-// Add services to the container.
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
+
+// Add services to the container.
+builder.Services.AddSingleton(authenticationSettings!);
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = "Bearer";
+    option.DefaultScheme = "Bearer";
+    option.DefaultChallengeScheme = "Bearer";
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = authenticationSettings!.JwtIssuer,
+        ValidAudience = authenticationSettings.JwtIssuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+    };
+});
+
 builder.Services.AddControllers();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddDbContext<ShoppingListDbContext>(options =>
@@ -34,11 +57,15 @@ builder.Services.AddScoped<IValidator<CreateEntryDto>, CreateEntryDtoValidator>(
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IEntryService, EntryService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ErrorHandlingMiddleware>();
+app.UseAuthentication();
 app.UseHttpsRedirection();
 
 app.UseSwagger();
