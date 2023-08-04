@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33209.295
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList4.Api", "ShoppingList4.Api\ShoppingList4.Api.csproj", "{2A9B4DD5-CE1B-4C53-B90A-8069CB04FF7C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList4.Api", "ShoppingList4.Api\ShoppingList4.Api.csproj", "{2A9B4DD5-CE1B-4C53-B90A-8069CB04FF7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList4.Maui", "ShoppingList4.Maui\ShoppingList4.Maui.csproj", "{4CD2F975-5908-49F5-A25F-7F67F246132B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,12 @@ Global
 		{2A9B4DD5-CE1B-4C53-B90A-8069CB04FF7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A9B4DD5-CE1B-4C53-B90A-8069CB04FF7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A9B4DD5-CE1B-4C53-B90A-8069CB04FF7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CD2F975-5908-49F5-A25F-7F67F246132B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CD2F975-5908-49F5-A25F-7F67F246132B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CD2F975-5908-49F5-A25F-7F67F246132B}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{4CD2F975-5908-49F5-A25F-7F67F246132B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CD2F975-5908-49F5-A25F-7F67F246132B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CD2F975-5908-49F5-A25F-7F67F246132B}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
