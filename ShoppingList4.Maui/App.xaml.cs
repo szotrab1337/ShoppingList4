@@ -1,6 +1,8 @@
-﻿namespace ShoppingList4.Maui
+﻿using ShoppingList4.Maui.View;
+
+namespace ShoppingList4.Maui
 {
-    public partial class App : Application
+    public partial class App
     {
         public App()
         {

@@ -1,15 +1,14 @@
-﻿using CommunityToolkit.Mvvm.DependencyInjection;
-using ShoppingList4.Maui.ViewModel;
+﻿using ShoppingList4.Maui.ViewModel;
 
 namespace ShoppingList4.Maui.View
 {
     public partial class MainPage : ContentPage
     {
-        public MainPage()
+        public MainPage(MainPageViewModel vm)
         {
             InitializeComponent();
 
-            BindingContext = Ioc.Default.GetRequiredService<MainPageViewModel>();
+            BindingContext = vm;
         }
     }
 }

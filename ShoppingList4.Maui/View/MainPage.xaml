@@ -28,8 +28,6 @@
                 FontSize="18"
                 HorizontalOptions="Center" />
 
-            <Label Text="{Binding Test}"/>
-
         </VerticalStackLayout>
     </ScrollView>
 
