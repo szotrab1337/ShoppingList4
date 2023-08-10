@@ -20,5 +20,10 @@ namespace ShoppingList4.Maui.Services
         {
             await SecureStorage.SetAsync("Bearer", token);
         }
+
+        public async Task<string> GetAsync()
+        {
+            return await SecureStorage.GetAsync("Bearer");
+        }
     }
 }

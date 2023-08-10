@@ -1,34 +1,153 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ShoppingList4.Maui.View.MainPage">
+             x:Class="ShoppingList4.Maui.View.MainPage"
+             Title="Listy zakupów"
+             BackgroundColor="{DynamicResource Gray950}">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Spacing="25"
-            Padding="30,0"
-            VerticalOptions="Center">
+    <AbsoluteLayout>
 
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
+        <Grid Margin="5,10,5,10"
+                     AbsoluteLayout.LayoutFlags="All"
+                     AbsoluteLayout.LayoutBounds="0,0,1,1">
 
-            <Label
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
+            <Label Text="Dodaj swoją pierwszą&#x0a;listę zakupów!"
+                   FontSize="20"
+                   TextColor="#616161"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible"
+                                Value="False"/>
+                        <Style.Triggers>
+                            <DataTrigger TargetType="Label"
+                                         Binding="{Binding ShoppingLists.Count}"
+                                         Value="0">
+                                <Setter Property="IsVisible"
+                                        Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
 
-            <Label
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
+            <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                         Command="{Binding RefreshAsyncCommand}">
 
-        </VerticalStackLayout>
-    </ScrollView>
+                <CollectionView ItemsSource="{Binding ShoppingLists}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <SwipeView Margin="5">
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+
+                                        <SwipeItemView Command="{Binding EditShopCommand}"
+                                                       CommandParameter="{Binding .}"
+                                                       BackgroundColor="{DynamicResource Gray950}"
+                                                       Margin="0,0,10,0">
+
+                                            <Label Text="Edytuj"
+                                                   FontSize="15"
+                                                   TextColor="{DynamicResource Gray100}"
+                                                   VerticalTextAlignment="Center"
+                                                   HorizontalTextAlignment="Center"
+                                                   Margin="0,10,0,10"/>
+
+                                        </SwipeItemView>
+                                        
+                                        <SwipeItemView Command="{Binding Path=BindingContext.DeleteAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                                       CommandParameter="{Binding .}"
+                                                       BackgroundColor="{DynamicResource Gray950}"
+                                                       Margin="0,0,10,0">
+
+                                            <Label Text="Usuń"
+                                                   FontSize="15"
+                                                   TextColor="{DynamicResource Gray100}"
+                                                   VerticalTextAlignment="Center"
+                                                   HorizontalTextAlignment="Center"
+                                                   Margin="0,10,0,10"/>
+
+                                        </SwipeItemView>
+
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+
+                                    <StackLayout>
+                                        <Frame Padding="15"
+                                               CornerRadius="10"
+                                               BackgroundColor="{DynamicResource Gray900}">
+                                            <StackLayout Orientation="Horizontal"
+                                                         Margin="10,0,0,0">
+                                                <StackLayout>
+                                                    <StackLayout>
+                                                        <Label Text="{Binding Name}"
+                                                               Margin="0,5,0,10"
+                                                               FontSize="22"
+                                                               TextColor="{DynamicResource Gray100}"/>
+                                                    </StackLayout>
+                                                    <StackLayout Orientation="Vertical"
+                                                                 VerticalOptions="EndAndExpand">
+                                                        <StackLayout Orientation="Horizontal"
+                                                                     VerticalOptions="End">
+                                                            <Label Text="Liczba rzeczy do kupienia: "
+                                                                   Margin="0,0,5,5"
+                                                                   FontSize="13"
+                                                                   TextColor="{StaticResource Gray300}"
+                                                                   FontAttributes="Italic"/>
+
+                                                            <Label Text="{Binding EntriesNotBought}"
+                                                                   Margin="0,0,5,5"
+                                                                   FontSize="13"
+                                                                   TextColor="{StaticResource Gray300}"
+                                                                   FontAttributes="Bold"/>
+
+                                                            <Label Text="z "
+                                                                   Margin="2,0,5,5"
+                                                                   FontSize="13"
+                                                                   TextColor="{StaticResource Gray300}"
+                                                                   FontAttributes="Italic"/>
+
+                                                            <Label Text="{Binding Entries.Count}"
+                                                                   Margin="0,0,0,5"
+                                                                   FontSize="13"
+                                                                   TextColor="{StaticResource Gray300}"
+                                                                   FontAttributes="Bold"/>
+                                                        </StackLayout>
+                                                    </StackLayout>
+                                                </StackLayout>
+                                            </StackLayout>
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer NumberOfTapsRequired="1"
+                                                                      Command="{Binding OpenShopCommand}"
+                                                                      CommandParameter="{Binding .}"/>
+                                            </Frame.GestureRecognizers>
+                                        </Frame>
+                                    </StackLayout>
+
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+
+        <Frame CornerRadius="75"
+               BackgroundColor="{DynamicResource Primary}"
+               IsClippedToBounds="True"
+               AbsoluteLayout.LayoutFlags="PositionProportional"
+               AbsoluteLayout.LayoutBounds=".95,.95,60,60"
+               VerticalOptions="Center"
+               HeightRequest="60"
+               Padding="0"
+               WidthRequest="60"
+               HorizontalOptions="Center">
+            <Button Text="+"
+                    Command="{Binding AddAsyncCommand}"
+                    FontSize="25"/>
+        </Frame>
+
+    </AbsoluteLayout>
 
 </ContentPage>

@@ -6,13 +6,16 @@
     xmlns:local="clr-namespace:ShoppingList4.Maui.View">
 
     <ShellContent
-        Title="Strona główna"
+        Title="Listy zakupów"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
-    
-    <ShellContent
-        Title="Logowanie"
-        ContentTemplate="{DataTemplate local:LoginPage}"
-        Route="LoginPage" />
+
+    <FlyoutItem Route="Main"
+                Title="Logowanie">
+        <ShellContent
+            Title="Logowanie"
+            ContentTemplate="{DataTemplate local:LoginPage}"
+            Route="LoginPage" />
+    </FlyoutItem>
 
 </Shell>
