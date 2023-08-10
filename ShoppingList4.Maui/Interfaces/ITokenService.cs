@@ -5,4 +5,5 @@ public interface ITokenService
     Task<bool> ExistsAsync();
     void Remove();
     Task SetAsync(string token);
+    Task<string> GetAsync();
 }

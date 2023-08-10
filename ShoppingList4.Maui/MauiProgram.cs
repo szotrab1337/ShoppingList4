@@ -29,11 +29,12 @@ namespace ShoppingList4.Maui
 
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IShoppingListService, ShoppingListService>();
 
             builder.Services.AddHttpClient("ShoppingList4", x =>
             {
                 x.BaseAddress = new Uri("http://192.168.1.100:88/");
-                x.Timeout = TimeSpan.FromSeconds(10);
+                x.Timeout = TimeSpan.FromSeconds(5);
             });
 
             return builder.Build();

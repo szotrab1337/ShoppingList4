@@ -64,15 +64,25 @@ namespace ShoppingList4.Maui.ViewModel
         private async Task LoginAsync()
         {
             var user = new User(Email, Password);
-            await _accountService.LoginAsync(user);
 
-            if (!await _tokenService.ExistsAsync())
+            try
             {
-                await Application.Current?.MainPage?.DisplayAlert("Błąd", "Niepoprawne dane.", "OK")!;
-                return;
-            }
+                await _accountService.LoginAsync(user);
 
-            await Shell.Current.GoToAsync("..");
+                if (!await _tokenService.ExistsAsync())
+                {
+                    await Application.Current?.MainPage?.DisplayAlert("Błąd", "Niepoprawne dane.", "OK")!;
+                    return;
+                }
+
+                await Shell.Current.GoToAsync("//MainPage");
+                //TODO: dodać message do zaladowania danych
+            }
+            catch (Exception)
+            {
+                await Application.Current?.MainPage?.DisplayAlert("Błąd", "Serwer nie odpowiada.", "OK")!;
+                
+            }
         }
 
         private void Logout()
