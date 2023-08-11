@@ -6,4 +6,5 @@ public interface IShoppingListService
 {
     Task<List<ShoppingList>> GetAll();
     Task<bool> Delete(int id);
+    Task<bool> Add(string name);
 }

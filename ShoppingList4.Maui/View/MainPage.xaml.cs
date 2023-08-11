@@ -7,8 +7,16 @@ namespace ShoppingList4.Maui.View
         public MainPage(MainPageViewModel vm)
         {
             InitializeComponent();
+            _viewModel = vm;
 
-            BindingContext = vm;
+            BindingContext = _viewModel;
+        }
+
+        private readonly MainPageViewModel _viewModel;
+
+        protected override void OnAppearing()
+        {
+            _viewModel.Initialize();
         }
     }
 }

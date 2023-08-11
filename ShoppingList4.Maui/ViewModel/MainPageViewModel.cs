@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using ShoppingList4.Maui.Entity;
 using ShoppingList4.Maui.Interfaces;
 using System.Collections.ObjectModel;
+using ShoppingList4.Maui.View;
 
 namespace ShoppingList4.Maui.ViewModel
 {
@@ -16,7 +17,7 @@ namespace ShoppingList4.Maui.ViewModel
             _tokenService = tokenService;
             _shoppingListService = shoppingListService;
 
-            AddShoppingListAsyncCommand = new AsyncRelayCommand(AddAsync);
+            AddAsyncCommand = new AsyncRelayCommand(AddAsync);
             RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
             DeleteAsyncCommand = new AsyncRelayCommand<ShoppingList>(DeleteAsync);
 
@@ -24,7 +25,7 @@ namespace ShoppingList4.Maui.ViewModel
             Initialize();
         }
 
-        public IAsyncRelayCommand AddShoppingListAsyncCommand { get; }
+        public IAsyncRelayCommand AddAsyncCommand { get; }
         public IAsyncRelayCommand RefreshAsyncCommand { get; }
         public IAsyncRelayCommand DeleteAsyncCommand { get; }
 
@@ -34,7 +35,7 @@ namespace ShoppingList4.Maui.ViewModel
         [ObservableProperty]
         private bool _isRefreshing;
 
-        private async void Initialize()
+        public async void Initialize()
         {
             await GetShoppingLists();
         }
@@ -45,7 +46,7 @@ namespace ShoppingList4.Maui.ViewModel
             IsRefreshing = false;
         }
 
-        private async Task DeleteAsync(ShoppingList? shoppingList)
+        private async Task DeleteAsync(ShoppingList shoppingList)
         {
             if (shoppingList is null)
             {
@@ -69,27 +70,35 @@ namespace ShoppingList4.Maui.ViewModel
 
         private async Task GetShoppingLists()
         {
-            var shoppingLists = await _shoppingListService.GetAll();
-
-            if (shoppingLists is null || !shoppingLists.Any())
+            try
             {
-                return;
-            }
+                var shoppingLists = await _shoppingListService.GetAll();
 
-            ShoppingLists = new ObservableCollection<ShoppingList>(shoppingLists);
+                if (shoppingLists is null || !shoppingLists.Any())
+                {
+                    return;
+                }
+
+                ShoppingLists = new ObservableCollection<ShoppingList>(shoppingLists);
+            }
+            catch (Exception)
+            {
+                await Application.Current?.MainPage?.DisplayAlert("Błąd",
+                    "Wystąpił błąd. Spróbuj ponownie.", "OK")!;
+            }
         }
 
         private async void Check()
         {
             if (!await _tokenService.ExistsAsync())
             {
-                await Shell.Current.GoToAsync("LoginPage");
+                await Shell.Current.GoToAsync(nameof(LoginPage));
             }
         }
 
         private async Task AddAsync()
         {
-            await Application.Current?.MainPage?.DisplayAlert("OK", "Działa", "OK")!;
+            await Shell.Current.GoToAsync(nameof(AddShoppingListPage));
         }
     }
 }
