@@ -10,6 +10,7 @@ namespace ShoppingList4.Maui
 
             Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
             Routing.RegisterRoute(nameof(LoginPage), typeof(LoginPage));
+            Routing.RegisterRoute(nameof(AddShoppingListPage), typeof(AddShoppingListPage));
         }
     }
 }

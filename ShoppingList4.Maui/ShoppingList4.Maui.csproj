@@ -56,19 +56,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="View\AddShoppingListPage.xaml.cs">
+	    <DependentUpon>AddShoppingListPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="View\LoginPage.xaml.cs">
 	    <DependentUpon>LoginPage.xaml</DependentUpon>
 	  </Compile>
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="View\AddShoppingListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="View\LoginPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Model\" />
 	</ItemGroup>
 
 </Project>
