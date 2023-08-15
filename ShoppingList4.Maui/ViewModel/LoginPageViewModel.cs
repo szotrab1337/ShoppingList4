@@ -10,11 +10,14 @@ namespace ShoppingList4.Maui.ViewModel
     {
         private readonly IAccountService _accountService;
         private readonly ITokenService _tokenService;
+        private readonly IMessageBoxService _messageBoxService;
 
-        public LoginPageViewModel(IAccountService accountService, ITokenService tokenService)
+        public LoginPageViewModel(IAccountService accountService, ITokenService tokenService,
+            IMessageBoxService messageBoxService)
         {
             _accountService = accountService;
             _tokenService = tokenService;
+            _messageBoxService = messageBoxService;
 
             LoginAsyncCommand = new AsyncRelayCommand(LoginAsync, CanLogin);
             LogoutCommand = new RelayCommand(Logout);
@@ -71,17 +74,15 @@ namespace ShoppingList4.Maui.ViewModel
 
                 if (!await _tokenService.ExistsAsync())
                 {
-                    await Application.Current?.MainPage?.DisplayAlert("Błąd", "Niepoprawne dane.", "OK")!;
+                    await _messageBoxService.ShowAlert("Błąd", "Niepoprawne dane.", "OK");
                     return;
                 }
 
                 await Shell.Current.GoToAsync("//MainPage");
-                //TODO: dodać message do zaladowania danych
             }
             catch (Exception)
             {
-                await Application.Current?.MainPage?.DisplayAlert("Błąd", "Serwer nie odpowiada.", "OK")!;
-                
+                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
         }
 

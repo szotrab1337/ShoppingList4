@@ -36,6 +36,7 @@ namespace ShoppingList4.Maui
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IShoppingListService, ShoppingListService>();
+            builder.Services.AddScoped<IMessageBoxService, MessageBoxService>();
 
             builder.Services.AddHttpClient("ShoppingList4", x =>
             {
