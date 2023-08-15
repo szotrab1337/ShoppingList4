@@ -11,11 +11,14 @@ namespace ShoppingList4.Maui.ViewModel
     {
         private readonly ITokenService _tokenService;
         private readonly IShoppingListService _shoppingListService;
+        private readonly IMessageBoxService _messageBoxService;
 
-        public MainPageViewModel(ITokenService tokenService, IShoppingListService shoppingListService)
+        public MainPageViewModel(ITokenService tokenService, IShoppingListService shoppingListService,
+            IMessageBoxService messageBoxService)
         {
             _tokenService = tokenService;
             _shoppingListService = shoppingListService;
+            _messageBoxService = messageBoxService;
 
             AddAsyncCommand = new AsyncRelayCommand(AddAsync);
             RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
@@ -55,8 +58,8 @@ namespace ShoppingList4.Maui.ViewModel
                 return;
             }
 
-            var confirmation = await Application.Current?.MainPage?.DisplayAlert("Potwierdzenie",
-                "Czy na pewno chcesz usunąć wybraną listę?", "TAK", "NIE")!;
+            var confirmation = await _messageBoxService.ShowAlert("Potwierdzenie",
+                "Czy na pewno chcesz usunąć wybraną listę?", "TAK", "NIE");
 
             if (!confirmation)
             {
@@ -85,8 +88,7 @@ namespace ShoppingList4.Maui.ViewModel
             }
             catch (Exception)
             {
-                await Application.Current?.MainPage?.DisplayAlert("Błąd",
-                    "Wystąpił błąd. Spróbuj ponownie.", "OK")!;
+                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
         }
 

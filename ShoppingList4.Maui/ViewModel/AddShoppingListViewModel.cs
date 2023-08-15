@@ -5,13 +5,15 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public partial class AddShoppingListViewModel : ObservableValidator
+    public class AddShoppingListViewModel : ObservableValidator
     {
         private readonly IShoppingListService _shoppingListService;
+        private readonly IMessageBoxService _messageBoxService;
 
-        public AddShoppingListViewModel(IShoppingListService shoppingListService)
+        public AddShoppingListViewModel(IShoppingListService shoppingListService, IMessageBoxService messageBoxService)
         {
             _shoppingListService = shoppingListService;
+            _messageBoxService = messageBoxService;
 
             SaveAsyncCommand = new AsyncRelayCommand(SaveAsync, CanSave);
         }
@@ -45,8 +47,7 @@ namespace ShoppingList4.Maui.ViewModel
             }
             catch (Exception)
             {
-                await Application.Current?.MainPage?.DisplayAlert("Błąd",
-                    "Wystąpił błąd. Spróbuj ponownie.", "OK")!;
+                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
         }
 
