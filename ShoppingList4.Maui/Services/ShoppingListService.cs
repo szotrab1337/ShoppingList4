@@ -63,5 +63,18 @@ namespace ShoppingList4.Maui.Services
             
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> Update(ShoppingList shoppingList)
+        {
+            using var client = _clientFactory.CreateClient("ShoppingList4");
+
+            var token = await _tokenService.GetAsync();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var content = new StringContent(JsonConvert.SerializeObject(shoppingList), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"api/shoppingList/{shoppingList.Id}", content);
+
+            return response.IsSuccessStatusCode;
+        }
     }
 }
