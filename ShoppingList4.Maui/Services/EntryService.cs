@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http.Headers;
+using System.Text;
 using ShoppingList4.Maui.Interfaces;
+using ShoppingList4.Maui.Model;
 using Entry = ShoppingList4.Maui.Entity.Entry;
 
 namespace ShoppingList4.Maui.Services
@@ -33,6 +35,21 @@ namespace ShoppingList4.Maui.Services
 
             var entries = JsonConvert.DeserializeObject<List<Entry>>(jsonEntries);
             return entries;
+        }
+
+        public async Task<bool> UpdateAsync(Entry entry)
+        {
+            using var client = _clientFactory.CreateClient("ShoppingList4");
+
+            var token = await _tokenService.GetAsync();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            //TODO: dodać automapper
+            var entryDto = new UpdateEntryDto(entry.Name, entry.IsBought);
+            var content = new StringContent(JsonConvert.SerializeObject(entryDto), Encoding.UTF8, "application/json");
+            var response = await client.PutAsync($"api/entry/{entry.Id}", content);
+
+            return response.IsSuccessStatusCode;
         }
     }
 }
