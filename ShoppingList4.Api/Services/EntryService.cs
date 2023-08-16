@@ -44,6 +44,16 @@ namespace ShoppingList4.Api.Services
             _dbContext.SaveChanges();
         }
 
+        public void DeleteMultiple(List<int> ids)
+        {
+            var entries = _dbContext.Entries.Where(x => ids.Contains(x.Id));
+
+            _logger.LogInformation("Deleting entries with Id: {@entries}.", entries);
+
+            _dbContext.Entries.RemoveRange(entries);
+            _dbContext.SaveChanges();
+        }
+
         public Entry GetById(int id)
         {
             var entry = _dbContext
