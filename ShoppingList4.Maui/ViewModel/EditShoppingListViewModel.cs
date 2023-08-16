@@ -58,7 +58,7 @@ namespace ShoppingList4.Maui.ViewModel
             }
             catch (Exception)
             {
-                _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
+                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
         }
 

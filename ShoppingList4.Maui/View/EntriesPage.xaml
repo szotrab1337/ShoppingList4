@@ -52,7 +52,7 @@
                                 <SwipeView.LeftItems>
                                     <SwipeItems Mode="Execute">
 
-                                        <SwipeItemView Command="{Binding Path=BindingContext.CheckCommand, Source={x:Reference Items}}"
+                                        <SwipeItemView Command="{Binding Path=BindingContext.CheckCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
                                                        CommandParameter="{Binding .}"
                                                        BackgroundColor="{DynamicResource Gray950}"
                                                        Margin="0,0,0,0">
