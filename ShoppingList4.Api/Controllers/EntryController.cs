@@ -49,5 +49,13 @@ namespace ShoppingList4.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPost("deleteMultiple")]
+        public ActionResult DeleteMultipleEntries([FromBody] List<DeleteEntryDto> dtos)
+        {
+            _entryService.DeleteMultiple(dtos.Select(x => x.Id).ToList());
+
+            return NoContent();
+        }
     }
 }

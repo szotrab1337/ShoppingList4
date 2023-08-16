@@ -63,5 +63,22 @@ namespace ShoppingList4.Maui.Services
 
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> DeleteMultipleAsync(List<int> ids)
+        {
+            using var client = _clientFactory.CreateClient("ShoppingList4");
+
+            var token = await _tokenService.GetAsync();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+
+            var entries = new List<DeleteEntryDto>();
+            ids.ForEach(x => entries.Add(new DeleteEntryDto(x)));
+
+            var content = new StringContent(JsonConvert.SerializeObject(entries), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/entry/deleteMultiple", content);
+
+            return response.IsSuccessStatusCode;
+        }
     }
 }

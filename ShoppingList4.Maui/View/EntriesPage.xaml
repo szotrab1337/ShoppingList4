@@ -7,10 +7,10 @@
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="Usuń wszystko"
-                     Command="{Binding Path=BindingContext.DeleteAllCommand, Source={x:Reference Items}}"
+                     Command="{Binding Path=BindingContext.DeleteAllAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
                      Order="Secondary"/>
         <ToolbarItem Text="Usuń kupione"
-                     Command="{Binding Path=BindingContext.DeleteBoughtCommand, Source={x:Reference Items}}"
+                     Command="{Binding Path=BindingContext.DeleteBoughtAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
                      Order="Secondary"/>
     </ContentPage.ToolbarItems>
 

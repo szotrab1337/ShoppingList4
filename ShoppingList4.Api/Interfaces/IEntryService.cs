@@ -9,4 +9,5 @@ public interface IEntryService
     void Delete(int id);
     Entry GetById(int id);
     void Update(int id, UpdateEntryDto dto);
+    void DeleteMultiple(List<int> ids);
 }
