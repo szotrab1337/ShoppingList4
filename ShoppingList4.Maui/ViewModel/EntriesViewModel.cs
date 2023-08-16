@@ -19,18 +19,29 @@ namespace ShoppingList4.Maui.ViewModel
             _messageBoxService = messageBoxService;
 
             CheckCommand = new RelayCommand<Entry>(Check);
+            RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
         }
 
         public IRelayCommand CheckCommand { get; }
+        public IAsyncRelayCommand RefreshAsyncCommand { get; }
 
         private int _shoppingListId;
 
         [ObservableProperty]
         private ObservableCollection<Entry> _entries;
 
+        [ObservableProperty]
+        private bool _isRefreshing;
+
         public async void InitializeAsync()
         {
             await GetEntriesAsync();
+        }
+
+        private async Task RefreshAsync()
+        {
+            await GetEntriesAsync();
+            IsRefreshing = false;
         }
 
         private async Task GetEntriesAsync()

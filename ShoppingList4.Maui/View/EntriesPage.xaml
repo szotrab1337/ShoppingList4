@@ -43,7 +43,7 @@
             </Label>
 
             <RefreshView IsRefreshing="{Binding IsRefreshing}"
-                         Command="{Binding Path=BindingContext.RefreshCommand, Source={x:Reference Entries}}">
+                         Command="{Binding Path=BindingContext.RefreshAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}">
 
                 <CollectionView ItemsSource="{Binding Entries}">
                     <CollectionView.ItemTemplate>
