@@ -18,7 +18,7 @@ namespace ShoppingList4.Maui.Services
             _tokenService = tokenService;
         }
 
-        public async Task<List<ShoppingList>> GetAll()
+        public async Task<List<ShoppingList>> GetAllAsync()
         {
             using var client = _clientFactory.CreateClient("ShoppingList4");
 
@@ -26,18 +26,18 @@ namespace ShoppingList4.Maui.Services
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await client.GetAsync("api/shoppinglist");
-            var rawShoppingLists = await response.Content.ReadAsStringAsync();
+            var jsonShoppingLists = await response.Content.ReadAsStringAsync();
 
-            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(rawShoppingLists))
+            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(jsonShoppingLists))
             {
                 return null;
             }
 
-            var shoppingLists = JsonConvert.DeserializeObject<List<ShoppingList>>(rawShoppingLists);
+            var shoppingLists = JsonConvert.DeserializeObject<List<ShoppingList>>(jsonShoppingLists);
             return shoppingLists;
         }
 
-        public async Task<bool> Add(string name)
+        public async Task<bool> AddAsync(string name)
         {
             var shoppingList = new ShoppingListDto(name);
 
@@ -52,7 +52,7 @@ namespace ShoppingList4.Maui.Services
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             using var client = _clientFactory.CreateClient("ShoppingList4");
 
@@ -64,7 +64,7 @@ namespace ShoppingList4.Maui.Services
             return response.IsSuccessStatusCode;
         }
 
-        public async Task<bool> Update(ShoppingList shoppingList)
+        public async Task<bool> UpdateAsync(ShoppingList shoppingList)
         {
             using var client = _clientFactory.CreateClient("ShoppingList4");
 

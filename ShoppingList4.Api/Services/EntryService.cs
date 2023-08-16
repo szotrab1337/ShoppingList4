@@ -64,6 +64,7 @@ namespace ShoppingList4.Api.Services
             _logger.LogInformation("Updating entry. Old object: {@oldEntry}.", entry);
 
             entry.Name = dto.Name;
+            entry.IsBought = dto.IsBought;
             _logger.LogInformation("New object: {@entry}.", entry);
 
             _dbContext.SaveChanges();

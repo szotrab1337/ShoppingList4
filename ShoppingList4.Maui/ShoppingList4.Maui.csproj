@@ -62,6 +62,9 @@
 	  <Compile Update="View\EditShoppingListPage.xaml.cs">
 	    <DependentUpon>EditShoppingListPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="View\EntriesPage.xaml.cs">
+	    <DependentUpon>EntriesPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="View\LoginPage.xaml.cs">
 	    <DependentUpon>LoginPage.xaml</DependentUpon>
 	  </Compile>

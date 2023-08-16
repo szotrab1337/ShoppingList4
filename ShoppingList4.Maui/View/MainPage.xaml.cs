@@ -4,7 +4,7 @@ namespace ShoppingList4.Maui.View
 {
     public partial class MainPage : ContentPage
     {
-        public MainPage(MainPageViewModel vm)
+        public MainPage(MainViewModel vm)
         {
             InitializeComponent();
             _viewModel = vm;
@@ -12,11 +12,11 @@ namespace ShoppingList4.Maui.View
             BindingContext = _viewModel;
         }
 
-        private readonly MainPageViewModel _viewModel;
+        private readonly MainViewModel _viewModel;
 
         protected override void OnAppearing()
         {
-            _viewModel.Initialize();
+            _viewModel.InitializeAsync();
         }
     }
 }

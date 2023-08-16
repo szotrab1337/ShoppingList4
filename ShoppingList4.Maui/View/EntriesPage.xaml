@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ShoppingList4.Maui.View.EntriesPage"
+             Title="Lista zakupów"
+             BackgroundColor="{DynamicResource Gray950}">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Usuń wszystko"
+                     Command="{Binding Path=BindingContext.DeleteAllCommand, Source={x:Reference Items}}"
+                     Order="Secondary"/>
+        <ToolbarItem Text="Usuń kupione"
+                     Command="{Binding Path=BindingContext.DeleteBoughtCommand, Source={x:Reference Items}}"
+                     Order="Secondary"/>
+    </ContentPage.ToolbarItems>
+
+    <AbsoluteLayout>
+
+        <Grid Margin="5,10,5,10"
+                     AbsoluteLayout.LayoutFlags="All"
+                     AbsoluteLayout.LayoutBounds="0,0,1,1">
+
+            <Label Text="Brak przedmiotów do kupienia!"
+                   FontSize="20"
+                   TextColor="#616161"
+                   HorizontalOptions="CenterAndExpand"
+                   VerticalOptions="CenterAndExpand"
+                   HorizontalTextAlignment="Center">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="IsVisible"
+                                Value="False"/>
+                        <Style.Triggers>
+                            <DataTrigger TargetType="Label"
+                                         Binding="{Binding Entries.Count}"
+                                         Value="0">
+                                <Setter Property="IsVisible"
+                                        Value="True"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+
+            <RefreshView IsRefreshing="{Binding IsRefreshing}"
+                         Command="{Binding Path=BindingContext.RefreshCommand, Source={x:Reference Entries}}">
+
+                <CollectionView ItemsSource="{Binding Entries}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <SwipeView Margin="5">
+                                <SwipeView.LeftItems>
+                                    <SwipeItems Mode="Execute">
+
+                                        <SwipeItemView Command="{Binding Path=BindingContext.CheckCommand, Source={x:Reference Items}}"
+                                                       CommandParameter="{Binding .}"
+                                                       BackgroundColor="{DynamicResource Gray950}"
+                                                       Margin="0,0,0,0">
+
+                                            <Label Text="Zaznacz"
+                                                   FontSize="15"
+                                                   TextColor="{DynamicResource Gray100}"
+                                                   VerticalTextAlignment="Center"
+                                                   HorizontalTextAlignment="Start"
+                                                   Margin="10,10,0,10"/>
+
+                                            
+                                        </SwipeItemView>
+
+                                    </SwipeItems>
+                                </SwipeView.LeftItems>
+
+                                <SwipeView.RightItems>
+                                    <SwipeItems>
+
+                                        <SwipeItemView Command="{Binding Path=BindingContext.EditAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                                       CommandParameter="{Binding .}"
+                                                       BackgroundColor="{DynamicResource Gray950}"
+                                                       Margin="0,0,10,0">
+
+                                            <Label Text="Edytuj"
+                                                   FontSize="15"
+                                                   TextColor="{DynamicResource Gray100}"
+                                                   VerticalTextAlignment="Center"
+                                                   HorizontalTextAlignment="Center"
+                                                   Margin="0,10,0,10"/>
+
+                                        </SwipeItemView>
+
+                                        <SwipeItemView Command="{Binding Path=BindingContext.DeleteAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                                       CommandParameter="{Binding .}"
+                                                       BackgroundColor="{DynamicResource Gray950}"
+                                                       Margin="0,0,10,0">
+
+                                            <Label Text="Usuń"
+                                                   FontSize="15"
+                                                   TextColor="{DynamicResource Gray100}"
+                                                   VerticalTextAlignment="Center"
+                                                   HorizontalTextAlignment="Center"
+                                                   Margin="0,10,0,10"/>
+
+                                        </SwipeItemView>
+
+                                    </SwipeItems>
+                                </SwipeView.RightItems>
+
+                                <StackLayout>
+                                    <Frame Padding="0"
+                                           CornerRadius="10"
+                                           BackgroundColor="{DynamicResource Gray900}">
+                                        <Frame.Style>
+                                            <Style TargetType="Frame">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsBought}"
+                                                                 TargetType="Frame"
+                                                                 Value="True">
+                                                        <Setter Property="BackgroundColor"
+                                                                Value="{DynamicResource Gray950}"/>
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Frame.Style>
+
+                                        <StackLayout Orientation="Horizontal"
+                                                     Margin="8">
+
+                                            <CheckBox IsChecked="{Binding IsBought}"
+                                                      HorizontalOptions="Center"
+                                                      VerticalOptions="Center"
+                                                      HeightRequest="35"
+                                                      WidthRequest="40">
+                                                <CheckBox.Style>
+                                                    <Style TargetType="CheckBox">
+                                                        <Style.Triggers>
+                                                            <Trigger Property="IsChecked"
+                                                                     Value="True"
+                                                                     TargetType="CheckBox">
+                                                                <Setter Property="Color"
+                                                                        Value="{DynamicResource Gray400}"/>
+                                                            </Trigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </CheckBox.Style>
+                                            </CheckBox>
+
+                                            <Label Text="{Binding Name}"
+                                                   FontSize="20"
+                                                   Margin="0,5,0,5"
+                                                   TextColor="{DynamicResource Gray100}"
+                                                   VerticalOptions="CenterAndExpand">
+                                                <Label.Style>
+                                                    <Style TargetType="Label">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsBought}"
+                                                                         Value="True"
+                                                                         TargetType="Label">
+                                                                <Setter Property="TextColor"
+                                                                        Value="{DynamicResource Gray400}"/>
+                                                                <Setter Property="TextDecorations"
+                                                                        Value="Strikethrough"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Label.Style>
+                                            </Label>
+
+                                        </StackLayout>
+                                    </Frame>
+                                </StackLayout>
+                            </SwipeView>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </RefreshView>
+        </Grid>
+
+        <Frame CornerRadius="75"
+               BackgroundColor="{DynamicResource Primary}"
+               IsClippedToBounds="True"
+               AbsoluteLayout.LayoutFlags="PositionProportional"
+               AbsoluteLayout.LayoutBounds=".95,.95,60,60"
+               VerticalOptions="Center"
+               HeightRequest="60"
+               Padding="0"
+               WidthRequest="60"
+               HorizontalOptions="Center">
+            <Button Text="+"
+                    Command="{Binding AddItemAsyncCommand}"
+                    FontSize="25"/>
+        </Frame>
+
+    </AbsoluteLayout>
+</ContentPage>

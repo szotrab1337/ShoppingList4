@@ -56,7 +56,7 @@
                                                    Margin="0,10,0,10"/>
 
                                         </SwipeItemView>
-                                        
+
                                         <SwipeItemView Command="{Binding Path=BindingContext.DeleteAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
                                                        CommandParameter="{Binding .}"
                                                        BackgroundColor="{DynamicResource Gray950}"
@@ -74,57 +74,57 @@
                                     </SwipeItems>
                                 </SwipeView.RightItems>
 
-                                    <StackLayout>
-                                        <Frame Padding="15"
-                                               CornerRadius="10"
-                                               BackgroundColor="{DynamicResource Gray900}">
-                                            <StackLayout Orientation="Horizontal"
+                                <StackLayout>
+                                    <Frame Padding="15"
+                                           CornerRadius="10"
+                                           BackgroundColor="{DynamicResource Gray900}">
+                                        <StackLayout Orientation="Horizontal"
                                                          Margin="10,0,0,0">
+                                            <StackLayout>
                                                 <StackLayout>
-                                                    <StackLayout>
-                                                        <Label Text="{Binding Name}"
-                                                               Margin="0,5,0,10"
-                                                               FontSize="22"
-                                                               TextColor="{DynamicResource Gray100}"/>
-                                                    </StackLayout>
-                                                    <StackLayout Orientation="Vertical"
-                                                                 VerticalOptions="EndAndExpand">
-                                                        <StackLayout Orientation="Horizontal"
-                                                                     VerticalOptions="End">
-                                                            <Label Text="Liczba rzeczy do kupienia: "
-                                                                   Margin="0,0,5,5"
-                                                                   FontSize="13"
-                                                                   TextColor="{StaticResource Gray300}"
-                                                                   FontAttributes="Italic"/>
+                                                    <Label Text="{Binding Name}"
+                                                           Margin="0,5,0,10"
+                                                           FontSize="22"
+                                                           TextColor="{DynamicResource Gray100}"/>
+                                                </StackLayout>
+                                                <StackLayout Orientation="Vertical"
+                                                             VerticalOptions="EndAndExpand">
+                                                    <StackLayout Orientation="Horizontal"
+                                                                 VerticalOptions="End">
+                                                        <Label Text="Liczba rzeczy do kupienia: "
+                                                               Margin="0,0,5,5"
+                                                               FontSize="13"
+                                                               TextColor="{StaticResource Gray300}"
+                                                               FontAttributes="Italic"/>
 
-                                                            <Label Text="{Binding EntriesNotBought}"
-                                                                   Margin="0,0,5,5"
-                                                                   FontSize="13"
-                                                                   TextColor="{StaticResource Gray300}"
-                                                                   FontAttributes="Bold"/>
+                                                        <Label Text="{Binding EntriesNotBought}"
+                                                               Margin="0,0,5,5"
+                                                               FontSize="13"
+                                                               TextColor="{StaticResource Gray300}"
+                                                               FontAttributes="Bold"/>
 
-                                                            <Label Text="z "
-                                                                   Margin="2,0,5,5"
-                                                                   FontSize="13"
-                                                                   TextColor="{StaticResource Gray300}"
-                                                                   FontAttributes="Italic"/>
+                                                        <Label Text="z "
+                                                               Margin="2,0,5,5"
+                                                               FontSize="13"
+                                                               TextColor="{StaticResource Gray300}"
+                                                               FontAttributes="Italic"/>
 
-                                                            <Label Text="{Binding Entries.Count}"
-                                                                   Margin="0,0,0,5"
-                                                                   FontSize="13"
-                                                                   TextColor="{StaticResource Gray300}"
-                                                                   FontAttributes="Bold"/>
-                                                        </StackLayout>
+                                                        <Label Text="{Binding Entries.Count}"
+                                                               Margin="0,0,0,5"
+                                                               FontSize="13"
+                                                               TextColor="{StaticResource Gray300}"
+                                                               FontAttributes="Bold"/>
                                                     </StackLayout>
                                                 </StackLayout>
                                             </StackLayout>
-                                            <Frame.GestureRecognizers>
-                                                <TapGestureRecognizer NumberOfTapsRequired="1"
-                                                                      Command="{Binding OpenShopCommand}"
-                                                                      CommandParameter="{Binding .}"/>
-                                            </Frame.GestureRecognizers>
-                                        </Frame>
-                                    </StackLayout>
+                                        </StackLayout>
+                                        <Frame.GestureRecognizers>
+                                            <TapGestureRecognizer NumberOfTapsRequired="1"
+                                                                  Command="{Binding Path=BindingContext.OpenShoppingListAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                                                  CommandParameter="{Binding .}"/>
+                                        </Frame.GestureRecognizers>
+                                    </Frame>
+                                </StackLayout>
 
                             </SwipeView>
                         </DataTemplate>
