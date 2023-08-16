@@ -38,7 +38,7 @@ namespace ShoppingList4.Maui.ViewModel
         {
             try
             {
-                var result = await _shoppingListService.Add(Name);
+                var result = await _shoppingListService.AddAsync(Name);
 
                 if (result)
                 {

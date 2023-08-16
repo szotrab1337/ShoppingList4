@@ -4,8 +4,8 @@ namespace ShoppingList4.Maui.Interfaces;
 
 public interface IShoppingListService
 {
-    Task<List<ShoppingList>> GetAll();
-    Task<bool> Delete(int id);
-    Task<bool> Add(string name);
-    Task<bool> Update(ShoppingList shoppingList);
+    Task<List<ShoppingList>> GetAllAsync();
+    Task<bool> DeleteAsync(int id);
+    Task<bool> AddAsync(string name);
+    Task<bool> UpdateAsync(ShoppingList shoppingList);
 }

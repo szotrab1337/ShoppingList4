@@ -22,7 +22,7 @@ namespace ShoppingList4.Maui
             builder.UseMauiApp<App>().UseMauiCommunityToolkit();
 
             builder.Services.AddSingleton<MainPage>();
-            builder.Services.AddScoped<MainPageViewModel>();
+            builder.Services.AddScoped<MainViewModel>();
 
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<LoginPageViewModel>();
@@ -33,10 +33,14 @@ namespace ShoppingList4.Maui
             builder.Services.AddTransient<EditShoppingListPage>();
             builder.Services.AddTransient<EditShoppingListViewModel>();
 
+            builder.Services.AddTransient<EntriesPage>();
+            builder.Services.AddTransient<EntriesViewModel>();
+
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IShoppingListService, ShoppingListService>();
             builder.Services.AddScoped<IMessageBoxService, MessageBoxService>();
+            builder.Services.AddScoped<IEntryService, EntryService>();
 
             builder.Services.AddHttpClient("ShoppingList4", x =>
             {

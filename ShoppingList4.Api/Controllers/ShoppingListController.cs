@@ -57,5 +57,13 @@ namespace ShoppingList4.Api.Controllers
 
             return Ok();
         }
+
+        [HttpGet("{id}/entries")]
+        public ActionResult GetShoppingListEntries([FromRoute] int id)
+        {
+            var shoppingListEntries = _shoppingListService.GetById(id).Entries;
+
+            return Ok(shoppingListEntries);
+        }
     }
 }

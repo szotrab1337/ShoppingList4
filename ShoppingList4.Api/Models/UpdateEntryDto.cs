@@ -4,5 +4,6 @@ namespace ShoppingList4.Api.Models
     public class UpdateEntryDto
     {
         public string Name { get; set; }
+        public bool IsBought { get; set; }
     }
 }

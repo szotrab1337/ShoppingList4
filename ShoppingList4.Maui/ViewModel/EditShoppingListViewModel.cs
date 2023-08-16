@@ -49,7 +49,7 @@ namespace ShoppingList4.Maui.ViewModel
             {
 
                 ShoppingList.Name = Name;
-                var result = await _shoppingListService.Update(ShoppingList);
+                var result = await _shoppingListService.UpdateAsync(ShoppingList);
 
                 if (result)
                 {

@@ -7,13 +7,13 @@ using ShoppingList4.Maui.View;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public partial class MainPageViewModel : ObservableObject
+    public partial class MainViewModel : ObservableObject
     {
         private readonly ITokenService _tokenService;
         private readonly IShoppingListService _shoppingListService;
         private readonly IMessageBoxService _messageBoxService;
 
-        public MainPageViewModel(ITokenService tokenService, IShoppingListService shoppingListService,
+        public MainViewModel(ITokenService tokenService, IShoppingListService shoppingListService,
             IMessageBoxService messageBoxService)
         {
             _tokenService = tokenService;
@@ -24,15 +24,17 @@ namespace ShoppingList4.Maui.ViewModel
             RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
             DeleteAsyncCommand = new AsyncRelayCommand<ShoppingList>(DeleteAsync);
             EditAsyncCommand = new AsyncRelayCommand<ShoppingList>(EditAsync);
+            OpenShoppingListAsyncCommand = new AsyncRelayCommand<ShoppingList>(OpenShoppingListAsync);
 
-            Check();
-            Initialize();
+            CheckAsync();
+            InitializeAsync();
         }
 
         public IAsyncRelayCommand AddAsyncCommand { get; }
         public IAsyncRelayCommand RefreshAsyncCommand { get; }
         public IAsyncRelayCommand DeleteAsyncCommand { get; }
         public IAsyncRelayCommand EditAsyncCommand { get; }
+        public IAsyncRelayCommand OpenShoppingListAsyncCommand { get; }
 
         [ObservableProperty]
         private ObservableCollection<ShoppingList> _shoppingLists = new();
@@ -40,14 +42,14 @@ namespace ShoppingList4.Maui.ViewModel
         [ObservableProperty]
         private bool _isRefreshing;
 
-        public async void Initialize()
+        public async void InitializeAsync()
         {
-            await GetShoppingLists();
+            await GetShoppingListsAsync();
         }
 
         private async Task RefreshAsync()
         {
-            await GetShoppingLists();
+            await GetShoppingListsAsync();
             IsRefreshing = false;
         }
 
@@ -66,23 +68,18 @@ namespace ShoppingList4.Maui.ViewModel
                 return;
             }
 
-            var result = await _shoppingListService.Delete(shoppingList.Id);
+            var result = await _shoppingListService.DeleteAsync(shoppingList.Id);
             if (result)
             {
                 ShoppingLists.Remove(shoppingList);
             }
         }
 
-        private async Task GetShoppingLists()
+        private async Task GetShoppingListsAsync()
         {
             try
             {
-                var shoppingLists = await _shoppingListService.GetAll();
-
-                if (shoppingLists is null || !shoppingLists.Any())
-                {
-                    return;
-                }
+                var shoppingLists = await _shoppingListService.GetAllAsync();
 
                 ShoppingLists = new ObservableCollection<ShoppingList>(shoppingLists);
             }
@@ -92,7 +89,7 @@ namespace ShoppingList4.Maui.ViewModel
             }
         }
 
-        private async void Check()
+        private async void CheckAsync()
         {
             if (!await _tokenService.ExistsAsync())
             {
@@ -113,6 +110,16 @@ namespace ShoppingList4.Maui.ViewModel
         private async Task AddAsync()
         {
             await Shell.Current.GoToAsync(nameof(AddShoppingListPage));
+        }
+
+        private async Task OpenShoppingListAsync(ShoppingList shoppingList)
+        {
+            var navigationParam = new Dictionary<string, object>
+            {
+                { "ShoppingList", shoppingList }
+            };
+
+            await Shell.Current.GoToAsync(nameof(EntriesPage), navigationParam);
         }
     }
 }
