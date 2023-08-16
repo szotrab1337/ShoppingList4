@@ -5,4 +5,5 @@ public interface IEntryService
 {
     Task<List<Entry>> GetAsync(int shoppingListId);
     Task<bool> UpdateAsync(Entry entry);
+    Task<bool> DeleteAsync(int id);
 }

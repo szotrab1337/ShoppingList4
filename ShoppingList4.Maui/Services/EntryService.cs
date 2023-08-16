@@ -51,5 +51,17 @@ namespace ShoppingList4.Maui.Services
 
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            using var client = _clientFactory.CreateClient("ShoppingList4");
+
+            var token = await _tokenService.GetAsync();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await client.DeleteAsync($"api/entry/{id}");
+
+            return response.IsSuccessStatusCode;
+        }
     }
 }

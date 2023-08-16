@@ -20,10 +20,12 @@ namespace ShoppingList4.Maui.ViewModel
 
             CheckCommand = new RelayCommand<Entry>(Check);
             RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
+            DeleteAsyncCommand = new AsyncRelayCommand<Entry>(DeleteAsync);
         }
 
         public IRelayCommand CheckCommand { get; }
         public IAsyncRelayCommand RefreshAsyncCommand { get; }
+        public IAsyncRelayCommand DeleteAsyncCommand { get; }
 
         private int _shoppingListId;
 
@@ -84,6 +86,28 @@ namespace ShoppingList4.Maui.ViewModel
                     {
                         entry.IsBought = !entry.IsBought;
                     }
+                }
+            }
+            catch (Exception)
+            {
+                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
+            }
+        }
+
+        private async Task DeleteAsync(Entry entry)
+        {
+            try
+            {
+                if (entry is null)
+                {
+                    return;
+                }
+
+                var result = await _entryService.DeleteAsync(entry.Id);
+                if (result)
+                {
+                    entry.PropertyChanged -= EntryPropertyChanged;
+                    Entries.Remove(entry);
                 }
             }
             catch (Exception)

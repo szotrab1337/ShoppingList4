@@ -55,23 +55,30 @@ namespace ShoppingList4.Maui.ViewModel
 
         private async Task DeleteAsync(ShoppingList shoppingList)
         {
-            if (shoppingList is null)
+            try
             {
-                return;
+                if (shoppingList is null)
+                {
+                    return;
+                }
+
+                var confirmation = await _messageBoxService.ShowAlert("Potwierdzenie",
+                    "Czy na pewno chcesz usunąć wybraną listę?", "TAK", "NIE");
+
+                if (!confirmation)
+                {
+                    return;
+                }
+
+                var result = await _shoppingListService.DeleteAsync(shoppingList.Id);
+                if (result)
+                {
+                    ShoppingLists.Remove(shoppingList);
+                }
             }
-
-            var confirmation = await _messageBoxService.ShowAlert("Potwierdzenie",
-                "Czy na pewno chcesz usunąć wybraną listę?", "TAK", "NIE");
-
-            if (!confirmation)
+            catch (Exception)
             {
-                return;
-            }
-
-            var result = await _shoppingListService.DeleteAsync(shoppingList.Id);
-            if (result)
-            {
-                ShoppingLists.Remove(shoppingList);
+                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
         }
 
