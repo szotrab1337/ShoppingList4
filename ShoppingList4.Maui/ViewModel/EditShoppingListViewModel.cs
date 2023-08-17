@@ -53,7 +53,7 @@ namespace ShoppingList4.Maui.ViewModel
 
                 if (result)
                 {
-                    await Shell.Current.GoToAsync("//MainPage");
+                    await Shell.Current.GoToAsync("..");
                 }
             }
             catch (Exception)

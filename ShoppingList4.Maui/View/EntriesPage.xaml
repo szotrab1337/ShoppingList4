@@ -185,7 +185,7 @@
                WidthRequest="60"
                HorizontalOptions="Center">
             <Button Text="+"
-                    Command="{Binding AddItemAsyncCommand}"
+                    Command="{Binding AddAsyncCommand}"
                     FontSize="25"/>
         </Frame>
 

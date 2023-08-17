@@ -7,7 +7,15 @@ public partial class EntriesPage : ContentPage
     public EntriesPage(EntriesViewModel vm)
     {
         InitializeComponent();
+        _viewModel = vm;
 
-        BindingContext = vm;
+        BindingContext = _viewModel;
+    }
+
+    private readonly EntriesViewModel _viewModel;
+
+    protected override void OnAppearing()
+    {
+        _viewModel.InitializeAsync();
     }
 }

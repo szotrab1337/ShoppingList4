@@ -1,24 +1,27 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ShoppingList4.Maui.Entity;
 using ShoppingList4.Maui.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public class AddShoppingListViewModel : ObservableValidator
+    public class AddEntryViewModel : ObservableValidator, IQueryAttributable
     {
-        private readonly IShoppingListService _shoppingListService;
+        private readonly IEntryService _entryService;
         private readonly IMessageBoxService _messageBoxService;
 
-        public AddShoppingListViewModel(IShoppingListService shoppingListService, IMessageBoxService messageBoxService)
+        public AddEntryViewModel(IEntryService entryService, IMessageBoxService messageBoxService)
         {
-            _shoppingListService = shoppingListService;
+            _entryService = entryService;
             _messageBoxService = messageBoxService;
 
             SaveAsyncCommand = new AsyncRelayCommand(SaveAsync, CanSave);
         }
 
         public IAsyncRelayCommand SaveAsyncCommand { get; }
+
+        private ShoppingList _shoppingList;
 
         [MaxLength(35, ErrorMessage = "Wprowadzona nazwa jest zbyt długa")]
         [Required(ErrorMessage = "Pole wymagane")]
@@ -38,7 +41,7 @@ namespace ShoppingList4.Maui.ViewModel
         {
             try
             {
-                var result = await _shoppingListService.AddAsync(Name);
+                var result = await _entryService.AddAsync(Name, _shoppingList.Id);
 
                 if (result)
                 {
@@ -56,6 +59,11 @@ namespace ShoppingList4.Maui.ViewModel
             ValidateAllProperties();
 
             return !HasErrors;
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            _shoppingList = query["ShoppingList"] as ShoppingList;
         }
     }
 }
