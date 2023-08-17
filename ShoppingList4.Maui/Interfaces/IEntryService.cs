@@ -7,4 +7,5 @@ public interface IEntryService
     Task<bool> UpdateAsync(Entry entry);
     Task<bool> DeleteAsync(int id);
     Task<bool> DeleteMultipleAsync(List<int> ids);
+    Task<bool> AddAsync(string name, int shoppingListId);
 }

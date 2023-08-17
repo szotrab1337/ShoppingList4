@@ -27,7 +27,6 @@ namespace ShoppingList4.Maui.ViewModel
             OpenShoppingListAsyncCommand = new AsyncRelayCommand<ShoppingList>(OpenShoppingListAsync);
 
             CheckAsync();
-            InitializeAsync();
         }
 
         public IAsyncRelayCommand AddAsyncCommand { get; }

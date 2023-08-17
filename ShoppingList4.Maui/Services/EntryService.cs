@@ -80,5 +80,20 @@ namespace ShoppingList4.Maui.Services
 
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<bool> AddAsync(string name, int shoppingListId)
+        {
+            var entry = new EntryDto(name, shoppingListId);
+
+            using var client = _clientFactory.CreateClient("ShoppingList4");
+
+            var token = await _tokenService.GetAsync();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var content = new StringContent(JsonConvert.SerializeObject(entry), Encoding.UTF8, "application/json");
+            var response = await client.PostAsync("api/entry", content);
+
+            return response.IsSuccessStatusCode;
+        }
     }
 }

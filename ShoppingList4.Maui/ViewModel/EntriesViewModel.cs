@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
 using Entry = ShoppingList4.Maui.Entity.Entry;
 using System.ComponentModel;
+using ShoppingList4.Maui.View;
 
 namespace ShoppingList4.Maui.ViewModel
 {
@@ -18,6 +19,7 @@ namespace ShoppingList4.Maui.ViewModel
             _entryService = entryService;
             _messageBoxService = messageBoxService;
 
+            AddAsyncCommand = new AsyncRelayCommand(AddAsync);
             CheckCommand = new RelayCommand<Entry>(Check);
             RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
             DeleteAsyncCommand = new AsyncRelayCommand<Entry>(DeleteAsync);
@@ -25,13 +27,14 @@ namespace ShoppingList4.Maui.ViewModel
             DeleteBoughtAsyncCommand = new AsyncRelayCommand(DeleteBoughtAsync);
         }
 
+        public IAsyncRelayCommand AddAsyncCommand { get; }
         public IRelayCommand CheckCommand { get; }
         public IAsyncRelayCommand RefreshAsyncCommand { get; }
         public IAsyncRelayCommand DeleteAsyncCommand { get; }
         public IAsyncRelayCommand DeleteAllAsyncCommand { get; }
         public IAsyncRelayCommand DeleteBoughtAsyncCommand { get; }
 
-        private int _shoppingListId;
+        private ShoppingList _shoppingList;
 
         [ObservableProperty]
         private ObservableCollection<Entry> _entries;
@@ -54,7 +57,7 @@ namespace ShoppingList4.Maui.ViewModel
         {
             try
             {
-                var entries = await _entryService.GetAsync(_shoppingListId);
+                var entries = await _entryService.GetAsync(_shoppingList.Id);
 
                 Entries = new ObservableCollection<Entry>(entries);
                 Entries.ToList().ForEach(x => x.PropertyChanged += EntryPropertyChanged);
@@ -67,8 +70,7 @@ namespace ShoppingList4.Maui.ViewModel
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            _shoppingListId = (query["ShoppingList"] as ShoppingList)!.Id;
-            InitializeAsync();
+            _shoppingList = query["ShoppingList"] as ShoppingList;
         }
 
         private void Check(Entry entry)
@@ -174,6 +176,16 @@ namespace ShoppingList4.Maui.ViewModel
                     Entries.Remove(entry);
                 }
             }
+        }
+
+        private async Task AddAsync()
+        {
+            var navigationParam = new Dictionary<string, object>
+            {
+                { "ShoppingList", _shoppingList }
+            };
+
+            await Shell.Current.GoToAsync(nameof(AddEntryPage), navigationParam);
         }
     }
 }

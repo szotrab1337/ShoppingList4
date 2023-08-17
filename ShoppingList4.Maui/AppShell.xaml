@@ -7,15 +7,13 @@
 
     <ShellContent
         Title="Listy zakupów"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        ContentTemplate="{DataTemplate local:MainPage}"/>
 
     <FlyoutItem Route="Main"
                 Title="Logowanie">
         <ShellContent
             Title="Logowanie"
-            ContentTemplate="{DataTemplate local:LoginPage}"
-            Route="LoginPage" />
+            ContentTemplate="{DataTemplate local:LoginPage}"/>
     </FlyoutItem>
 
 </Shell>
