@@ -17,12 +17,12 @@ jobs:
        - name: Build
          run: dotnet build --no-restore
        - name: Publish
-         run: dotnet publish ./ShoppingList4.API/ShoppingList4.Api.csproj -C Release -o ${{ env.DOTNET_ROOT }}/api
+         run: dotnet publish ./ShoppingList4.API/ShoppingList4.Api.csproj -C Release -o ${{ env.DOTNET_ROOT }}\api
        - name: upload artifact
          uses: actions/upload-artifact@v3.1.2
          with:
            name: api-artifact
-           path: ${{ env.DOTNET_ROOT }}/api
+           path: ${{ env.DOTNET_ROOT }}\api
   deploy:
       runs-on: windows-latest
       needs: build
