@@ -1,0 +1,44 @@
+name: CD
+on:
+  push:
+    branches: [ master ]
+  
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+       - uses: actions/checkout@v2
+       - name: Setup .NET Core SDK
+         uses: actions/setup-dotnet@v3.2.0
+         with: 
+            dotnet-version: 6.0.x
+       - name: Restore dependencies
+         run: dotnet restore
+       - name: Build
+         run: dotnet build --no-restore
+       - name: Publish
+         run: dotnet publish ./ShoppingList4.API/ShoppingList4.Api.csproj -C Release -o ${{ env.DOTNET_ROOT }}/api
+       - name: upload artifact
+         uses: actions/upload-artifact@v3.1.2
+         with:
+           name: api-artifact
+           path: ${{ env.DOTNET_ROOT }}/api
+  deploy:
+      runs-on: windows-latest
+      needs: build
+      environment: 
+        name: 'Prod'
+        url: ${{ steps.deploy-to-azure.outputs.webapp-url }}
+      steps:
+        - name: Download a Build Artifact
+          uses: actions/download-artifact@v2.1.1
+          with:
+            name: api-artifact
+        - name: Azure WebApp deploy
+          id: deploy-to-azure
+          uses: Azure/webapps-deploy@v2.2.10
+          with:
+            app-name: 'shopping-list-4-app'
+            publish-profile: ${{ secrets.PUBLISH_PROFILE }}
+        
+        
