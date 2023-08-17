@@ -60,8 +60,13 @@ builder.Services.AddScoped<IEntryService, EntryService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+builder.Services.AddScoped<IDbManager, DbManager>();
 
 var app = builder.Build();
+
+using var scope = app.Services.CreateScope();
+var dbManager = scope.ServiceProvider.GetService<IDbManager>();
+dbManager?.Migrate();
 
 // Configure the HTTP request pipeline.
 app.UseMiddleware<ErrorHandlingMiddleware>();
