@@ -20,6 +20,7 @@ namespace ShoppingList4.Maui.ViewModel
             _messageBoxService = messageBoxService;
 
             AddAsyncCommand = new AsyncRelayCommand(AddAsync);
+            EditAsyncCommand = new AsyncRelayCommand<Entry>(EditAsync);
             CheckCommand = new RelayCommand<Entry>(Check);
             RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
             DeleteAsyncCommand = new AsyncRelayCommand<Entry>(DeleteAsync);
@@ -28,6 +29,7 @@ namespace ShoppingList4.Maui.ViewModel
         }
 
         public IAsyncRelayCommand AddAsyncCommand { get; }
+        public IAsyncRelayCommand EditAsyncCommand { get; }
         public IRelayCommand CheckCommand { get; }
         public IAsyncRelayCommand RefreshAsyncCommand { get; }
         public IAsyncRelayCommand DeleteAsyncCommand { get; }
@@ -57,7 +59,8 @@ namespace ShoppingList4.Maui.ViewModel
         {
             try
             {
-                var entries = await _entryService.GetAsync(_shoppingList.Id);
+                var entries = (await _entryService.GetAsync(_shoppingList.Id))
+                    .OrderBy(x => x.IsBought);
 
                 Entries = new ObservableCollection<Entry>(entries);
                 Entries.ToList().ForEach(x => x.PropertyChanged += EntryPropertyChanged);
@@ -186,6 +189,16 @@ namespace ShoppingList4.Maui.ViewModel
             };
 
             await Shell.Current.GoToAsync(nameof(AddEntryPage), navigationParam);
+        }
+
+        private async Task EditAsync(Entry entry)
+        {
+            var navigationParam = new Dictionary<string, object>
+            {
+                { "Entry", entry }
+            };
+
+            await Shell.Current.GoToAsync(nameof(EditEntryPage), navigationParam);
         }
     }
 }

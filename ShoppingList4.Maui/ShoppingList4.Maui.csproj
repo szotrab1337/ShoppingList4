@@ -62,6 +62,9 @@
 	  <Compile Update="View\AddShoppingListPage.xaml.cs">
 	    <DependentUpon>AddShoppingListPage.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="View\EditEntryPage.xaml.cs">
+	    <DependentUpon>EditEntryPage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="View\EditShoppingListPage.xaml.cs">
 	    <DependentUpon>EditShoppingListPage.xaml</DependentUpon>
 	  </Compile>
@@ -78,6 +81,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="View\AddShoppingListPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\EditEntryPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="View\EditShoppingListPage.xaml">

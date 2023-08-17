@@ -39,6 +39,9 @@ namespace ShoppingList4.Maui
             builder.Services.AddTransient<AddEntryPage>();
             builder.Services.AddTransient<AddEntryViewModel>();
 
+            builder.Services.AddTransient<EditEntryPage>();
+            builder.Services.AddTransient<EditEntryViewModel>();
+
             builder.Services.AddScoped<IAccountService, AccountService>();
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IShoppingListService, ShoppingListService>();
