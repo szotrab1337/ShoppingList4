@@ -17,6 +17,7 @@
 
             <Entry Text="{Binding Name, Mode=TwoWay}"
                    Grid.Row="0"
+                   FontSize="16"
                    ClearButtonVisibility="WhileEditing"
                    Placeholder="Nazwa listy"
                    Margin="10,30,10,10">

@@ -44,9 +44,14 @@ namespace ShoppingList4.Maui.ViewModel
         [ObservableProperty]
         private bool _isRefreshing;
 
-        public async void InitializeAsync()
+        [ObservableProperty]
+        private bool _isInitializing;
+
+        public async Task InitializeAsync()
         {
+            IsInitializing = true;
             await GetEntriesAsync();
+            IsInitializing = false;
         }
 
         private async Task RefreshAsync()

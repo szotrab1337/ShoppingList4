@@ -25,8 +25,6 @@ namespace ShoppingList4.Maui.ViewModel
             DeleteAsyncCommand = new AsyncRelayCommand<ShoppingList>(DeleteAsync);
             EditAsyncCommand = new AsyncRelayCommand<ShoppingList>(EditAsync);
             OpenShoppingListAsyncCommand = new AsyncRelayCommand<ShoppingList>(OpenShoppingListAsync);
-
-            CheckAsync();
         }
 
         public IAsyncRelayCommand AddAsyncCommand { get; }
@@ -40,10 +38,15 @@ namespace ShoppingList4.Maui.ViewModel
 
         [ObservableProperty]
         private bool _isRefreshing;
+        
+        [ObservableProperty]
+        private bool _isInitializing;
 
-        public async void InitializeAsync()
+        public async Task InitializeAsync()
         {
+            IsInitializing = true;
             await GetShoppingListsAsync();
+            IsInitializing = false;
         }
 
         private async Task RefreshAsync()
@@ -95,12 +98,15 @@ namespace ShoppingList4.Maui.ViewModel
             }
         }
 
-        private async void CheckAsync()
+        public async Task<bool> CheckUserAsync()
         {
             if (!await _tokenService.ExistsAsync())
             {
-                await Shell.Current.GoToAsync(nameof(LoginPage));
+                await Shell.Current.GoToAsync("//Login");
+                return false;
             }
+
+            return true;
         }
 
         private async Task EditAsync(ShoppingList shoppingList)

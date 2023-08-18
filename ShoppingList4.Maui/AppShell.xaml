@@ -5,15 +5,14 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:ShoppingList4.Maui.View">
 
-    <ShellContent
-        Title="Listy zakupów"
-        ContentTemplate="{DataTemplate local:MainPage}"/>
+        <ShellContent
+            Route="Main"
+                Title="Listy zakupów"
+                ContentTemplate="{DataTemplate local:MainPage}"/>
 
-    <FlyoutItem Route="Main"
-                Title="Logowanie">
         <ShellContent
             Title="Logowanie"
-            ContentTemplate="{DataTemplate local:LoginPage}"/>
-    </FlyoutItem>
+            ContentTemplate="{DataTemplate local:LoginPage}"
+            Route="Login"/>
 
 </Shell>
