@@ -5,7 +5,12 @@ VisualStudioVersion = 17.5.33209.295
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList4.Api", "ShoppingList4.Api\ShoppingList4.Api.csproj", "{2A9B4DD5-CE1B-4C53-B90A-8069CB04FF7C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList4.Maui", "ShoppingList4.Maui\ShoppingList4.Maui.csproj", "{4CD2F975-5908-49F5-A25F-7F67F246132B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShoppingList4.Maui", "ShoppingList4.Maui\ShoppingList4.Maui.csproj", "{4CD2F975-5908-49F5-A25F-7F67F246132B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FB65091C-0C10-49A4-B360-A59F51315524}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

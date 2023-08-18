@@ -21,8 +21,6 @@ namespace ShoppingList4.Maui.ViewModel
 
             LoginAsyncCommand = new AsyncRelayCommand(LoginAsync, CanLogin);
             LogoutCommand = new RelayCommand(Logout);
-
-            Initialize();
         }
 
         public IAsyncRelayCommand LoginAsyncCommand { get; }
@@ -59,8 +57,11 @@ namespace ShoppingList4.Maui.ViewModel
         }
         private string _password;
 
-        private async void Initialize()
+        public async Task InitializeAsync()
         {
+            Email = string.Empty;
+            Password = string.Empty;
+
             TokenExists = await _tokenService.ExistsAsync();
         }
 
@@ -78,7 +79,7 @@ namespace ShoppingList4.Maui.ViewModel
                     return;
                 }
 
-                await Shell.Current.GoToAsync("//MainPage");
+                await Shell.Current.GoToAsync("//Main");
             }
             catch (Exception)
             {

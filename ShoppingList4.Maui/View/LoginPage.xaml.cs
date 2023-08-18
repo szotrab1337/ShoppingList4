@@ -7,11 +7,16 @@ public partial class LoginPage : ContentPage
     public LoginPage(LoginPageViewModel vm)
     {
         InitializeComponent();
-        BindingContext = vm;
+        _viewModel = vm;
+
+        BindingContext = _viewModel;
     }
 
-    protected override bool OnBackButtonPressed()
+    private readonly LoginPageViewModel _viewModel;
+
+    protected override async void OnAppearing()
     {
-        return true;
+        await Task.Delay(400);
+        await _viewModel.InitializeAsync();
     }
 }
