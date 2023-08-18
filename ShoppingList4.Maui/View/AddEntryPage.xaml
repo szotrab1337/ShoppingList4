@@ -17,7 +17,7 @@
             <Entry Text="{Binding Name, Mode=TwoWay}"
                    Grid.Row="0"
                    ClearButtonVisibility="WhileEditing"
-                   Placeholder="Nazwa listy"
+                   Placeholder="Nazwa pozycji"
                    Margin="10,30,10,10">
                 <Entry.Behaviors>
                     <behaviors:TextValidationBehavior MaximumLength="35" 
