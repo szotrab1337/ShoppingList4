@@ -11,24 +11,32 @@ jobs:
        - name: Setup Keystore File
          run: |
            echo "${{ secrets.KEYSTORE_FILE }}" > shoppinglist4.keystore.asc
-           gpg -d --passphrase "{{ secrets.KEYSTORE_PASSWORD }}" --batch shoppinglist4.keystore.asc > shoppinglist4.keystore
+           gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD_GPG }}" --batch shoppinglist4.keystore.asc > shoppinglist4.keystore
        - name: Setup .NET Core SDK
          uses: actions/setup-dotnet@v3.2.0
          with: 
             dotnet-version: 6.0.x
+       - name: Install .NET MAUI
+         run: dotnet workload install maui
        - name: Restore dependencies
          run: dotnet restore
        - name: Build API
          run: dotnet build ./ShoppingList4.Api/ShoppingList4.Api.csproj --no-restore
        - name: Publish API
          run: dotnet publish ./ShoppingList4.Api/ShoppingList4.Api.csproj -c Release -o '${{ env.DOTNET_ROOT }}\api'
-       - name: Build MAUI
-         run: dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net6.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
        - name: upload artifact
          uses: actions/upload-artifact@v3.1.2
          with:
            name: api-artifact
            path: ${{ env.DOTNET_ROOT }}\api
+       - name: Build MAUI
+         run: dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net6.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
+       - name: Upload a Build Artifact
+         uses: actions/upload-artifact@v3.1.0
+         with:
+           path: |
+             ./**/*.aab
+             ./**/*.apk
   deploy:
       runs-on: windows-latest
       needs: build
