@@ -16,13 +16,7 @@ namespace ShoppingList4.Maui.View
 
         protected override async void OnAppearing()
         {
-            await Task.Delay(400);
-            var tokenExists = await _viewModel.CheckUserAsync();
-            
-            if(tokenExists)
-            {
-                await _viewModel.InitializeAsync();
-            }
+            await _viewModel.InitializeAsync();   
         }
     }
 }
