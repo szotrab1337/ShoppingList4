@@ -34,6 +34,7 @@ jobs:
        - name: Upload Maui artifact
          uses: actions/upload-artifact@v3.1.0
          with:
+           name: maui-artifact
            path: ./**/*.apk
   deploy:
       runs-on: windows-latest
