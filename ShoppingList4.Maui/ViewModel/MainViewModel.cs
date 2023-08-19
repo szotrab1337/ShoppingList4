@@ -2,8 +2,8 @@
 using CommunityToolkit.Mvvm.Input;
 using ShoppingList4.Maui.Entity;
 using ShoppingList4.Maui.Interfaces;
-using System.Collections.ObjectModel;
 using ShoppingList4.Maui.View;
+using System.Collections.ObjectModel;
 
 namespace ShoppingList4.Maui.ViewModel
 {
@@ -38,14 +38,22 @@ namespace ShoppingList4.Maui.ViewModel
 
         [ObservableProperty]
         private bool _isRefreshing;
-        
+
         [ObservableProperty]
         private bool _isInitializing;
 
         public async Task InitializeAsync()
         {
             IsInitializing = true;
-            await GetShoppingListsAsync();
+
+            await Task.Delay(400);
+            var tokenExists = await CheckUserAsync();
+
+            if (tokenExists)
+            {
+                await GetShoppingListsAsync();
+            }
+
             IsInitializing = false;
         }
 

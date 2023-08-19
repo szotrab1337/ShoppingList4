@@ -50,6 +50,7 @@ namespace ShoppingList4.Maui.ViewModel
         public async Task InitializeAsync()
         {
             IsInitializing = true;
+            await Task.Delay(400);
             await GetEntriesAsync();
             IsInitializing = false;
         }

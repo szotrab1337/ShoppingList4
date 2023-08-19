@@ -16,7 +16,6 @@ public partial class EntriesPage : ContentPage
 
     protected override async void OnAppearing()
     {
-        await Task.Delay(400);
         await _viewModel.InitializeAsync();
     }
 }
