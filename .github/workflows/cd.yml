@@ -11,7 +11,7 @@ jobs:
        - name: Setup Keystore File
          run: |
            echo "${{ secrets.KEYSTORE_FILE }}" > shoppinglist4.keystore.asc
-           gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD_GPG }}" --batch shoppinglist4.keystore.asc > shoppinglist4.keystore
+           gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" --batch shoppinglist4.keystore.asc > shoppinglist4.keystore
        - name: Setup .NET Core SDK
          uses: actions/setup-dotnet@v3.2.0
          with: 
