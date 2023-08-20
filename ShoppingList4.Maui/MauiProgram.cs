@@ -51,7 +51,7 @@ namespace ShoppingList4.Maui
             builder.Services.AddHttpClient("ShoppingList4", x =>
             {
                 x.BaseAddress = new Uri("https://shopping-list-4-app.azurewebsites.net/");
-                x.Timeout = TimeSpan.FromSeconds(5);
+                x.Timeout = TimeSpan.FromSeconds(15);
             });
 
             return builder.Build();

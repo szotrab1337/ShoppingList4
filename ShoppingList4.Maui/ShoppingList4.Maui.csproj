@@ -12,10 +12,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>ShoppingList4.Maui</ApplicationTitle>
+		<ApplicationTitle>Lista zakupów</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.shoppinglist4.maui</ApplicationId>
+		<ApplicationId>com.boapps.shoppinglist4.maui</ApplicationId>
 		<ApplicationIdGuid>5852502d-434b-4640-a481-7a6e0f9ef399</ApplicationIdGuid>
 
 		<!-- Versions -->
@@ -35,7 +35,7 @@
 		<MauiIcon Include="Resources\AppIcon\appicon.svg" ForegroundFile="Resources\AppIcon\appiconfg.svg" Color="#512BD4" />
 
 		<!-- Splash Screen -->
-		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#512BD4" BaseSize="128,128" />
+		<MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#141414" BaseSize="128,128" />
 
 		<!-- Images -->
 		<MauiImage Include="Resources\Images\*" />
