@@ -12,10 +12,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>ShoppingList4.Maui</ApplicationTitle>
+		<ApplicationTitle>Lista zakupów</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.shoppinglist4.maui</ApplicationId>
+		<ApplicationId>com.boapps.shoppinglist4.maui</ApplicationId>
 		<ApplicationIdGuid>5852502d-434b-4640-a481-7a6e0f9ef399</ApplicationIdGuid>
 
 		<!-- Versions -->
