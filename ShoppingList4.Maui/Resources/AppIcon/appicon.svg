@@ -1,4 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg width="456" height="456" viewBox="0 0 456 456" version="1.1" xmlns="http://www.w3.org/2000/svg">
-    <rect x="0" y="0" width="456" height="456" fill="#512BD4" />
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="800px"
+   height="800px"
+   viewBox="0 0 24 24"
+   fill="none"
+   version="1.1"
+   id="svg12"
+   sodipodi:docname="appicon.svg"
+   inkscape:version="1.1.2 (b8e25be833, 2022-02-05)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+	<defs
+	   id="defs16" />
+	<sodipodi:namedview
+	   id="namedview14"
+	   pagecolor="#130000"
+	   bordercolor="#eeeeee"
+	   borderopacity="1"
+	   inkscape:pageshadow="0"
+	   inkscape:pageopacity="0"
+	   inkscape:pagecheckerboard="true"
+	   showgrid="false"
+	   inkscape:zoom="0.90509668"
+	   inkscape:cx="309.35922"
+	   inkscape:cy="415.42524"
+	   inkscape:window-width="1920"
+	   inkscape:window-height="1129"
+	   inkscape:window-x="-8"
+	   inkscape:window-y="-8"
+	   inkscape:window-maximized="1"
+	   inkscape:current-layer="svg12" />
+	<rect
+	   style="fill:#141414;stroke-width:0.121438"
+	   id="rect928"
+	   width="24"
+	   height="24"
+	   x="0"
+	   y="0" />
 </svg>
