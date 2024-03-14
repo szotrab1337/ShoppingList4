@@ -30,7 +30,7 @@ jobs:
            name: api-artifact
            path: ${{ env.DOTNET_ROOT }}\api
        - name: Build MAUI
-         run: dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net6.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
+         run: dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net8.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
        - name: Upload Maui artifact
          uses: actions/upload-artifact@v3.1.0
          with:
