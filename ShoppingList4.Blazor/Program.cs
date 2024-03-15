@@ -1,4 +1,7 @@
+using Blazored.LocalStorage;
 using MudBlazor.Services;
+using ShoppingList4.Blazor.Interfaces;
+using ShoppingList4.Blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +9,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddMudServices();
+builder.Services.AddBlazoredLocalStorage();   // local storage
+builder.Services.AddBlazoredLocalStorage(config => config.JsonSerializerOptions.WriteIndented = true);  // local storage
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IShoppingListService, ShoppingListService>();
+
+builder.Services.AddHttpClient("ShoppingList4", x =>
+{
+    x.BaseAddress = new Uri(builder.Configuration.GetValue<string>("ApiUrl")!);
+    x.Timeout = TimeSpan.FromSeconds(30);
+});
 
 var app = builder.Build();
 

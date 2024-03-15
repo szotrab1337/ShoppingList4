@@ -1,0 +1,26 @@
+﻿@page "/Login"
+@using ShoppingList4.Blazor.Interfaces
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+
+@inject IAccountService _accountService
+@inject NavigationManager _navigationManager
+
+<MudGrid Class="d-flex justify-center">
+    <MudItem xs="12" sm="7">
+        <MudPaper Class="pa-4">
+            <MudForm @ref="Form" @bind-IsValid="@Success">
+                <MudTextField @bind-Value="Email" T="string" Label="Email" Required="true" RequiredError="Email is required!"
+                              Validation="@(new EmailAddressAttribute() {ErrorMessage = "Niepoprawny adres email"})" />
+                <MudTextField @bind-Value="Password" T="string" Label="Hasło"
+                              InputType="InputType.Password"
+                              Required="true"
+                              RequiredError="Hasło jest wymagane!" />
+               
+                <div class="d-flex align-center justify-space-between">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!Success)" OnClick="@(async () => await Submit())" Class="ml-auto mt-5">Zaloguj</MudButton>
+                </div>
+            </MudForm>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
