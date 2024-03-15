@@ -1,7 +1,27 @@
 ﻿@page "/"
+@using ShoppingList4.Blazor.Interfaces
 
-<PageTitle>Index</PageTitle>
+@inject ITokenService _tokenService
+@inject IShoppingListService _shoppingListService
+@inject NavigationManager _navigationManager
 
-<h1>Hello, world!</h1>
+<PageTitle>ShoppingList4</PageTitle>
 
-Welcome to your new app.
+
+@foreach (var shoppingList in ShoppingLists)
+{
+    <MudCard onclick="Open" Class="mb-5">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <MudText Typo="Typo.h4">@shoppingList.Name</MudText>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="Edit" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="Delete" />
+            </CardHeaderActions>
+        </MudCardHeader>
+        <MudCardContent>
+            <MudText Class="pb-2" Typo="Typo.body1"><em>Liczba rzeczy do kupienia:</em> <b>@shoppingList.EntriesNotBought</b> z <b>@shoppingList.Entries.Count</b></MudText>
+        </MudCardContent>
+    </MudCard>
+}
