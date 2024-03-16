@@ -1,9 +1,17 @@
 using Blazored.LocalStorage;
 using MudBlazor.Services;
+using Serilog;
 using ShoppingList4.Blazor.Interfaces;
 using ShoppingList4.Blazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .CreateLogger();
+
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 // Add services to the container.
 builder.Services.AddRazorPages();

@@ -1,9 +1,19 @@
+using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using ShoppingList4.Blazor.Entity;
+using ShoppingList4.Blazor.Interfaces;
 
 namespace ShoppingList4.Blazor.Pages
 {
     public partial class Index
     {
+        [Inject] public ILogger<Index> Logger { get; set; } = default!;
+        [Inject] public ITokenService TokenService { get; set; } = default!;
+        [Inject] public IShoppingListService ShoppingListService { get; set; } = default!;
+        [Inject] public IDialogService DialogService { get; set; } = default!;
+        [Inject] public ISnackbar Snackbar { get; set; } = default!;
+        [Inject] public NavigationManager NavigationManager { get; set; } = default!;
+
         public List<ShoppingList> ShoppingLists { get; set; } = [];
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -19,14 +29,16 @@ namespace ShoppingList4.Blazor.Pages
             {
                 await GetShoppingListsAsync();
                 StateHasChanged();
+
+                Logger.LogInformation("Loaded shopping lists.");
             }
         }
 
         public async Task<bool> CheckUserAsync()
         {
-            if (!await _tokenService.Exists())
+            if (!await TokenService.Exists())
             {
-                _navigationManager.NavigateTo("/Login");
+                NavigationManager.NavigateTo("/Login");
                 return false;
             }
 
@@ -37,11 +49,11 @@ namespace ShoppingList4.Blazor.Pages
         {
             try
             {
-                ShoppingLists = await _shoppingListService.GetAll();
+                ShoppingLists = await ShoppingListService.GetAll();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                //TODO: handle error
+                Logger.LogError(ex, "Error occurred during loading shopping lists");
             }
         }
 
@@ -57,7 +69,7 @@ namespace ShoppingList4.Blazor.Pages
 
         public async Task Delete(int shoppingListId)
         {
-            bool? isConfirmed = await _dialogService.ShowMessageBox(
+            bool? isConfirmed = await DialogService.ShowMessageBox(
                 "Potwierdzenie",
                 "Czy chcesz usun¹æ wybran¹ listê zakupów?",
                 yesText: "Usuñ", cancelText: "Anuluj");
@@ -67,13 +79,14 @@ namespace ShoppingList4.Blazor.Pages
                 return;
             }
 
-            var result = await _shoppingListService.Delete(shoppingListId);
+            var result = await ShoppingListService.Delete(shoppingListId);
             if (result)
             {
                 await GetShoppingListsAsync();
                 StateHasChanged();
 
-                _snackbar.Add("Lista zakupów zosta³a usuniêta!", MudBlazor.Severity.Success);
+                Logger.LogInformation("User deleted shopping list with id {id}", shoppingListId);
+                Snackbar.Add("Lista zakupów zosta³a usuniêta!", MudBlazor.Severity.Success);
             }
         }
     }

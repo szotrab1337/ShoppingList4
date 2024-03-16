@@ -1,10 +1,15 @@
+using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using ShoppingList4.Blazor.Entity;
+using ShoppingList4.Blazor.Interfaces;
 
 namespace ShoppingList4.Blazor.Pages
 {
     public partial class Login
     {
+        [Inject] public IAccountService AccountService { get; set; } = default!;
+        [Inject] public NavigationManager NavigationManager { get; set; } = default!;
+
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public bool Success { get; set; }
@@ -22,9 +27,9 @@ namespace ShoppingList4.Blazor.Pages
                     Password = Password
                 };
 
-                await _accountService.LoginAsync(user);
+                await AccountService.LoginAsync(user);
 
-                _navigationManager.NavigateTo("/");
+                NavigationManager.NavigateTo("/");
             }
         }
     }
