@@ -1,4 +1,3 @@
-
 using ShoppingList4.Blazor.Entity;
 
 namespace ShoppingList4.Blazor.Pages
@@ -56,9 +55,26 @@ namespace ShoppingList4.Blazor.Pages
 
         }
 
-        public async Task Delete()
+        public async Task Delete(int shoppingListId)
         {
+            bool? isConfirmed = await _dialogService.ShowMessageBox(
+                "Potwierdzenie",
+                "Czy chcesz usun¹æ wybran¹ listê zakupów?",
+                yesText: "Usuñ", cancelText: "Anuluj");
 
+            if (isConfirmed != true)
+            {
+                return;
+            }
+
+            var result = await _shoppingListService.Delete(shoppingListId);
+            if (result)
+            {
+                await GetShoppingListsAsync();
+                StateHasChanged();
+
+                _snackbar.Add("Lista zakupów zosta³a usuniêta!", MudBlazor.Severity.Success);
+            }
         }
     }
 }

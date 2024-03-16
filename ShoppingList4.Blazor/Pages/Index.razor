@@ -3,10 +3,11 @@
 
 @inject ITokenService _tokenService
 @inject IShoppingListService _shoppingListService
+@inject IDialogService _dialogService
+@inject ISnackbar _snackbar
 @inject NavigationManager _navigationManager
 
 <PageTitle>ShoppingList4</PageTitle>
-
 
 @foreach (var shoppingList in ShoppingLists)
 {
@@ -17,7 +18,7 @@
             </CardHeaderContent>
             <CardHeaderActions>
                 <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="Edit" />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="Delete" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="@(() => Delete(shoppingList.Id))" />
             </CardHeaderActions>
         </MudCardHeader>
         <MudCardContent>
