@@ -1,12 +1,6 @@
 ﻿@page "/"
 @using ShoppingList4.Blazor.Interfaces
 
-@inject ITokenService _tokenService
-@inject IShoppingListService _shoppingListService
-@inject IDialogService _dialogService
-@inject ISnackbar _snackbar
-@inject NavigationManager _navigationManager
-
 <PageTitle>ShoppingList4</PageTitle>
 
 @foreach (var shoppingList in ShoppingLists)
