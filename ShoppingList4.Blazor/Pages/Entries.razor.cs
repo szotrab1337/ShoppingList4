@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using ShoppingList4.Blazor.Entities;
 using ShoppingList4.Blazor.Interfaces;
+using ShoppingList4.Blazor.Models;
+using ShoppingList4.Blazor.Pages.Dialogs;
 
 namespace ShoppingList4.Blazor.Pages
 {
@@ -57,9 +59,7 @@ namespace ShoppingList4.Blazor.Pages
         {
             try
             {
-                EntriesList = (await EntryService.Get(_id))
-                    .OrderBy(x => x.IsBought)
-                    .ToList();
+                EntriesList = [.. (await EntryService.Get(_id)).OrderBy(x => x.IsBought)];
             }
             catch (Exception ex)
             {
@@ -111,7 +111,36 @@ namespace ShoppingList4.Blazor.Pages
 
         public async Task Add()
         {
+            var parameters = new DialogParameters<SimpleDialog>
+            {
+                { x => x.Text, string.Empty  },
+                { x => x.Title, "Nowa pozycja"  }
+            };
 
+            var dialog = await DialogService.ShowAsync<SimpleDialog>("Nowa pozycja",
+                parameters,
+                Common.GetDialogOptions());
+
+            var dialogResult = await dialog.Result;
+
+            if (!dialogResult.Canceled)
+            {
+                var data = dialogResult.Data.ToString();
+                if (string.IsNullOrEmpty(data))
+                {
+                    return;
+                }
+
+                var isAdded = await EntryService.Add(data, _id);
+                if (isAdded)
+                {
+                    await GetEntries();
+                    StateHasChanged();
+
+                    Logger.LogInformation("Added new entry with name {name} to list {id}.", data, _id);
+                    Snackbar.Add("Dodano now¹ pozycjê!", Severity.Success);
+                }
+            }
         }
     }
 }
