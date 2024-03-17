@@ -1,0 +1,24 @@
+﻿@page "/Entries/{id}"
+
+<div class="d-flex justify-end">
+    <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary" OnClick="Add">Dodaj</MudButton>
+</div>
+
+@foreach (var entry in EntriesList)
+{
+    <MudCard Class="mb-5">
+        <MudCardHeader>
+            <CardHeaderContent>
+                <div class="container">
+                    <div class="row">
+                        <MudCheckBox onclick="@(() => ChangeEntryState(entry.Id))" Value="entry.IsBought" Label="@entry.Name" Class="@(entry.IsBought ? "bought-entry" : "")"></MudCheckBox>
+                    </div>
+                </div>
+            </CardHeaderContent>
+            <CardHeaderActions>
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="@(() => Edit(entry.Id))" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="@(() => Delete(entry.Id))" />
+            </CardHeaderActions>
+        </MudCardHeader>
+    </MudCard>
+}

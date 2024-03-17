@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using ShoppingList4.Blazor.Interfaces
 
 <PageTitle>ShoppingList4</PageTitle>
 
@@ -9,7 +8,7 @@
 
 @foreach (var shoppingList in ShoppingLists)
 {
-    <MudCard onclick="Open" Class="mb-5">
+    <MudCard onclick="@(() => Open(shoppingList.Id))" Class="mb-5">
         <MudCardHeader>
             <CardHeaderContent>
                 <MudText Typo="Typo.h4">@shoppingList.Name</MudText>

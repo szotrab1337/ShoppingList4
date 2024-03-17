@@ -29,7 +29,7 @@ namespace ShoppingList4.Blazor.Pages
 
             if (tokenExists)
             {
-                await GetShoppingListsAsync();
+                await GetShoppingLists();
                 StateHasChanged();
 
                 Logger.LogInformation("Loaded shopping lists.");
@@ -47,7 +47,7 @@ namespace ShoppingList4.Blazor.Pages
             return true;
         }
 
-        private async Task GetShoppingListsAsync()
+        private async Task GetShoppingLists()
         {
             try
             {
@@ -59,9 +59,9 @@ namespace ShoppingList4.Blazor.Pages
             }
         }
 
-        public async Task Open()
+        public void Open(int shoppingListId)
         {
-
+            NavigationManager.NavigateTo($"/Entries/{shoppingListId}");
         }
 
         public async Task Edit(int shoppingListId)
@@ -97,7 +97,7 @@ namespace ShoppingList4.Blazor.Pages
                 var isUpdated = await ShoppingListService.Update(shoppingList);
                 if (isUpdated)
                 {
-                    await GetShoppingListsAsync();
+                    await GetShoppingLists();
                     StateHasChanged();
 
                     Logger.LogInformation("Updated shopping list with name {name}.", data);
@@ -131,7 +131,7 @@ namespace ShoppingList4.Blazor.Pages
                 var isAdded = await ShoppingListService.Add(data);
                 if (isAdded)
                 {
-                    await GetShoppingListsAsync();
+                    await GetShoppingLists();
                     StateHasChanged();
 
                     Logger.LogInformation("Added new shopping list with name {name}.", data);
@@ -155,7 +155,7 @@ namespace ShoppingList4.Blazor.Pages
             var isDeleted = await ShoppingListService.Delete(shoppingListId);
             if (isDeleted)
             {
-                await GetShoppingListsAsync();
+                await GetShoppingLists();
                 StateHasChanged();
 
                 Logger.LogInformation("User deleted shopping list with id {id}", shoppingListId);
