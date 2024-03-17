@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using ShoppingList4.Blazor.Entity;
+using ShoppingList4.Blazor.Entities;
 using ShoppingList4.Blazor.Interfaces;
 using System.Text;
 

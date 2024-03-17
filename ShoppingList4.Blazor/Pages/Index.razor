@@ -3,6 +3,10 @@
 
 <PageTitle>ShoppingList4</PageTitle>
 
+<div class="d-flex justify-end">
+    <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary" OnClick="Add">Dodaj</MudButton>
+</div>
+
 @foreach (var shoppingList in ShoppingLists)
 {
     <MudCard onclick="Open" Class="mb-5">

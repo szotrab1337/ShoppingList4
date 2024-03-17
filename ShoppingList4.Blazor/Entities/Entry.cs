@@ -1,4 +1,4 @@
-﻿namespace ShoppingList4.Blazor.Entity
+﻿namespace ShoppingList4.Blazor.Entities
 {
     public class Entry
     {

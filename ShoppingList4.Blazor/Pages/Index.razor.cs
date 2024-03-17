@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using ShoppingList4.Blazor.Entity;
+using ShoppingList4.Blazor.Entities;
 using ShoppingList4.Blazor.Interfaces;
+using ShoppingList4.Blazor.Pages.Dialogs;
 
 namespace ShoppingList4.Blazor.Pages
 {
@@ -64,7 +65,45 @@ namespace ShoppingList4.Blazor.Pages
 
         public async Task Edit()
         {
+        }
 
+        public async Task Add()
+        {
+            var parameters = new DialogParameters<SimpleDialog>
+            {
+                { x => x.Text, string.Empty  },
+                { x => x.Title, "Nowa lista zakupów"  }
+            };
+
+            var dialog = await DialogService.ShowAsync<SimpleDialog>("Nowa lista zakupów", parameters,
+                new DialogOptions()
+                {
+                    FullWidth = true,
+                    MaxWidth = MaxWidth.ExtraSmall
+                });
+
+            var dialogResult = await dialog.Result;
+
+            if (!dialogResult.Canceled)
+            {
+                var data = dialogResult.Data.ToString();
+
+                if (string.IsNullOrEmpty(data))
+                {
+                    return;
+                }
+
+                var isAdded = await ShoppingListService.Add(data);
+
+                if (isAdded)
+                {
+                    await GetShoppingListsAsync();
+                    StateHasChanged();
+
+                    Logger.LogInformation("Added new shopping list with name {name}.", data);
+                    Snackbar.Add("Dodano now¹ listê zakupów!", Severity.Success);
+                }
+            }
         }
 
         public async Task Delete(int shoppingListId)
@@ -79,8 +118,8 @@ namespace ShoppingList4.Blazor.Pages
                 return;
             }
 
-            var result = await ShoppingListService.Delete(shoppingListId);
-            if (result)
+            var isDeleted = await ShoppingListService.Delete(shoppingListId);
+            if (isDeleted)
             {
                 await GetShoppingListsAsync();
                 StateHasChanged();
