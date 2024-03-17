@@ -90,9 +90,18 @@ namespace ShoppingList4.Blazor.Pages
             }
         }
 
-        public void ChangeEntryState(int entryId)
+        public async Task ChangeEntryState(int entryId)
         {
+            var entry = EntriesList.Find(x => x.Id == entryId);
+            if(entry is null)
+            {
+                return;
+            }
 
+            entry.IsBought = !entry.IsBought;
+            await EntryService.Update(entry);
+
+            StateHasChanged();
         }
 
         public async Task Edit(int entryId)
