@@ -63,7 +63,6 @@ namespace ShoppingList4.Blazor.Services
             var token = await _tokenService.Get();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-
             var entries = new List<DeleteEntryDto>();
             ids.ForEach(x => entries.Add(new DeleteEntryDto(x)));
 
