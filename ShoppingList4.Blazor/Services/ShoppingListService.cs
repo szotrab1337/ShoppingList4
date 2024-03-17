@@ -31,24 +31,6 @@ namespace ShoppingList4.Blazor.Services
             return shoppingLists!;
         }
 
-        public async Task<ShoppingList?> Get(int id)
-        {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
-
-            var token = await _tokenService.Get();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.GetAsync($"api/shoppinglist/{id}");
-            var jsonShoppingList = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(jsonShoppingList))
-            {
-                return null;
-            }
-
-            return JsonConvert.DeserializeObject<ShoppingList>(jsonShoppingList);
-        }
-
         public async Task<bool> Add(string name)
         {
             var shoppingList = new ShoppingListDto(name);

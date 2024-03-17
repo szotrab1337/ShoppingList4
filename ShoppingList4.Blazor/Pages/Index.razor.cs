@@ -66,7 +66,7 @@ namespace ShoppingList4.Blazor.Pages
 
         public async Task Edit(int shoppingListId)
         {
-            var shoppingList = await ShoppingListService.Get(shoppingListId);
+            var shoppingList = ShoppingLists.Find(x => x.Id == shoppingListId);
             if (shoppingList is null)
             {
                 return;
