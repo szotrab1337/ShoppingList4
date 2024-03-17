@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using ShoppingList4.Blazor.Entities;
 using ShoppingList4.Blazor.Interfaces;
 
@@ -12,6 +13,8 @@ namespace ShoppingList4.Blazor.Pages
         [Inject] public ILogger<Entries> Logger { get; set; } = default!;
         [Inject] public ITokenService TokenService { get; set; } = default!;
         [Inject] public NavigationManager NavigationManager { get; set; } = default!;
+        [Inject] public IDialogService DialogService { get; set; } = default!;
+        [Inject] public ISnackbar Snackbar { get; set; } = default!;
 
         public List<Entry> EntriesList { get; set; } = [];
 
@@ -66,7 +69,25 @@ namespace ShoppingList4.Blazor.Pages
 
         public async Task Delete(int entryId)
         {
+            bool? isConfirmed = await DialogService.ShowMessageBox(
+                "Potwierdzenie",
+                "Czy chcesz usun¹æ wybran¹ pozycjê?",
+                yesText: "Usuñ", cancelText: "Anuluj");
 
+            if (isConfirmed != true)
+            {
+                return;
+            }
+
+            var isDeleted = await EntryService.Delete(entryId);
+            if (isDeleted)
+            {
+                await GetEntries();
+                StateHasChanged();
+
+                Logger.LogInformation("User deleted entry with id {id}", entryId);
+                Snackbar.Add("Pozycja zosta³a usuniêta!", Severity.Success);
+            }
         }
 
         public void ChangeEntryState(int entryId)
