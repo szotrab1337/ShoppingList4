@@ -179,5 +179,58 @@ namespace ShoppingList4.Blazor.Pages
                 }
             }
         }
+
+        public async Task DeleteAll()
+        {
+            bool? isConfirmed = await DialogService.ShowMessageBox(
+                "Potwierdzenie",
+                "Czy chcesz usun¹æ wszystkie pozycje?",
+                yesText: "Usuñ", cancelText: "Anuluj");
+
+            if (isConfirmed != true)
+            {
+                return;
+            }
+
+            await DeleteMultipleAsync(EntriesList.ToList());
+
+            Snackbar.Add("Wszystkie pozycje zosta³y usuniête!", Severity.Success);
+        }
+
+        private async Task DeleteMultipleAsync(List<Entry> entries)
+        {
+            var entriesIds = entries.ConvertAll(entry => entry.Id);
+
+            var result = await EntryService.DeleteMultiple(entriesIds);
+            if (result)
+            {
+                foreach (var entry in entries)
+                {
+                    EntriesList.Remove(entry);
+                }
+
+                StateHasChanged();
+
+                Logger.LogInformation("User deleted entries with ids {@ids}", entriesIds);
+            }
+        }
+
+        public async Task DeleteBought()
+        {
+            bool? isConfirmed = await DialogService.ShowMessageBox(
+                "Potwierdzenie",
+                "Czy chcesz usun¹æ kupione pozycje?",
+                yesText: "Usuñ", cancelText: "Anuluj");
+
+            if (isConfirmed != true)
+            {
+                return;
+            }
+
+            var entries = EntriesList.Where(x => x.IsBought).ToList();
+            await DeleteMultipleAsync(entries);
+
+            Snackbar.Add("Kupione pozycje zosta³y usuniête!", Severity.Success);
+        }
     }
 }
