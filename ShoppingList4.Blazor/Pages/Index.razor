@@ -15,7 +15,7 @@
                 <MudText Typo="Typo.h4">@shoppingList.Name</MudText>
             </CardHeaderContent>
             <CardHeaderActions>
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="Edit" />
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="@(() => Edit(shoppingList.Id))" />
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="@(() => Delete(shoppingList.Id))" />
             </CardHeaderActions>
         </MudCardHeader>

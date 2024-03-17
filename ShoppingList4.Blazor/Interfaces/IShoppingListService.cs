@@ -6,6 +6,7 @@ namespace ShoppingList4.Blazor.Interfaces
     {
         Task<bool> Add(string name);
         Task<bool> Delete(int id);
+        Task<ShoppingList?> Get(int id);
         Task<List<ShoppingList>> GetAll();
         Task<bool> Update(ShoppingList shoppingList);
     }
