@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Components;
 using MudBlazor;
 using ShoppingList4.Blazor.Entities;
 using ShoppingList4.Blazor.Interfaces;
+using ShoppingList4.Blazor.Models;
 using ShoppingList4.Blazor.Pages.Dialogs;
 
 namespace ShoppingList4.Blazor.Pages
@@ -63,8 +64,46 @@ namespace ShoppingList4.Blazor.Pages
 
         }
 
-        public async Task Edit()
+        public async Task Edit(int shoppingListId)
         {
+            var shoppingList = await ShoppingListService.Get(shoppingListId);
+            if (shoppingList is null)
+            {
+                return;
+            }
+
+            var parameters = new DialogParameters<SimpleDialog>
+            {
+                { x => x.Text, shoppingList.Name  },
+                { x => x.Title, "Edycja listy zakupów"  }
+            };
+
+            var dialog = await DialogService.ShowAsync<SimpleDialog>("Edycja listy zakupów",
+                parameters,
+                Common.GetDialogOptions());
+
+            var dialogResult = await dialog.Result;
+
+            if (!dialogResult.Canceled)
+            {
+                var data = dialogResult.Data.ToString();
+                if (string.IsNullOrEmpty(data))
+                {
+                    return;
+                }
+
+                shoppingList.Name = data;
+
+                var isUpdated = await ShoppingListService.Update(shoppingList);
+                if (isUpdated)
+                {
+                    await GetShoppingListsAsync();
+                    StateHasChanged();
+
+                    Logger.LogInformation("Updated shopping list with name {name}.", data);
+                    Snackbar.Add("Dokonano edycji listy zakupów!", Severity.Success);
+                }
+            }
         }
 
         public async Task Add()
@@ -75,26 +114,21 @@ namespace ShoppingList4.Blazor.Pages
                 { x => x.Title, "Nowa lista zakupów"  }
             };
 
-            var dialog = await DialogService.ShowAsync<SimpleDialog>("Nowa lista zakupów", parameters,
-                new DialogOptions()
-                {
-                    FullWidth = true,
-                    MaxWidth = MaxWidth.ExtraSmall
-                });
+            var dialog = await DialogService.ShowAsync<SimpleDialog>("Nowa lista zakupów",
+                parameters,
+                Common.GetDialogOptions());
 
             var dialogResult = await dialog.Result;
 
             if (!dialogResult.Canceled)
             {
                 var data = dialogResult.Data.ToString();
-
                 if (string.IsNullOrEmpty(data))
                 {
                     return;
                 }
 
                 var isAdded = await ShoppingListService.Add(data);
-
                 if (isAdded)
                 {
                     await GetShoppingListsAsync();
