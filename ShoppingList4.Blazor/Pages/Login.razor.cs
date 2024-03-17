@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using ShoppingList4.Blazor.Entity;
+using ShoppingList4.Blazor.Entities;
 using ShoppingList4.Blazor.Interfaces;
 
 namespace ShoppingList4.Blazor.Pages

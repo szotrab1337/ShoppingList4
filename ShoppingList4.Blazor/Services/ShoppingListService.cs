@@ -1,5 +1,5 @@
 ﻿using Newtonsoft.Json;
-using ShoppingList4.Blazor.Entity;
+using ShoppingList4.Blazor.Entities;
 using ShoppingList4.Blazor.Interfaces;
 using ShoppingList4.Blazor.Models;
 using System.Net.Http.Headers;
@@ -7,16 +7,10 @@ using System.Text;
 
 namespace ShoppingList4.Blazor.Services
 {
-    public class ShoppingListService : IShoppingListService
+    public class ShoppingListService(IHttpClientFactory clientFactory, ITokenService tokenService) : IShoppingListService
     {
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly ITokenService _tokenService;
-
-        public ShoppingListService(IHttpClientFactory clientFactory, ITokenService tokenService)
-        {
-            _clientFactory = clientFactory;
-            _tokenService = tokenService;
-        }
+        private readonly IHttpClientFactory _clientFactory = clientFactory;
+        private readonly ITokenService _tokenService = tokenService;
 
         public async Task<List<ShoppingList>> GetAll()
         {

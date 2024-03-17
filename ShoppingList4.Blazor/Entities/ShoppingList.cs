@@ -1,4 +1,4 @@
-﻿namespace ShoppingList4.Blazor.Entity
+﻿namespace ShoppingList4.Blazor.Entities
 {
     public class ShoppingList
     {
@@ -8,6 +8,6 @@
 
         public int EntriesNotBought => Entries.Count(x => !x.IsBought);
 
-        public virtual List<Entry> Entries { get; set; } = new();
+        public virtual List<Entry> Entries { get; set; } = [];
     }
 }
