@@ -106,7 +106,44 @@ namespace ShoppingList4.Blazor.Pages
 
         public async Task Edit(int entryId)
         {
+            var entry = EntriesList.Find(x => x.Id == entryId);
+            if (entry is null)
+            {
+                return;
+            }
 
+            var parameters = new DialogParameters<SimpleDialog>
+            {
+                { x => x.Text, entry.Name  },
+                { x => x.Title, "Edycja pozycji"  }
+            };
+
+            var dialog = await DialogService.ShowAsync<SimpleDialog>("Edycja pozycji",
+                parameters,
+                Common.GetDialogOptions());
+
+            var dialogResult = await dialog.Result;
+
+            if (!dialogResult.Canceled)
+            {
+                var data = dialogResult.Data.ToString();
+                if (string.IsNullOrEmpty(data))
+                {
+                    return;
+                }
+
+                entry.Name = data;
+
+                var isUpdated = await EntryService.Update(entry);
+                if (isUpdated)
+                {
+                    await GetEntries();
+                    StateHasChanged();
+
+                    Logger.LogInformation("Updated entry with id {id}.", entry.Id);
+                    Snackbar.Add("Dokonano edycji pozycji!", Severity.Success);
+                }
+            }
         }
 
         public async Task Add()

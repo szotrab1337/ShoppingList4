@@ -100,7 +100,7 @@ namespace ShoppingList4.Blazor.Pages
                     await GetShoppingLists();
                     StateHasChanged();
 
-                    Logger.LogInformation("Updated shopping list with name {name}.", data);
+                    Logger.LogInformation("Updated shopping list with id {id}.", shoppingList.Id);
                     Snackbar.Add("Dokonano edycji listy zakupów!", Severity.Success);
                 }
             }
