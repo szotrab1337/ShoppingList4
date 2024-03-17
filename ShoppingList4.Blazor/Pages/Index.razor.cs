@@ -159,7 +159,7 @@ namespace ShoppingList4.Blazor.Pages
                 StateHasChanged();
 
                 Logger.LogInformation("User deleted shopping list with id {id}", shoppingListId);
-                Snackbar.Add("Lista zakupów zosta³a usuniêta!", MudBlazor.Severity.Success);
+                Snackbar.Add("Lista zakupów zosta³a usuniêta!", Severity.Success);
             }
         }
     }

@@ -2,6 +2,10 @@
 
 <div class="d-flex justify-end">
     <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary" OnClick="Add">Dodaj</MudButton>
+    <MudMenu Label="Open Menu" Icon="@Icons.Material.Filled.MoreVert">
+        <MudMenuItem>Usuń wszystko</MudMenuItem>
+        <MudMenuItem>Usuń kupione</MudMenuItem>
+    </MudMenu>
 </div>
 
 @foreach (var entry in EntriesList)
