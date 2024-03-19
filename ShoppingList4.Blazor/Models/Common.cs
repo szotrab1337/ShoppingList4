@@ -9,7 +9,8 @@ namespace ShoppingList4.Blazor.Models
             return new DialogOptions()
             {
                 FullWidth = true,
-                MaxWidth = MaxWidth.ExtraSmall
+                MaxWidth = MaxWidth.ExtraSmall,
+                CloseOnEscapeKey = true,
             };
         }
     }

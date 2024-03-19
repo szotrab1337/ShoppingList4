@@ -1,6 +1,9 @@
 ﻿@page "/"
 
+@using ShoppingList4.Blazor.Components
+
 <PageTitle>ShoppingList4</PageTitle>
+<KeyboardShortcuts ShortcutKey="n" OnShortcutPressed="HandleAdd" />
 
 @if (!IsLoading)
 {

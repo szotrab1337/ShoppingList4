@@ -21,7 +21,10 @@ namespace ShoppingList4.Blazor.Pages
         public List<Entry> EntriesList { get; set; } = [];
         public bool IsLoading { get; set; }
 
+
         private int _id;
+
+        private bool _isAdding;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -152,6 +155,8 @@ namespace ShoppingList4.Blazor.Pages
 
         public async Task Add()
         {
+            _isAdding = true;
+
             var parameters = new DialogParameters<SimpleDialog>
             {
                 { x => x.Text, string.Empty  },
@@ -181,6 +186,8 @@ namespace ShoppingList4.Blazor.Pages
                     Snackbar.Add("Dodano now¹ pozycjê!", Severity.Success);
                 }
             }
+
+            _isAdding = false;
         }
 
         public async Task DeleteAll()
@@ -234,6 +241,14 @@ namespace ShoppingList4.Blazor.Pages
             await DeleteMultipleAsync(entries);
 
             Snackbar.Add("Kupione pozycje zosta³y usuniête!", Severity.Success);
+        }
+
+        private async Task HandleAdd()
+        {
+            if (!_isAdding)
+            {
+                await Add();
+            }
         }
     }
 }

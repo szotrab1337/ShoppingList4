@@ -1,11 +1,18 @@
-﻿<MudDialog>
+﻿@using ShoppingList4.Blazor.Components
+
+<KeyboardShortcuts ShortcutKey="Enter" OnShortcutPressed="HandleSave" />
+<KeyboardShortcuts ShortcutKey="Esc" OnShortcutPressed="HandleCancel" />
+
+<MudDialog>
     <TitleContent>
         <MudText Typo="Typo.h6">
             @Title
         </MudText>
     </TitleContent>
     <DialogContent>
-        <MudTextField Counter="0" T="string" MaxLength="35" Immediate="true" @bind-Value="Text" Label="Nazwa" Variant="Variant.Text" />
+        <MudFocusTrap>
+            <MudTextField Counter="0" T="string" MaxLength="35" Immediate="true" @bind-Value="Text" Label="Nazwa" Variant="Variant.Text" />
+        </MudFocusTrap>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="Cancel">Anuluj</MudButton>

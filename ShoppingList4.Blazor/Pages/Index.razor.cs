@@ -19,6 +19,8 @@ namespace ShoppingList4.Blazor.Pages
         public List<ShoppingList> ShoppingLists { get; set; } = [];
         public bool IsLoading { get; set; }
 
+        private bool _isAdding;
+
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
             if (!firstRender)
@@ -113,6 +115,8 @@ namespace ShoppingList4.Blazor.Pages
 
         public async Task Add()
         {
+            _isAdding = true;
+
             var parameters = new DialogParameters<SimpleDialog>
             {
                 { x => x.Text, string.Empty  },
@@ -142,6 +146,8 @@ namespace ShoppingList4.Blazor.Pages
                     Snackbar.Add("Dodano now¹ listê zakupów!", Severity.Success);
                 }
             }
+
+            _isAdding = false;
         }
 
         public async Task Delete(int shoppingListId)
@@ -163,6 +169,14 @@ namespace ShoppingList4.Blazor.Pages
 
                 Logger.LogInformation("User deleted shopping list with id {id}", shoppingListId);
                 Snackbar.Add("Lista zakupów zosta³a usuniêta!", Severity.Success);
+            }
+        }
+
+        private async Task HandleAdd()
+        {
+            if (!_isAdding)
+            {
+                await Add();
             }
         }
     }
