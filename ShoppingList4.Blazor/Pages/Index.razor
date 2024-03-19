@@ -2,24 +2,33 @@
 
 <PageTitle>ShoppingList4</PageTitle>
 
-<div class="d-flex justify-end">
-    <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary" OnClick="Add">Dodaj</MudButton>
-</div>
-
-@foreach (var shoppingList in ShoppingLists)
+@if (!IsLoading)
 {
-    <MudCard onclick="@(() => Open(shoppingList.Id))" Class="mb-5">
-        <MudCardHeader>
-            <CardHeaderContent>
-                <MudText Typo="Typo.h4">@shoppingList.Name</MudText>
-            </CardHeaderContent>
-            <CardHeaderActions>
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="@(() => Edit(shoppingList.Id))" />
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="@(() => Delete(shoppingList.Id))" />
-            </CardHeaderActions>
-        </MudCardHeader>
-        <MudCardContent>
-            <MudText Class="pb-2" Typo="Typo.body1"><em>Liczba rzeczy do kupienia:</em> <b>@shoppingList.EntriesNotBought</b> z <b>@shoppingList.Entries.Count</b></MudText>
-        </MudCardContent>
-    </MudCard>
+    <div class="d-flex justify-end">
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary" OnClick="Add">Dodaj</MudButton>
+    </div>
+
+    @foreach (var shoppingList in ShoppingLists)
+    {
+        <MudCard onclick="@(() => Open(shoppingList.Id))" Class="mb-5">
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.h4">@shoppingList.Name</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="@(() => Edit(shoppingList.Id))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="@(() => Delete(shoppingList.Id))" />
+                </CardHeaderActions>
+            </MudCardHeader>
+            <MudCardContent>
+                <MudText Class="pb-2" Typo="Typo.body1"><em>Liczba rzeczy do kupienia:</em> <b>@shoppingList.EntriesNotBought</b> z <b>@shoppingList.Entries.Count</b></MudText>
+            </MudCardContent>
+        </MudCard>
+    }
+}
+else
+{
+    <div class="d-flex justify-center mt-12 pt-12">
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+    </div>
 }

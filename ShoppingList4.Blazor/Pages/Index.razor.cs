@@ -17,6 +17,7 @@ namespace ShoppingList4.Blazor.Pages
         [Inject] public NavigationManager NavigationManager { get; set; } = default!;
 
         public List<ShoppingList> ShoppingLists { get; set; } = [];
+        public bool IsLoading { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -30,7 +31,6 @@ namespace ShoppingList4.Blazor.Pages
             if (tokenExists)
             {
                 await GetShoppingLists();
-                StateHasChanged();
 
                 Logger.LogInformation("Loaded shopping lists.");
             }
@@ -51,7 +51,13 @@ namespace ShoppingList4.Blazor.Pages
         {
             try
             {
+                IsLoading = true;
+                StateHasChanged();
+
                 ShoppingLists = await ShoppingListService.GetAll();
+
+                IsLoading = false;
+                StateHasChanged();
             }
             catch (Exception ex)
             {
@@ -98,7 +104,6 @@ namespace ShoppingList4.Blazor.Pages
                 if (isUpdated)
                 {
                     await GetShoppingLists();
-                    StateHasChanged();
 
                     Logger.LogInformation("Updated shopping list with id {id}.", shoppingList.Id);
                     Snackbar.Add("Dokonano edycji listy zakupów!", Severity.Success);
@@ -132,7 +137,6 @@ namespace ShoppingList4.Blazor.Pages
                 if (isAdded)
                 {
                     await GetShoppingLists();
-                    StateHasChanged();
 
                     Logger.LogInformation("Added new shopping list with name {name}.", data);
                     Snackbar.Add("Dodano now¹ listê zakupów!", Severity.Success);
@@ -156,7 +160,6 @@ namespace ShoppingList4.Blazor.Pages
             if (isDeleted)
             {
                 await GetShoppingLists();
-                StateHasChanged();
 
                 Logger.LogInformation("User deleted shopping list with id {id}", shoppingListId);
                 Snackbar.Add("Lista zakupów zosta³a usuniêta!", Severity.Success);
