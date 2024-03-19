@@ -19,6 +19,7 @@ namespace ShoppingList4.Blazor.Pages
         [Inject] public ISnackbar Snackbar { get; set; } = default!;
 
         public List<Entry> EntriesList { get; set; } = [];
+        public bool IsLoading { get; set; }
 
         private int _id;
 
@@ -38,7 +39,6 @@ namespace ShoppingList4.Blazor.Pages
             if (tokenExists)
             {
                 await GetEntries();
-                StateHasChanged();
 
                 Logger.LogInformation("Loaded entries.");
             }
@@ -59,7 +59,13 @@ namespace ShoppingList4.Blazor.Pages
         {
             try
             {
+                IsLoading = true;
+                StateHasChanged();
+
                 EntriesList = [.. (await EntryService.Get(_id)).OrderBy(x => x.IsBought)];
+
+                IsLoading = false;
+                StateHasChanged();
             }
             catch (Exception ex)
             {
@@ -83,7 +89,6 @@ namespace ShoppingList4.Blazor.Pages
             if (isDeleted)
             {
                 await GetEntries();
-                StateHasChanged();
 
                 Logger.LogInformation("User deleted entry with id {id}", entryId);
                 Snackbar.Add("Pozycja zosta³a usuniêta!", Severity.Success);
@@ -138,7 +143,6 @@ namespace ShoppingList4.Blazor.Pages
                 if (isUpdated)
                 {
                     await GetEntries();
-                    StateHasChanged();
 
                     Logger.LogInformation("Updated entry with id {id}.", entry.Id);
                     Snackbar.Add("Dokonano edycji pozycji!", Severity.Success);
@@ -172,7 +176,6 @@ namespace ShoppingList4.Blazor.Pages
                 if (isAdded)
                 {
                     await GetEntries();
-                    StateHasChanged();
 
                     Logger.LogInformation("Added new entry with name {name} to list {id}.", data, _id);
                     Snackbar.Add("Dodano now¹ pozycjê!", Severity.Success);
