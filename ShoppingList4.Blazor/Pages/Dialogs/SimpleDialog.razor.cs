@@ -15,5 +15,15 @@ namespace ShoppingList4.Blazor.Pages.Dialogs
         {
             MudDialog.Close(DialogResult.Ok(Text));
         }
+
+        private void HandleSave()
+        {
+            Save();
+        }
+
+        private void HandleCancel()
+        {
+            Cancel();
+        }
     }
 }
