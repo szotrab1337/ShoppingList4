@@ -16,16 +16,15 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Add DevExpress NuGet Source
+      - name: Configure NuGet authentication
         run: |
-          dotnet nuget add source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api" `
-            --name DevExpress `
-            --username "any" `
-            --password "${{ secrets.DEVEXPRESS_NUGET_KEY }}" `
-            --store-password-in-clear-text
+          $config = Get-Content nuget.config -Raw
+          $config = $config -replace "%DEVEXPRESS_NUGET_KEY%", "${{ secrets.DEVEXPRESS_NUGET_KEY }}"
+          Set-Content nuget.config $config
 
-      - name: Restore dependencies from NuGet.org and DevExpress
-        run: dotnet restore -s "https://api.nuget.org/v3/index.json" -s "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api"
+      - name: Restore dependencies
+        run: dotnet restore
+
       - name: Build
         run: dotnet build --no-restore
 
