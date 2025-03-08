@@ -1,11 +1,13 @@
-﻿namespace ShoppingList4.Maui.Interfaces;
-using Entry = ShoppingList4.Maui.Entity.Entry;
+﻿using ShoppingList4.Maui.Dtos;
 
-public interface IEntryService
+namespace ShoppingList4.Maui.Interfaces
 {
-    Task<List<Entry>> GetAsync(int shoppingListId);
-    Task<bool> UpdateAsync(Entry entry);
-    Task<bool> DeleteAsync(int id);
-    Task<bool> DeleteMultipleAsync(List<int> ids);
-    Task<bool> AddAsync(string name, int shoppingListId);
+    public interface IEntryService
+    {
+        Task<Domain.Entities.Entry> Add(AddEntryDto dto);
+        Task<bool> Delete(int id);
+        Task<bool> DeleteMultiple(IEnumerable<int> ids);
+        Task<IEnumerable<Domain.Entities.Entry>> GetShoppingListEntries(int shoppingListId);
+        Task<Domain.Entities.Entry> Update(EditEntryDto dto);
+    }
 }

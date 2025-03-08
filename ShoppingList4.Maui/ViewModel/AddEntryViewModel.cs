@@ -1,52 +1,37 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingList4.Maui.Entity;
+using ShoppingList4.Maui.Dtos;
 using ShoppingList4.Maui.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public class AddEntryViewModel : ObservableValidator, IQueryAttributable
+    public partial class AddEntryViewModel(
+        IEntryService entryService,
+        IMessageBoxService messageBoxService) : ObservableValidator, IQueryAttributable
     {
-        private readonly IEntryService _entryService;
-        private readonly IMessageBoxService _messageBoxService;
+        private readonly IEntryService _entryService = entryService;
+        private readonly IMessageBoxService _messageBoxService = messageBoxService;
 
-        public AddEntryViewModel(IEntryService entryService, IMessageBoxService messageBoxService)
-        {
-            _entryService = entryService;
-            _messageBoxService = messageBoxService;
+        private int _shoppingListId;
 
-            SaveAsyncCommand = new AsyncRelayCommand(SaveAsync, CanSave);
-        }
-
-        public IAsyncRelayCommand SaveAsyncCommand { get; }
-
-        private ShoppingList _shoppingList;
-
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
+        [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
         [MaxLength(35, ErrorMessage = "Wprowadzona nazwa jest zbyt długa")]
         [Required(ErrorMessage = "Pole wymagane")]
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                SetProperty(ref _name, value);
-                ValidateProperty(_name);
-                SaveAsyncCommand.NotifyCanExecuteChanged();
-            }
-        }
-        private string _name;
+        private string _name = string.Empty;
 
-        private async Task SaveAsync()
+        [RelayCommand(CanExecute = nameof(CanSave))]
+        private async Task Save()
         {
             try
             {
-                var result = await _entryService.AddAsync(Name, _shoppingList.Id);
+                var dto = new AddEntryDto { ShoppingListId = _shoppingListId, Name = Name };
+                var result = await _entryService.Add(dto);
 
-                if (result)
-                {
-                    await Shell.Current.GoToAsync("..");
-                }
+                var navigationParam = new Dictionary<string, object> { { "AddedEntry", result } };
+                await Shell.Current.GoToAsync("..", navigationParam);
             }
             catch (Exception)
             {
@@ -63,7 +48,7 @@ namespace ShoppingList4.Maui.ViewModel
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            _shoppingList = query["ShoppingList"] as ShoppingList;
+            _shoppingListId = (int)query["ShoppingListId"];
         }
     }
 }

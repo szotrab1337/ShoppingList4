@@ -1,13 +1,13 @@
 ﻿using ShoppingList4.Maui.ViewModel;
 
-namespace ShoppingList4.Maui.View;
-
-public partial class EditShoppingListPage : ContentPage
+namespace ShoppingList4.Maui.View
 {
-    public EditShoppingListPage(EditShoppingListViewModel vm)
+    public partial class EditShoppingListPage
     {
-        InitializeComponent();
-
-        BindingContext = vm;
+        public EditShoppingListPage(EditShoppingListViewModel vm)
+        {
+            InitializeComponent();
+            BindingContext = vm;
+        }
     }
 }

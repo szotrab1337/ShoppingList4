@@ -1,59 +1,38 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ShoppingList4.Maui.Dtos;
 using ShoppingList4.Maui.Interfaces;
+using ShoppingList4.Maui.ViewModel.Entities;
 using System.ComponentModel.DataAnnotations;
-using Entry = ShoppingList4.Maui.Entity.Entry;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public partial class EditEntryViewModel : ObservableValidator, IQueryAttributable
+    public partial class EditEntryViewModel(
+        IEntryService entryService,
+        IMessageBoxService messageBoxService) : ObservableValidator, IQueryAttributable
     {
-        private readonly IEntryService _entryService;
-        private readonly IMessageBoxService _messageBoxService;
+        private readonly IEntryService _entryService = entryService;
+        private readonly IMessageBoxService _messageBoxService = messageBoxService;
 
-        public EditEntryViewModel(IEntryService entryService, IMessageBoxService messageBoxService)
-        {
-            _entryService = entryService;
-            _messageBoxService = messageBoxService;
+        private int _id;
 
-            SaveAsyncCommand = new AsyncRelayCommand(SaveAsync, CanSave);
-        }
-
-        public IAsyncRelayCommand SaveAsyncCommand { get; }
-
+        [NotifyDataErrorInfo]
         [ObservableProperty]
-        private Entry _entry;
-
+        [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
         [MaxLength(35, ErrorMessage = "Wprowadzona nazwa jest zbyt długa")]
         [Required(ErrorMessage = "Pole wymagane")]
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                SetProperty(ref _name, value);
-                ValidateProperty(_name);
-                SaveAsyncCommand.NotifyCanExecuteChanged();
-            }
-        }
-        private string _name;
+        private string _name = string.Empty;
 
-        partial void OnEntryChanged(Entry value)
-        {
-            Name = value.Name;
-        }
-
-        private async Task SaveAsync()
+        [RelayCommand(CanExecute = nameof(CanSave))]
+        private async Task Save()
         {
             try
             {
-                Entry.Name = Name;
-                var result = await _entryService.UpdateAsync(Entry);
+                var dto = new EditEntryDto { Id = _id, Name = Name };
+                var result = await _entryService.Update(dto);
 
-                if (result)
-                {
-                    await Shell.Current.GoToAsync("..");
-                }
+                var navigationParam = new Dictionary<string, object> { { "EditedEntry", result } };
+                await Shell.Current.GoToAsync("..", navigationParam);
             }
             catch (Exception)
             {
@@ -70,7 +49,10 @@ namespace ShoppingList4.Maui.ViewModel
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            Entry = (query["Entry"] as Entry)!;
+            var entry = (query["Entry"] as EntryViewModel)!;
+
+            _id = entry.Id;
+            Name = entry.Name;
         }
     }
 }

@@ -1,60 +1,39 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingList4.Maui.Entity;
+using ShoppingList4.Domain.Entities;
+using ShoppingList4.Maui.Dtos;
 using ShoppingList4.Maui.Interfaces;
+using ShoppingList4.Maui.ViewModel.Entities;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public partial class EditShoppingListViewModel : ObservableValidator, IQueryAttributable
+    public partial class EditShoppingListViewModel(
+        IShoppingListService shoppingListService,
+        IMessageBoxService messageBoxService) : ObservableValidator, IQueryAttributable
     {
-        private readonly IShoppingListService _shoppingListService;
-        private readonly IMessageBoxService _messageBoxService;
+        private readonly IShoppingListService _shoppingListService = shoppingListService;
+        private readonly IMessageBoxService _messageBoxService = messageBoxService;
 
-        public EditShoppingListViewModel(IShoppingListService shoppingListService, IMessageBoxService messageBoxService)
-        {
-            _shoppingListService = shoppingListService;
-            _messageBoxService = messageBoxService;
+        private int _id;
 
-            SaveAsyncCommand = new AsyncRelayCommand(SaveAsync, CanSave);
-        }
-
-        public IAsyncRelayCommand SaveAsyncCommand { get; }
-
+        [NotifyDataErrorInfo]
         [ObservableProperty]
-        private ShoppingList _shoppingList;
-
+        [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
         [MaxLength(35, ErrorMessage = "Wprowadzona nazwa jest zbyt długa")]
         [Required(ErrorMessage = "Pole wymagane")]
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                SetProperty(ref _name, value);
-                ValidateProperty(_name);
-                SaveAsyncCommand.NotifyCanExecuteChanged();
-            }
-        }
-        private string _name;
+        private string _name = string.Empty;
 
-        partial void OnShoppingListChanged(ShoppingList value)
-        {
-            Name = value.Name;
-        }
-
-        private async Task SaveAsync()
+        [RelayCommand(CanExecute = nameof(CanSave))]
+        private async Task Save()
         {
             try
             {
+                var dto = new EditShoppingListDto { Id = _id, Name = Name };
+                var result = await _shoppingListService.Update(dto);
 
-                ShoppingList.Name = Name;
-                var result = await _shoppingListService.UpdateAsync(ShoppingList);
-
-                if (result)
-                {
-                    await Shell.Current.GoToAsync("..");
-                }
+                var navigationParam = new Dictionary<string, object> { { "EditedShoppingList", result } };
+                await Shell.Current.GoToAsync("..", navigationParam);
             }
             catch (Exception)
             {
@@ -71,7 +50,10 @@ namespace ShoppingList4.Maui.ViewModel
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            ShoppingList = (query["ShoppingList"] as ShoppingList)!;
+            var shoppingList = (query["ShoppingList"] as ShoppingListViewModel)!;
+
+            _id = shoppingList.Id;
+            Name = shoppingList.Name;
         }
     }
 }

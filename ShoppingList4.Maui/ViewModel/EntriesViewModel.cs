@@ -1,127 +1,117 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using ShoppingList4.Maui.Entity;
-using ShoppingList4.Maui.Interfaces;
-using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.Input;
-using Entry = ShoppingList4.Maui.Entity.Entry;
-using System.ComponentModel;
+using DevExpress.Maui.Core.Internal;
+using ShoppingList4.Maui.Dtos;
+using ShoppingList4.Maui.Interfaces;
 using ShoppingList4.Maui.View;
+using ShoppingList4.Maui.ViewModel.Entities;
+using System.Collections.ObjectModel;
+using Entry = ShoppingList4.Domain.Entities.Entry;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public partial class EntriesViewModel : ObservableObject, IQueryAttributable
+    public partial class EntriesViewModel(
+        IEntryService entryService,
+        IMessageBoxService messageBoxService) : ObservableObject, IQueryAttributable
     {
-        private readonly IEntryService _entryService;
-        private readonly IMessageBoxService _messageBoxService;
+        private readonly IEntryService _entryService = entryService;
+        private readonly IMessageBoxService _messageBoxService = messageBoxService;
 
-        public EntriesViewModel(IEntryService entryService, IMessageBoxService messageBoxService)
+        private int _shoppingListId;
+
+        private bool _loaded;
+
+        [ObservableProperty] private ObservableCollection<EntryViewModel> _entries = [];
+
+        [ObservableProperty] private bool _isRefreshing;
+
+        [ObservableProperty] private bool _isInitializing;
+
+        public async Task Initialize()
         {
-            _entryService = entryService;
-            _messageBoxService = messageBoxService;
+            if (_loaded)
+            {
+                return;
+            }
 
-            AddAsyncCommand = new AsyncRelayCommand(AddAsync);
-            EditAsyncCommand = new AsyncRelayCommand<Entry>(EditAsync);
-            CheckCommand = new RelayCommand<Entry>(Check);
-            RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
-            DeleteAsyncCommand = new AsyncRelayCommand<Entry>(DeleteAsync);
-            DeleteAllAsyncCommand = new AsyncRelayCommand(DeleteAllAsync);
-            DeleteBoughtAsyncCommand = new AsyncRelayCommand(DeleteBoughtAsync);
-        }
-
-        public IAsyncRelayCommand AddAsyncCommand { get; }
-        public IAsyncRelayCommand EditAsyncCommand { get; }
-        public IRelayCommand CheckCommand { get; }
-        public IAsyncRelayCommand RefreshAsyncCommand { get; }
-        public IAsyncRelayCommand DeleteAsyncCommand { get; }
-        public IAsyncRelayCommand DeleteAllAsyncCommand { get; }
-        public IAsyncRelayCommand DeleteBoughtAsyncCommand { get; }
-
-        private ShoppingList _shoppingList;
-
-        [ObservableProperty]
-        private ObservableCollection<Entry> _entries;
-
-        [ObservableProperty]
-        private bool _isRefreshing;
-
-        [ObservableProperty]
-        private bool _isInitializing;
-
-        public async Task InitializeAsync()
-        {
             IsInitializing = true;
+
             await Task.Delay(400);
-            await GetEntriesAsync();
+            await GetEntries();
+
             IsInitializing = false;
+            _loaded = true;
         }
 
-        private async Task RefreshAsync()
+        [RelayCommand]
+        private async Task Refresh()
         {
-            await GetEntriesAsync();
+            await GetEntries();
             IsRefreshing = false;
         }
 
-        private async Task GetEntriesAsync()
+        private async Task GetEntries()
         {
             try
             {
-                var entries = (await _entryService.GetAsync(_shoppingList.Id))
+                var entries = await _entryService.GetShoppingListEntries(_shoppingListId);
+                var vms = entries
+                    .Select(entry => new EntryViewModel(entry))
                     .OrderBy(x => x.IsBought);
 
-                Entries = new ObservableCollection<Entry>(entries);
-                Entries.ToList().ForEach(x => x.PropertyChanged += EntryPropertyChanged);
+                Entries = new ObservableCollection<EntryViewModel>(vms);
+                Entries.ForEach(x => x.OnBoughtStatusChanged += OnEntryBoughtStatusChanged);
             }
             catch (Exception)
             {
                 await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
+        }
+
+        private async void OnEntryBoughtStatusChanged(object? sender, EventArgs e)
+        {
+            if (sender is not EntryViewModel entry)
+            {
+                return;
+            }
+
+            var dto = new EditEntryDto { Id = entry.Id, IsBought = entry.IsBought, Name = entry.Name };
+            await _entryService.Update(dto);
         }
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
         {
-            _shoppingList = query["ShoppingList"] as ShoppingList;
-        }
+            _shoppingListId = (int)query["ShoppingListId"];
 
-        private void Check(Entry entry)
-        {
-            entry.IsBought = !entry.IsBought;
-        }
-
-        //triggers also on Check method
-        private async void EntryPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            try
+            if (query.TryGetValue("ShoppingListId", out var shoppingListIdObj) &&
+                shoppingListIdObj is int shoppingListId)
             {
-                if (e.PropertyName == "IsBought")
-                {
-                    var entry = (Entry)sender;
-                    var result = await _entryService.UpdateAsync(entry);
-
-                    if (!result)
-                    {
-                        entry.IsBought = !entry.IsBought;
-                    }
-                }
+                _shoppingListId = shoppingListId;
             }
-            catch (Exception)
+
+            if (query.TryGetValue("EditedEntry", out var editedEntryObj) &&
+                editedEntryObj is Entry editedEntry)
             {
-                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
+                var vm = Entries.FirstOrDefault(x => x.Id == editedEntry.Id);
+                vm?.Update(editedEntry);
+            }
+
+            if (query.TryGetValue("AddedEntry", out var addedEntryObj) &&
+                addedEntryObj is Entry addedEntry)
+            {
+                Entries.Insert(0, new EntryViewModel(addedEntry));
             }
         }
 
-        private async Task DeleteAsync(Entry entry)
+        [RelayCommand]
+        private async Task Delete(EntryViewModel entry)
         {
             try
             {
-                if (entry is null)
-                {
-                    return;
-                }
-
-                var result = await _entryService.DeleteAsync(entry.Id);
+                var result = await _entryService.Delete(entry.Id);
                 if (result)
                 {
-                    entry.PropertyChanged -= EntryPropertyChanged;
+                    entry.OnBoughtStatusChanged -= OnEntryBoughtStatusChanged;
                     Entries.Remove(entry);
                 }
             }
@@ -130,8 +120,9 @@ namespace ShoppingList4.Maui.ViewModel
                 await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
         }
-        
-        private async Task DeleteAllAsync()
+
+        [RelayCommand]
+        private async Task DeleteAll()
         {
             try
             {
@@ -150,8 +141,9 @@ namespace ShoppingList4.Maui.ViewModel
                 await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
         }
-        
-        private async Task DeleteBoughtAsync()
+
+        [RelayCommand]
+        private async Task DeleteBought()
         {
             try
             {
@@ -172,37 +164,33 @@ namespace ShoppingList4.Maui.ViewModel
             }
         }
 
-        private async Task DeleteMultipleAsync(List<Entry> entries)
+        private async Task DeleteMultipleAsync(List<EntryViewModel> entries)
         {
-            var entriesIds = entries.Select(entry => entry.Id).ToList();
+            var entriesIds = entries.Select(x => x.Id);
 
-            var result = await _entryService.DeleteMultipleAsync(entriesIds);
+            var result = await _entryService.DeleteMultiple(entriesIds);
             if (result)
             {
                 foreach (var entry in entries)
                 {
-                    entry.PropertyChanged -= EntryPropertyChanged;
+                    entry.OnBoughtStatusChanged -= OnEntryBoughtStatusChanged;
                     Entries.Remove(entry);
                 }
             }
         }
 
-        private async Task AddAsync()
+        [RelayCommand]
+        private async Task Add()
         {
-            var navigationParam = new Dictionary<string, object>
-            {
-                { "ShoppingList", _shoppingList }
-            };
+            var navigationParam = new Dictionary<string, object> { { "ShoppingListId", _shoppingListId } };
 
             await Shell.Current.GoToAsync(nameof(AddEntryPage), navigationParam);
         }
 
-        private async Task EditAsync(Entry entry)
+        [RelayCommand]
+        private async Task Edit(EntryViewModel entry)
         {
-            var navigationParam = new Dictionary<string, object>
-            {
-                { "Entry", entry }
-            };
+            var navigationParam = new Dictionary<string, object> { { "Entry", entry } };
 
             await Shell.Current.GoToAsync(nameof(EditEntryPage), navigationParam);
         }

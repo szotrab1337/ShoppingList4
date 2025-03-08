@@ -1,10 +1,13 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ShoppingList4.Maui.View.MainPage"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             Title="Listy zakupów"
-             BackgroundColor="{DynamicResource Gray950}">
+<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage
+    x:Class="ShoppingList4.Maui.View.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:dxcv="clr-namespace:DevExpress.Maui.CollectionView;assembly=DevExpress.Maui.CollectionView"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    Title="Listy zakupów"
+    BackgroundColor="{DynamicResource Gray950}">
 
     <ContentPage.Resources>
         <ResourceDictionary>
@@ -14,170 +17,169 @@
 
     <AbsoluteLayout>
 
-        <Grid Margin="5,10,5,10"
-                     AbsoluteLayout.LayoutFlags="All"
-                     AbsoluteLayout.LayoutBounds="0,0,1,1">
+        <Grid
+            Margin="5,10,5,10"
+            AbsoluteLayout.LayoutBounds="0,0,1,1"
+            AbsoluteLayout.LayoutFlags="All">
 
-            <Label Text="Dodaj swoją pierwszą&#x0a;listę zakupów!"
-                   FontSize="20"
-                   TextColor="#616161"
-                   HorizontalOptions="CenterAndExpand"
-                   VerticalOptions="CenterAndExpand"
-                   HorizontalTextAlignment="Center">
+            <Label
+                FontSize="20"
+                HorizontalTextAlignment="Center"
+                Text="Dodaj swoją pierwszą&#x0a;listę zakupów!"
+                TextColor="#616161"
+                VerticalTextAlignment="Center">
                 <Label.Style>
                     <Style TargetType="Label">
-                        <Setter Property="IsVisible"
-                                Value="False"/>
+                        <Setter Property="IsVisible" Value="False" />
                         <Style.Triggers>
-                            <DataTrigger TargetType="Label"
-                                         Binding="{Binding ShoppingLists.Count}"
-                                         Value="0">
-                                <Setter Property="IsVisible"
-                                        Value="True"/>
+                            <DataTrigger
+                                Binding="{Binding ShoppingLists.Count}"
+                                TargetType="Label"
+                                Value="0">
+                                <Setter Property="IsVisible" Value="True" />
                             </DataTrigger>
-                            <DataTrigger TargetType="Label"
-                                         Binding="{Binding IsInitializing}"
-                                         Value="True">
-                                <Setter Property="IsVisible"
-                                        Value="False"/>
+                            <DataTrigger
+                                Binding="{Binding IsInitializing}"
+                                TargetType="Label"
+                                Value="True">
+                                <Setter Property="IsVisible" Value="False" />
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
                 </Label.Style>
             </Label>
 
-            <Frame BackgroundColor="{DynamicResource Gray900}"
-                   WidthRequest="150"
-                   HeightRequest="120"
-                   IsVisible="{Binding IsInitializing}">
-                <Grid HorizontalOptions="CenterAndExpand">
+            <Frame
+                BackgroundColor="{DynamicResource Gray900}"
+                HeightRequest="120"
+                IsVisible="{Binding IsInitializing}"
+                WidthRequest="150">
+                <Grid>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-                    <ActivityIndicator WidthRequest="70"
-                                       IsRunning="{Binding IsInitializing}"/>
-                    <Label Text="Ładowanie...."
-                           Margin="0,10,0,0"
-                           Grid.Row="1"
-                           HorizontalOptions="Center"/>
+                    <ActivityIndicator
+                        IsRunning="{Binding IsInitializing}"
+                        WidthRequest="70" />
+                    <Label
+                        Grid.Row="1"
+                        Margin="0,10,0,0"
+                        HorizontalOptions="Center"
+                        Text="Ładowanie...." />
                 </Grid>
             </Frame>
 
-            <RefreshView IsRefreshing="{Binding IsRefreshing}"
-                         Command="{Binding RefreshAsyncCommand}"
-                         IsVisible="{Binding IsInitializing, Converter={StaticResource InvertedBoolConverter}}">
+            <RefreshView
+                Command="{Binding RefreshCommand}"
+                IsRefreshing="{Binding IsRefreshing}"
+                IsVisible="{Binding IsInitializing, Converter={StaticResource InvertedBoolConverter}}">
 
-                <CollectionView ItemsSource="{Binding ShoppingLists}">
-                    <CollectionView.ItemTemplate>
+                <dxcv:DXCollectionView ItemsSource="{Binding ShoppingLists}">
+                    <dxcv:DXCollectionView.ItemTemplate>
                         <DataTemplate>
-                            <SwipeView Margin="5">
-                                <SwipeView.RightItems>
-                                    <SwipeItems>
 
-                                        <SwipeItemView Command="{Binding Path=BindingContext.EditAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
-                                                       CommandParameter="{Binding .}"
-                                                       BackgroundColor="{DynamicResource Gray950}"
-                                                       Margin="0,0,10,0">
-
-                                            <Label Text="Edytuj"
-                                                   FontSize="15"
-                                                   TextColor="{DynamicResource Gray100}"
-                                                   VerticalTextAlignment="Center"
-                                                   HorizontalTextAlignment="Center"
-                                                   Margin="0,10,0,10"/>
-
-                                        </SwipeItemView>
-
-                                        <SwipeItemView Command="{Binding Path=BindingContext.DeleteAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
-                                                       CommandParameter="{Binding .}"
-                                                       BackgroundColor="{DynamicResource Gray950}"
-                                                       Margin="0,0,10,0">
-
-                                            <Label Text="Usuń"
-                                                   FontSize="15"
-                                                   TextColor="{DynamicResource Gray100}"
-                                                   VerticalTextAlignment="Center"
-                                                   HorizontalTextAlignment="Center"
-                                                   Margin="0,10,0,10"/>
-
-                                        </SwipeItemView>
-
-                                    </SwipeItems>
-                                </SwipeView.RightItems>
-
-                                <StackLayout>
-                                    <Frame Padding="15"
-                                           CornerRadius="10"
-                                           BackgroundColor="{DynamicResource Gray900}">
-                                        <StackLayout Orientation="Horizontal"
-                                                         Margin="10,0,0,0">
-                                            <StackLayout>
+                            <dxcv:SwipeContainer FullSwipeMode="None">
+                                <dxcv:SwipeContainer.ItemView>
+                                    <StackLayout>
+                                        <Frame
+                                            Padding="15"
+                                            BackgroundColor="{DynamicResource Gray900}"
+                                            CornerRadius="10">
+                                            <StackLayout
+                                                Margin="10,0,0,0"
+                                                Orientation="Horizontal">
                                                 <StackLayout>
-                                                    <Label Text="{Binding Name}"
-                                                           Margin="0,5,0,10"
-                                                           FontSize="22"
-                                                           TextColor="{DynamicResource Gray100}"/>
-                                                </StackLayout>
-                                                <StackLayout Orientation="Vertical"
-                                                             VerticalOptions="EndAndExpand">
-                                                    <StackLayout Orientation="Horizontal"
-                                                                 VerticalOptions="End">
-                                                        <Label Text="Liczba rzeczy do kupienia: "
-                                                               Margin="0,0,5,5"
-                                                               FontSize="13"
-                                                               TextColor="{StaticResource Gray300}"
-                                                               FontAttributes="Italic"/>
+                                                    <StackLayout>
+                                                        <Label
+                                                            Margin="0,5,0,10"
+                                                            FontSize="22"
+                                                            Text="{Binding Name}"
+                                                            TextColor="{DynamicResource Gray100}" />
+                                                    </StackLayout>
+                                                    <StackLayout Orientation="Vertical">
+                                                        <StackLayout
+                                                            Orientation="Horizontal"
+                                                            VerticalOptions="End">
+                                                            <Label
+                                                                Margin="0,0,5,5"
+                                                                FontAttributes="Italic"
+                                                                FontSize="13"
+                                                                Text="Kupiono: "
+                                                                TextColor="{StaticResource Gray300}" />
 
-                                                        <Label Text="{Binding EntriesNotBought}"
-                                                               Margin="0,0,5,5"
-                                                               FontSize="13"
-                                                               TextColor="{StaticResource Gray300}"
-                                                               FontAttributes="Bold"/>
+                                                            <Label
+                                                                Margin="0,0,5,5"
+                                                                FontAttributes="Bold"
+                                                                FontSize="13"
+                                                                Text="{Binding ItemsBoughtCount}"
+                                                                TextColor="{StaticResource Gray300}" />
 
-                                                        <Label Text="z "
-                                                               Margin="2,0,5,5"
-                                                               FontSize="13"
-                                                               TextColor="{StaticResource Gray300}"
-                                                               FontAttributes="Italic"/>
+                                                            <Label
+                                                                Margin="2,0,5,5"
+                                                                FontAttributes="Italic"
+                                                                FontSize="13"
+                                                                Text="z "
+                                                                TextColor="{StaticResource Gray300}" />
 
-                                                        <Label Text="{Binding Entries.Count}"
-                                                               Margin="0,0,0,5"
-                                                               FontSize="13"
-                                                               TextColor="{StaticResource Gray300}"
-                                                               FontAttributes="Bold"/>
+                                                            <Label
+                                                                Margin="0,0,0,5"
+                                                                FontAttributes="Bold"
+                                                                FontSize="13"
+                                                                Text="{Binding ItemsCount}"
+                                                                TextColor="{StaticResource Gray300}" />
+                                                            
+                                                        </StackLayout>
                                                     </StackLayout>
                                                 </StackLayout>
                                             </StackLayout>
-                                        </StackLayout>
-                                        <Frame.GestureRecognizers>
-                                            <TapGestureRecognizer NumberOfTapsRequired="1"
-                                                                  Command="{Binding Path=BindingContext.OpenShoppingListAsyncCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
-                                                                  CommandParameter="{Binding .}"/>
-                                        </Frame.GestureRecognizers>
-                                    </Frame>
-                                </StackLayout>
+                                            <Frame.GestureRecognizers>
+                                                <TapGestureRecognizer
+                                                    Command="{Binding Path=BindingContext.OpenCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                                    CommandParameter="{Binding .}"
+                                                    NumberOfTapsRequired="1" />
+                                            </Frame.GestureRecognizers>
+                                        </Frame>
+                                    </StackLayout>
+                                </dxcv:SwipeContainer.ItemView>
 
-                            </SwipeView>
+                                <dxcv:SwipeContainer.EndSwipeItems>
+                                    <dxcv:SwipeContainerItem
+                                        BackgroundColor="{DynamicResource Gray950}"
+                                        Caption="Usuń"
+                                        Command="{Binding Path=BindingContext.DeleteCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                        CommandParameter="{Binding .}"
+                                        FontColor="{DynamicResource Gray100}" />
+                                    <dxcv:SwipeContainerItem
+                                        BackgroundColor="{DynamicResource Gray950}"
+                                        Caption="Edytuj"
+                                        Command="{Binding Path=BindingContext.EditCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                        CommandParameter="{Binding .}"
+                                        FontColor="{DynamicResource Gray100}" />
+                                </dxcv:SwipeContainer.EndSwipeItems>
+                            </dxcv:SwipeContainer>
+
                         </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                    </dxcv:DXCollectionView.ItemTemplate>
+                </dxcv:DXCollectionView>
             </RefreshView>
         </Grid>
 
-        <Frame CornerRadius="75"
-               BackgroundColor="{DynamicResource Primary}"
-               IsClippedToBounds="True"
-               AbsoluteLayout.LayoutFlags="PositionProportional"
-               AbsoluteLayout.LayoutBounds=".95,.95,60,60"
-               VerticalOptions="Center"
-               HeightRequest="60"
-               Padding="0"
-               WidthRequest="60"
-               HorizontalOptions="Center">
-            <Button Text="+"
-                    Command="{Binding AddAsyncCommand}"
-                    FontSize="25"/>
+        <Frame
+            Padding="0"
+            AbsoluteLayout.LayoutBounds=".95,.95,60,60"
+            AbsoluteLayout.LayoutFlags="PositionProportional"
+            BackgroundColor="{DynamicResource Primary}"
+            CornerRadius="75"
+            HeightRequest="60"
+            HorizontalOptions="Center"
+            IsClippedToBounds="True"
+            VerticalOptions="Center"
+            WidthRequest="60">
+            <Button
+                Command="{Binding AddCommand}"
+                FontSize="25"
+                Text="+" />
         </Frame>
 
     </AbsoluteLayout>

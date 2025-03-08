@@ -1,21 +1,22 @@
 ﻿using ShoppingList4.Maui.ViewModel;
 
-namespace ShoppingList4.Maui.View;
-
-public partial class EntriesPage : ContentPage
+namespace ShoppingList4.Maui.View
 {
-    public EntriesPage(EntriesViewModel vm)
+    public partial class EntriesPage
     {
-        InitializeComponent();
-        _viewModel = vm;
+        private readonly EntriesViewModel _viewModel;
 
-        BindingContext = _viewModel;
-    }
+        public EntriesPage(EntriesViewModel vm)
+        {
+            InitializeComponent();
 
-    private readonly EntriesViewModel _viewModel;
+            _viewModel = vm;
+            BindingContext = _viewModel;
+        }
 
-    protected override async void OnAppearing()
-    {
-        await _viewModel.InitializeAsync();
+        protected override async void OnAppearing()
+        {
+            await _viewModel.Initialize();
+        }
     }
 }

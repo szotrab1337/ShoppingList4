@@ -1,49 +1,35 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ShoppingList4.Maui.Dtos;
 using ShoppingList4.Maui.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public class AddShoppingListViewModel : ObservableValidator
+    public partial class AddShoppingListViewModel(
+        IShoppingListService shoppingListService,
+        IMessageBoxService messageBoxService) : ObservableValidator
     {
-        private readonly IShoppingListService _shoppingListService;
-        private readonly IMessageBoxService _messageBoxService;
+        private readonly IShoppingListService _shoppingListService = shoppingListService;
+        private readonly IMessageBoxService _messageBoxService = messageBoxService;
 
-        public AddShoppingListViewModel(IShoppingListService shoppingListService, IMessageBoxService messageBoxService)
-        {
-            _shoppingListService = shoppingListService;
-            _messageBoxService = messageBoxService;
-
-            SaveAsyncCommand = new AsyncRelayCommand(SaveAsync, CanSave);
-        }
-
-        public IAsyncRelayCommand SaveAsyncCommand { get; }
-
+        [NotifyDataErrorInfo]
+        [ObservableProperty]
         [MaxLength(35, ErrorMessage = "Wprowadzona nazwa jest zbyt długa")]
         [Required(ErrorMessage = "Pole wymagane")]
-        public string Name
-        {
-            get => _name;
-            set
-            {
-                SetProperty(ref _name, value);
-                ValidateProperty(_name);
-                SaveAsyncCommand.NotifyCanExecuteChanged();
-            }
-        }
-        private string _name;
+        [NotifyCanExecuteChangedFor(nameof(SaveCommand))]
+        private string _name = string.Empty;
 
-        private async Task SaveAsync()
+        [RelayCommand(CanExecute = nameof(CanSave))]
+        private async Task Save()
         {
             try
             {
-                var result = await _shoppingListService.AddAsync(Name);
+                var dto = new AddShoppingListDto { Name = Name };
+                var result = await _shoppingListService.Add(dto);
 
-                if (result)
-                {
-                    await Shell.Current.GoToAsync("..");
-                }
+                var navigationParam = new Dictionary<string, object> { { "AddedShoppingList", result } };
+                await Shell.Current.GoToAsync("..", navigationParam);
             }
             catch (Exception)
             {

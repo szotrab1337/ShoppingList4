@@ -1,9 +1,7 @@
-﻿#nullable enable
-using ShoppingList4.Maui.Entity;
-
-namespace ShoppingList4.Maui.Interfaces;
-
-public interface IAccountService
+﻿namespace ShoppingList4.Maui.Interfaces
 {
-    Task LoginAsync(User user);
+    public interface IAccountService
+    {
+        Task Login(string email, string password);
+    }
 }

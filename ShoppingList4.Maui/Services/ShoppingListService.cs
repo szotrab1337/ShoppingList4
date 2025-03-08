@@ -1,80 +1,70 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
-using Newtonsoft.Json;
-using ShoppingList4.Maui.Entity;
+﻿using Microsoft.Extensions.Logging;
+using ShoppingList4.Domain.Entities;
+using ShoppingList4.Domain.Interfaces;
+using ShoppingList4.Maui.Dtos;
 using ShoppingList4.Maui.Interfaces;
-using ShoppingList4.Maui.Model;
 
 namespace ShoppingList4.Maui.Services
 {
-    public class ShoppingListService : IShoppingListService
+    public class ShoppingListService(
+        IShoppingListRepository shoppingListRepository,
+        IUserService userService,
+        ILogger<ShoppingListService> logger) : IShoppingListService
     {
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly ITokenService _tokenService;
+        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
+        private readonly IUserService _userService = userService;
+        private readonly ILogger<ShoppingListService> _logger = logger;
 
-        public ShoppingListService(IHttpClientFactory clientFactory, ITokenService tokenService)
+        public async Task<IEnumerable<ShoppingList>> GetAll()
         {
-            _clientFactory = clientFactory;
-            _tokenService = tokenService;
+            var user = await _userService.GetCurrentUser();
+
+            return await _shoppingListRepository.GetAll(user?.ApiToken);
         }
 
-        public async Task<List<ShoppingList>> GetAllAsync()
+        public async Task<ShoppingList> Add(AddShoppingListDto dto)
         {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
+            var user = await _userService.GetCurrentUser();
 
-            var token = await _tokenService.GetAsync();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var result = await _shoppingListRepository.Add(
+                user?.ApiToken,
+                dto);
 
-            var response = await client.GetAsync("api/shoppinglist");
-            var jsonShoppingLists = await response.Content.ReadAsStringAsync();
+            _logger.LogInformation("{@User} created new shopping list {@ShoppingList}.",
+                user, result.Item2);
 
-            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(jsonShoppingLists))
+            return result.Item2;
+        }
+
+        public async Task<bool> Delete(int id)
+        {
+            var user = await _userService.GetCurrentUser();
+
+            var result = await _shoppingListRepository.Delete(
+                user?.ApiToken,
+                id);
+
+            if (result)
             {
-                return null;
+                _logger.LogInformation("{@User} deleted shopping list {ShoppingList}.",
+                    user, id);
             }
 
-            var shoppingLists = JsonConvert.DeserializeObject<List<ShoppingList>>(jsonShoppingLists);
-            return shoppingLists;
+            return result;
         }
 
-        public async Task<bool> AddAsync(string name)
+        public async Task<ShoppingList> Update(EditShoppingListDto dto)
         {
-            var shoppingList = new ShoppingListDto(name);
+            var user = await _userService.GetCurrentUser();
 
-            using var client = _clientFactory.CreateClient("ShoppingList4");
+            var result = await _shoppingListRepository.Edit(
+                user?.ApiToken,
+                dto);
 
-            var token = await _tokenService.GetAsync();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            _logger.LogInformation("User {@User} created new entry {@Entry}.",
+                user, result.Item2);
 
-            var content = new StringContent(JsonConvert.SerializeObject(shoppingList), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("api/shoppinglist", content);
-
-            return response.IsSuccessStatusCode;
-        }
-
-        public async Task<bool> DeleteAsync(int id)
-        {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
-
-            var token = await _tokenService.GetAsync();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.DeleteAsync($"api/shoppinglist/{id}");
-            
-            return response.IsSuccessStatusCode;
-        }
-
-        public async Task<bool> UpdateAsync(ShoppingList shoppingList)
-        {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
-
-            var token = await _tokenService.GetAsync();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var content = new StringContent(JsonConvert.SerializeObject(shoppingList), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"api/shoppingList/{shoppingList.Id}", content);
-
-            return response.IsSuccessStatusCode;
+            return result.Item2;
         }
     }
 }
