@@ -28,7 +28,7 @@ namespace ShoppingList4.Api.Application.Users.Commands.Login
         public async Task<UserDto> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.Get(request.Email)
-                ?? throw new NotFoundException(nameof(User), request.Email);
+                       ?? throw new NotFoundException(nameof(User), request.Email);
 
             var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
             if (result == PasswordVerificationResult.Failed)
@@ -39,8 +39,7 @@ namespace ShoppingList4.Api.Application.Users.Commands.Login
 
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new(ClaimTypes.Name, $"{user.Email}")
+                new(ClaimTypes.NameIdentifier, user.Id.ToString()), new(ClaimTypes.Name, $"{user.Email}")
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecurityKey));
@@ -59,13 +58,7 @@ namespace ShoppingList4.Api.Application.Users.Commands.Login
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var jwt = tokenHandler.WriteToken(token);
 
-            return new UserDto
-            {
-                Id = user.Id,
-                Email = user.Email,
-                Name = user.Name,
-                ApiToken = jwt
-            };
+            return new UserDto { Id = user.Id, Email = user.Email, Name = user.Name, ApiToken = jwt };
         }
     }
 }

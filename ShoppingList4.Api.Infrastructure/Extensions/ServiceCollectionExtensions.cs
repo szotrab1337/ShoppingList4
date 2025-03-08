@@ -13,7 +13,8 @@ namespace ShoppingList4.Api.Infrastructure.Extensions
         public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddDbContext<ShoppingListDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("ShoppingListDbConnection")), ServiceLifetime.Transient);
+                    options.UseSqlServer(configuration.GetConnectionString("ShoppingListDbConnection")),
+                ServiceLifetime.Transient);
 
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IEntryRepository, EntryRepository>();

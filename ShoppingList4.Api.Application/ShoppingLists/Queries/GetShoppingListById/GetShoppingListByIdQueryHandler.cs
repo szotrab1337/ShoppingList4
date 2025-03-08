@@ -17,7 +17,7 @@ namespace ShoppingList4.Api.Application.ShoppingLists.Queries.GetShoppingListByI
         public async Task<ShoppingListDto> Handle(GetShoppingListByIdQuery request, CancellationToken cancellationToken)
         {
             var list = await _shoppingListRepository.Get(request.Id)
-                ?? throw new NotFoundException(nameof(ShoppingList), request.Id.ToString());
+                       ?? throw new NotFoundException(nameof(ShoppingList), request.Id.ToString());
 
             return _mapper.Map<ShoppingListDto>(list);
         }

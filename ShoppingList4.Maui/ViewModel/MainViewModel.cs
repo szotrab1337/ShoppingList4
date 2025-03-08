@@ -1,77 +1,62 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingList4.Maui.Entity;
+using ShoppingList4.Domain.Entities;
 using ShoppingList4.Maui.Interfaces;
 using ShoppingList4.Maui.View;
+using ShoppingList4.Maui.ViewModel.Entities;
 using System.Collections.ObjectModel;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public partial class MainViewModel : ObservableObject
+    public partial class MainViewModel(
+        IUserService userService,
+        IShoppingListService shoppingListService,
+        IMessageBoxService messageBoxService) : ObservableObject, IQueryAttributable
     {
-        private readonly ITokenService _tokenService;
-        private readonly IShoppingListService _shoppingListService;
-        private readonly IMessageBoxService _messageBoxService;
+        private readonly IUserService _userService = userService;
+        private readonly IShoppingListService _shoppingListService = shoppingListService;
+        private readonly IMessageBoxService _messageBoxService = messageBoxService;
 
-        public MainViewModel(ITokenService tokenService, IShoppingListService shoppingListService,
-            IMessageBoxService messageBoxService)
+        private bool _loaded;
+
+        [ObservableProperty] private ObservableCollection<ShoppingListViewModel> _shoppingLists = [];
+
+        [ObservableProperty] private bool _isRefreshing;
+
+        [ObservableProperty] private bool _isInitializing;
+
+        public async Task Initialize()
         {
-            _tokenService = tokenService;
-            _shoppingListService = shoppingListService;
-            _messageBoxService = messageBoxService;
+            if (_loaded)
+            {
+                return;
+            }
 
-            AddAsyncCommand = new AsyncRelayCommand(AddAsync);
-            RefreshAsyncCommand = new AsyncRelayCommand(RefreshAsync);
-            DeleteAsyncCommand = new AsyncRelayCommand<ShoppingList>(DeleteAsync);
-            EditAsyncCommand = new AsyncRelayCommand<ShoppingList>(EditAsync);
-            OpenShoppingListAsyncCommand = new AsyncRelayCommand<ShoppingList>(OpenShoppingListAsync);
-        }
-
-        public IAsyncRelayCommand AddAsyncCommand { get; }
-        public IAsyncRelayCommand RefreshAsyncCommand { get; }
-        public IAsyncRelayCommand DeleteAsyncCommand { get; }
-        public IAsyncRelayCommand EditAsyncCommand { get; }
-        public IAsyncRelayCommand OpenShoppingListAsyncCommand { get; }
-
-        [ObservableProperty]
-        private ObservableCollection<ShoppingList> _shoppingLists = new();
-
-        [ObservableProperty]
-        private bool _isRefreshing;
-
-        [ObservableProperty]
-        private bool _isInitializing;
-
-        public async Task InitializeAsync()
-        {
             IsInitializing = true;
 
             await Task.Delay(400);
-            var tokenExists = await CheckUserAsync();
+            var userExists = await CheckUser();
 
-            if (tokenExists)
+            if (userExists)
             {
-                await GetShoppingListsAsync();
+                await LoadShoppingLists();
             }
 
             IsInitializing = false;
+            _loaded = true;
         }
 
-        private async Task RefreshAsync()
+        [RelayCommand]
+        private async Task Refresh()
         {
-            await GetShoppingListsAsync();
-            IsRefreshing = false;
+            await LoadShoppingLists();
         }
 
-        private async Task DeleteAsync(ShoppingList shoppingList)
+        [RelayCommand]
+        private async Task Delete(ShoppingListViewModel shoppingList)
         {
             try
             {
-                if (shoppingList is null)
-                {
-                    return;
-                }
-
                 var confirmation = await _messageBoxService.ShowAlert("Potwierdzenie",
                     "Czy na pewno chcesz usunąć wybraną listę?", "TAK", "NIE");
 
@@ -80,7 +65,7 @@ namespace ShoppingList4.Maui.ViewModel
                     return;
                 }
 
-                var result = await _shoppingListService.DeleteAsync(shoppingList.Id);
+                var result = await _shoppingListService.Delete(shoppingList.Id);
                 if (result)
                 {
                     ShoppingLists.Remove(shoppingList);
@@ -92,54 +77,72 @@ namespace ShoppingList4.Maui.ViewModel
             }
         }
 
-        private async Task GetShoppingListsAsync()
+        private async Task LoadShoppingLists()
         {
             try
             {
-                var shoppingLists = await _shoppingListService.GetAllAsync();
+                var shoppingLists = await _shoppingListService.GetAll();
+                var vms = shoppingLists.Select(x => new ShoppingListViewModel(x));
 
-                ShoppingLists = new ObservableCollection<ShoppingList>(shoppingLists);
+                ShoppingLists = new ObservableCollection<ShoppingListViewModel>(vms);
             }
             catch (Exception)
             {
                 await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
+            finally
+            {
+                IsRefreshing = false;
+            }
         }
 
-        public async Task<bool> CheckUserAsync()
+        private async Task<bool> CheckUser()
         {
-            if (!await _tokenService.ExistsAsync())
+            if (await _userService.ExistsCurrentUser())
             {
-                await Shell.Current.GoToAsync("//Login");
-                return false;
+                return true;
             }
 
-            return true;
+            await Shell.Current.GoToAsync("//Login");
+            return false;
         }
 
-        private async Task EditAsync(ShoppingList shoppingList)
+        [RelayCommand]
+        private async Task Edit(ShoppingListViewModel shoppingList)
         {
-            var navigationParam = new Dictionary<string, object>
-            {
-                { "ShoppingList", shoppingList }
-            };
+            var navigationParam = new Dictionary<string, object> { { "ShoppingList", shoppingList } };
 
             await Shell.Current.GoToAsync(nameof(EditShoppingListPage), navigationParam);
         }
 
-        private async Task AddAsync()
+        [RelayCommand]
+        private async Task Add()
         {
             await Shell.Current.GoToAsync(nameof(AddShoppingListPage));
         }
 
-        private async Task OpenShoppingListAsync(ShoppingList shoppingList)
+        [RelayCommand]
+        private async Task Open(ShoppingListViewModel shoppingList)
         {
-            var navigationParam = new Dictionary<string, object>
-            {
-                { "ShoppingList", shoppingList }
-            };
+            var navigationParam = new Dictionary<string, object> { { "ShoppingListId", shoppingList.Id } };
 
             await Shell.Current.GoToAsync(nameof(EntriesPage), navigationParam);
+        }
+
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue("EditedShoppingList", out var editedShoppingListObj) &&
+                editedShoppingListObj is ShoppingList editedShoppingList)
+            {
+                var vm = ShoppingLists.FirstOrDefault(x => x.Id == editedShoppingList.Id);
+                vm?.Update(editedShoppingList);
+            }
+
+            if (query.TryGetValue("AddedShoppingList", out var addedShoppingListObj) &&
+                addedShoppingListObj is ShoppingList addedShoppingList)
+            {
+                ShoppingLists.Add(new ShoppingListViewModel(addedShoppingList));
+            }
         }
     }
 }

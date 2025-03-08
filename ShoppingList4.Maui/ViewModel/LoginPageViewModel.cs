@@ -1,79 +1,50 @@
-﻿using System.ComponentModel.DataAnnotations;
-using CommunityToolkit.Mvvm.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingList4.Maui.Entity;
 using ShoppingList4.Maui.Interfaces;
+using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public partial class LoginPageViewModel : ObservableValidator
+    public partial class LoginPageViewModel(IAccountService accountService, IUserService userService,
+        IMessageBoxService messageBoxService) : ObservableValidator
     {
-        private readonly IAccountService _accountService;
-        private readonly ITokenService _tokenService;
-        private readonly IMessageBoxService _messageBoxService;
+        private readonly IAccountService _accountService = accountService;
+        private readonly IUserService _userService = userService;
+        private readonly IMessageBoxService _messageBoxService = messageBoxService;
 
-        public LoginPageViewModel(IAccountService accountService, ITokenService tokenService,
-            IMessageBoxService messageBoxService)
-        {
-            _accountService = accountService;
-            _tokenService = tokenService;
-            _messageBoxService = messageBoxService;
-
-            LoginAsyncCommand = new AsyncRelayCommand(LoginAsync, CanLogin);
-            LogoutCommand = new RelayCommand(Logout);
-        }
-
-        public IAsyncRelayCommand LoginAsyncCommand { get; }
-        public IRelayCommand LogoutCommand { get; }
 
         [ObservableProperty]
-        private bool _tokenExists;
+        private bool _userExists;
 
+        [ObservableProperty]
         [EmailAddress(ErrorMessage = "Nie jest to poprawny adres email.")]
         [Required(ErrorMessage = "Pole wymagane")]
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                SetProperty(ref _email, value);
-                ValidateProperty(_email);
-                LoginAsyncCommand.NotifyCanExecuteChanged();
-            }
-        }
+        [NotifyDataErrorInfo]
+        [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
         private string _email;
 
+        [ObservableProperty]
         [Required(ErrorMessage = "Pole wymagane")]
         [MinLength(6, ErrorMessage = "Podaj minimum 6 znaków")]
-        public string Password
-        {
-            get => _password;
-            set
-            {
-                SetProperty(ref _password, value);
-                ValidateProperty(_password);
-                LoginAsyncCommand.NotifyCanExecuteChanged();
-            } 
-        }
+        [NotifyDataErrorInfo]
+        [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
         private string _password;
 
-        public async Task InitializeAsync()
+        public async Task Initialize()
         {
             Email = string.Empty;
             Password = string.Empty;
-
-            TokenExists = await _tokenService.ExistsAsync();
+            UserExists = await _userService.ExistsCurrentUser();
         }
 
-        private async Task LoginAsync()
+        [RelayCommand(CanExecute = nameof(CanLogin))]
+        private async Task Login()
         {
-            var user = new User(Email, Password);
-
             try
             {
-                await _accountService.LoginAsync(user);
+                await _accountService.Login(Email, Password);
 
-                if (!await _tokenService.ExistsAsync())
+                if (!await _userService.ExistsCurrentUser())
                 {
                     await _messageBoxService.ShowAlert("Błąd", "Niepoprawne dane.", "OK");
                     return;
@@ -81,16 +52,17 @@ namespace ShoppingList4.Maui.ViewModel
 
                 await Shell.Current.GoToAsync("//Main");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }
         }
 
+        [RelayCommand]
         private void Logout()
         {
-            _tokenService.Remove();
-            TokenExists = false;
+            _userService.RemoveCurrentUser();
+            UserExists = false;
         }
 
         private bool CanLogin()

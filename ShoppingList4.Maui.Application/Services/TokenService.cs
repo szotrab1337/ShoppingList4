@@ -1,7 +1,7 @@
 ﻿using ShoppingList4.Maui.Interfaces;
 using Microsoft.Maui.Storage;
 
-namespace ShoppingList4.Maui.Services
+namespace ShoppingList4.Maui.Application.Services
 {
     public class TokenService : ITokenService
     {

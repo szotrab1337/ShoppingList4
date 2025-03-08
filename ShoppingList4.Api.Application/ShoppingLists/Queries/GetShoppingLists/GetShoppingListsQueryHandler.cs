@@ -12,7 +12,8 @@ namespace ShoppingList4.Api.Application.ShoppingLists.Queries.GetShoppingLists
         private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<IEnumerable<ShoppingListDto>> Handle(GetShoppingListsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ShoppingListDto>> Handle(GetShoppingListsQuery request,
+            CancellationToken cancellationToken)
         {
             var lists = await _shoppingListRepository.GetAll();
 

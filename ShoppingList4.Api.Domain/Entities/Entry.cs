@@ -8,6 +8,6 @@
         public bool IsBought { get; set; }
         public int ShoppingListId { get; set; }
 
-        public ShoppingList ShoppingList { get; set; } = default!;
+        public ShoppingList ShoppingList { get; set; } = null!;
     }
 }

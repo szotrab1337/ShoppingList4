@@ -21,6 +21,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList4.Api.Domain", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList4.Api.Infrastructure", "ShoppingList4.Api.Infrastructure\ShoppingList4.Api.Infrastructure.csproj", "{BF4C9B9F-FB20-4F1E-A233-87D1EA858979}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList4.Domain", "ShoppingList4.Domain\ShoppingList4.Domain.csproj", "{51B2A616-9CDE-4321-A78E-466C4928143C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShoppingList4.Infrastructure", "ShoppingList4.Infrastructure\ShoppingList4.Infrastructure.csproj", "{EE8A0C3F-774B-46DE-9397-00D1E124D688}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +57,14 @@ Global
 		{BF4C9B9F-FB20-4F1E-A233-87D1EA858979}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BF4C9B9F-FB20-4F1E-A233-87D1EA858979}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BF4C9B9F-FB20-4F1E-A233-87D1EA858979}.Release|Any CPU.Build.0 = Release|Any CPU
+		{51B2A616-9CDE-4321-A78E-466C4928143C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{51B2A616-9CDE-4321-A78E-466C4928143C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{51B2A616-9CDE-4321-A78E-466C4928143C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{51B2A616-9CDE-4321-A78E-466C4928143C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE8A0C3F-774B-46DE-9397-00D1E124D688}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE8A0C3F-774B-46DE-9397-00D1E124D688}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE8A0C3F-774B-46DE-9397-00D1E124D688}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE8A0C3F-774B-46DE-9397-00D1E124D688}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

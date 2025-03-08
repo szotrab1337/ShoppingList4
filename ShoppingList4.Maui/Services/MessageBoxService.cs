@@ -9,7 +9,7 @@ namespace ShoppingList4.Maui.Services
             return await Application.Current?.MainPage?.DisplayAlert(title,
                 message, accept: accept, cancel: cancel)!;
         }
-        
+
         public async Task ShowAlert(string title, string message, string cancel)
         {
             await Application.Current?.MainPage?.DisplayAlert(title,

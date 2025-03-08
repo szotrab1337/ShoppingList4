@@ -12,7 +12,8 @@ namespace ShoppingList4.Api.Application.Entries.Queries.GetEntriesByShoppingList
         private readonly IEntryRepository _entryRepository = entryRepository;
         private readonly IMapper _mapper = mapper;
 
-        public async Task<IEnumerable<EntryDto>> Handle(GetEntriesByShoppingListIdQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<EntryDto>> Handle(GetEntriesByShoppingListIdQuery request,
+            CancellationToken cancellationToken)
         {
             var entries = await _entryRepository.GetByShoppingListId(request.ShoppingListId);
 
