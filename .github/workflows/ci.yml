@@ -19,9 +19,9 @@ jobs:
       - name: Add DevExpress NuGet source
         run: |
             dotnet nuget add source --name "DevExpress" \
-              --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api/v3/index.json" \
+              --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api/v3/index.json" \
               --username "User" \
-              --password "${{ secrets.DEVEXPRESS_NUGET_KEY }}" \
+              --password "${{ secrets.DEVEXPRESS_API_KEY_1 }}" \
               --store-password-in-clear-text
 
       - name: Restore dependencies
