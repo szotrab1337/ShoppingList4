@@ -14,7 +14,9 @@ jobs:
          with: 
             dotnet-version: 8.0.x
        - name: Add DevExpress NuGet Source
-         run: dotnet nuget add source https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api -n DevExpress
+         run: |
+          dotnet nuget add source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api" -n DevExpress
+          dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api"
        - name: Restore dependencies
          run: dotnet restore
        - name: Build
