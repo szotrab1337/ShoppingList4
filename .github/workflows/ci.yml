@@ -3,37 +3,27 @@ on:
   pull_request:
     branches: [ master ]
   workflow_dispatch:
-
+  
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v3
-
+      - uses: actions/checkout@v2
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v3
-        with:
+        uses: actions/setup-dotnet@v3.2.0
+        with: 
           dotnet-version: 8.0.x
-
+      - name: Show current NuGet sources
+        run: dotnet nuget list source
       - name: Configure NuGet authentication
         run: |
+          # Replace DevExpress key in nuget.config
           $config = Get-Content nuget.config -Raw
-          $config = $config -replace "%DEVEXPRESS_NUGET_KEY%", "${{ secrets.DEVEXPRESS_NUGET_KEY }}"
+          $config = $config -replace "\${DEVEXPRESS_NUGET_KEY}", "${{ secrets.DEVEXPRESS_NUGET_KEY }}"
           Set-Content nuget.config $config
-
       - name: Restore dependencies
-        run: dotnet restore
-
+        run: dotnet restore --configfile nuget.config
       - name: Build
         run: dotnet build --no-restore
-
-      - name: Run Tests
-        run: dotnet test --logger "trx" --results-directory TestResults
-
-      - name: Build
-        run: dotnet build --no-restore
-        
-      - name: Run Tests
-        run: dotnet test --logger "trx" --results-directory TestResults
-
+      - name: Test
+        run: dotnet test
