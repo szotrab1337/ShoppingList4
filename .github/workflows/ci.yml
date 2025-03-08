@@ -32,18 +32,16 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Create nuget.config with DevExpress API Key
+      - name: Add DevExpress NuGet Source
         run: |
-          echo '<?xml version="1.0" encoding="utf-8"?>' > nuget.config
-          echo '<configuration>' >> nuget.config
-          echo '  <packageSources>' >> nuget.config
-          echo '    <add key="NuGet.org" value="https://api.nuget.org/v3/index.json" />' >> nuget.config
-          echo '    <add key="DevExpress" value="https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api/v3/index.json" />' >> nuget.config
-          echo '  </packageSources>' >> nuget.config
-          echo '</configuration>' >> nuget.config
+          dotnet nuget add source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api" `
+            --name DevExpress `
+            --username "any" `
+            --password "${{ secrets.DEVEXPRESS_NUGET_KEY }}" `
+            --store-password-in-clear-text
 
-      - name: Restore dependencies using nuget.config
-        run: dotnet restore --configfile nuget.config
+      - name: Restore dependencies from NuGet.org and DevExpress
+        run: dotnet restore -s "https://api.nuget.org/v3/index.json" -s "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api" --disable-parallel
 
       - name: Build
         run: dotnet build --no-restore
