@@ -25,7 +25,7 @@ jobs:
        - name: Publish API
          run: dotnet publish ./ShoppingList4.Api/ShoppingList4.Api.csproj -c Release -o '${{ env.DOTNET_ROOT }}\api'
        - name: Upload API artifact
-         uses: actions/upload-artifact@v3.1.2
+         uses: actions/upload-artifact@v4
          with:
            name: api-artifact
            path: ${{ env.DOTNET_ROOT }}\api
