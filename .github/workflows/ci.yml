@@ -32,10 +32,3 @@ jobs:
 
       - name: Run Tests
         run: dotnet test --logger "trx" --results-directory TestResults
-
-      - name: Build
-        run: dotnet build --no-restore
-        
-      - name: Run Tests
-        run: dotnet test --logger "trx" --results-directory TestResults
-
