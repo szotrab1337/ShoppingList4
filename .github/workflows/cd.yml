@@ -18,8 +18,16 @@ jobs:
             dotnet-version: 8.0.x
        - name: Install .NET MAUI
          run: dotnet workload install maui
-       - name: Restore dependencies
-         run: dotnet restore
+       - name: Add DevExpress NuGet Source
+         run: |
+            dotnet nuget add source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api" `
+              --name DevExpress `
+              --username "any" `
+              --password "${{ secrets.DEVEXPRESS_API_KEY_1 }}" `
+              --store-password-in-clear-text
+
+       - name: Restore dependencies from NuGet.org and DevExpress
+         run: dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api"
        - name: Build API
          run: dotnet build ./ShoppingList4.Api/ShoppingList4.Api.csproj --no-restore
        - name: Publish API
