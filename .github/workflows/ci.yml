@@ -8,16 +8,23 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-       - uses: actions/checkout@v3
-       - name: Setup .NET Core SDK
-         uses: actions/setup-dotnet@v3.2.0
-         with: 
-            dotnet-version: 8.0.x
-       - name: Add DevExpress NuGet Source and restore packages
-         run: |
-          dotnet nuget add source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api" -n DevExpress
-          dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api"
-       - name: Build
-         run: dotnet build --no-restore
-       - name: Test
-         run: dotnet test
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v3
+        with: 
+          dotnet-version: 8.0.x
+      - name: Add DevExpress NuGet Source
+        run: |
+          dotnet nuget add source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api" `
+            --name DevExpress `
+            --username "any" `
+            --password "${{ secrets.DEVEXPRESS_NUGET_KEY }}" `
+            --store-password-in-clear-text
+      - name: Restore dependencies
+        run: dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api"
+      - name: Build
+        run: dotnet build --no-restore
+      - name: Run Tests
+        run: dotnet test --logger "trx" --results-directory TestResults
+
