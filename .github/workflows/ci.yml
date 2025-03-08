@@ -21,8 +21,10 @@ jobs:
             --username "any" `
             --password "${{ secrets.DEVEXPRESS_NUGET_KEY }}" `
             --store-password-in-clear-text
-      - name: Restore dependencies
-        run: dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api"
+      - name: Restore dependencies from NuGet.org
+        run: dotnet restore --source "https://api.nuget.org/v3/index.json"
+      - name: Restore dependencies from DevExpress
+        run: dotnet restore --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api"
       - name: Build
         run: dotnet build --no-restore
       - name: Run Tests
