@@ -16,16 +16,16 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Add DevExpress NuGet source
+      - name: Add DevExpress NuGet Source
         run: |
-            dotnet nuget add source --name "DevExpress" `
-              --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api/v3/index.json" `
-              --username "User" `
+            dotnet nuget add source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api" `
+              --name DevExpress `
+              --username "any" `
               --password "${{ secrets.DEVEXPRESS_API_KEY_1 }}" `
               --store-password-in-clear-text
 
-      - name: Restore dependencies
-        run: dotnet restore
+      - name: Restore dependencies from NuGet.org and DevExpress
+        run: dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api"
 
       - name: Build
         run: dotnet build --no-restore
