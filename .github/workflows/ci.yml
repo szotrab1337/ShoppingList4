@@ -25,8 +25,7 @@ jobs:
             --store-password-in-clear-text
 
       - name: Restore dependencies from NuGet.org and DevExpress
-        run: dotnet restore -s "https://api.nuget.org/v3/index.json" -s "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api" --disable-parallel
-
+        run: dotnet restore -s "https://api.nuget.org/v3/index.json" -s "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_NUGET_KEY }}/api"
       - name: Build
         run: dotnet build --no-restore
 
