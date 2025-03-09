@@ -5,25 +5,15 @@ namespace ShoppingList4.Blazor.Pages.Dialogs
 {
     public partial class SimpleDialog
     {
-        [CascadingParameter] MudDialogInstance MudDialog { get; set; } = default!;
-        [Parameter] public string Text { get; set; } = default!;
-        [Parameter] public string Title { get; set; } = default!;
+        [CascadingParameter] private IMudDialogInstance MudDialog { get; set; } = null!;
+        [Parameter] public string Text { get; set; } = null!;
+        [Parameter] public string Title { get; set; } = null!;
 
         public void Cancel() => MudDialog.Cancel();
 
         public void Save()
         {
             MudDialog.Close(DialogResult.Ok(Text));
-        }
-
-        private void HandleSave()
-        {
-            Save();
-        }
-
-        private void HandleCancel()
-        {
-            Cancel();
         }
     }
 }

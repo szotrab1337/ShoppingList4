@@ -2,7 +2,7 @@
     <MudIconButton Icon="@Icons.Material.Filled.Home" Color="Color.Inherit" Edge="Edge.Start" Href="/" />
     <MudSpacer />
 
-    @if (!TokenExists)
+    @if (!UserExists)
     {
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="me-5" Href="/Login">Zaloguj się</MudButton>
     }

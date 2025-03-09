@@ -1,32 +1,35 @@
 ﻿@page "/Entries/{id}"
-@using ShoppingList4.Blazor.Components
-
-<KeyboardShortcuts ShortcutKey="n" OnShortcutPressed="HandleAdd" />
 
 @if (!IsLoading)
 {
     <div class="d-flex justify-end">
-        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary" OnClick="Add">Dodaj</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary"
+                   OnClick="Add">Dodaj
+        </MudButton>
         <MudMenu Label="Open Menu" Icon="@Icons.Material.Filled.MoreVert">
-            <MudMenuItem OnClick="DeleteAll">Usuń wszystko</MudMenuItem>
-            <MudMenuItem OnClick="DeleteBought">Usuń kupione</MudMenuItem>
+            <MudMenuItem OnClick="DeleteAll" Label="Usuń wszystko"/>
+            <MudMenuItem OnClick="DeleteBought" Label="Usuń kupione"/>
         </MudMenu>
     </div>
 
     @foreach (var entry in EntriesList)
     {
-        <MudCard Class="mb-5">
+        <MudCard Class="mb-3">
             <MudCardHeader>
                 <CardHeaderContent>
                     <div class="container">
                         <div class="row">
-                            <MudCheckBox onclick="@(() => ChangeEntryState(entry.Id))" Value="entry.IsBought" Label="@entry.Name" Class="@(entry.IsBought ? "bought-entry" : "")"></MudCheckBox>
+                            <MudCheckBox onclick="@(() => ChangeEntryState(entry.Id))" Value="entry.IsBought"
+                                         Label="@entry.Name"
+                                         Class="@(entry.IsBought ? "bought-entry" : "")"></MudCheckBox>
                         </div>
                     </div>
                 </CardHeaderContent>
                 <CardHeaderActions>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="@(() => Edit(entry.Id))" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="@(() => Delete(entry.Id))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit"
+                                   OnClick="@(() => Edit(entry.Id))"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit"
+                                   OnClick="@(() => Delete(entry.Id))"/>
                 </CardHeaderActions>
             </MudCardHeader>
         </MudCard>
@@ -35,6 +38,6 @@
 else
 {
     <div class="d-flex justify-center mt-12 pt-12">
-        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
     </div>
 }

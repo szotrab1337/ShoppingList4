@@ -21,14 +21,14 @@ namespace ShoppingList4.Maui.ViewModel
         [Required(ErrorMessage = "Pole wymagane")]
         [NotifyDataErrorInfo]
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
-        private string _email;
+        private string _email = string.Empty;
 
         [ObservableProperty]
         [Required(ErrorMessage = "Pole wymagane")]
         [MinLength(6, ErrorMessage = "Podaj minimum 6 znaków")]
         [NotifyDataErrorInfo]
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
-        private string _password;
+        private string _password = string.Empty;
 
         public async Task Initialize()
         {

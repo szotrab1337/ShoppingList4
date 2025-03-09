@@ -1,41 +1,26 @@
-﻿using Newtonsoft.Json;
-using ShoppingList4.Blazor.Entities;
-using ShoppingList4.Blazor.Interfaces;
-using System.Text;
+﻿using ShoppingList4.Blazor.Interfaces;
+using ShoppingList4.Domain.Interfaces;
 
 namespace ShoppingList4.Blazor.Services
 {
-    public class AccountService(IHttpClientFactory clientFactory, ITokenService tokenService) : IAccountService
+    public class AccountService(
+        IUsersRepository usersRepository,
+        IUserService userService) : IAccountService
     {
-        private readonly IHttpClientFactory _clientFactory = clientFactory;
-        private readonly ITokenService _tokenService = tokenService;
+        private readonly IUsersRepository _usersRepository = usersRepository;
+        private readonly IUserService _userService = userService;
 
-        private async Task<string> GetToken(User user)
+        public async Task Login(string email, string password)
         {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
+            var user = await _usersRepository.Login(email, password);
 
-            var content = new StringContent(JsonConvert.SerializeObject(user), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("api/account/login", content);
-
-            if (!response.IsSuccessStatusCode)
+            if (user is null)
             {
-                return string.Empty;
-            }
-
-            return await response.Content.ReadAsStringAsync();
-        }
-
-        public async Task LoginAsync(User user)
-        {
-            var token = await GetToken(user);
-
-            if (string.IsNullOrEmpty(token))
-            {
-                await _tokenService.Remove();
+                await _userService.RemoveCurrentUser();
                 return;
             }
 
-            await _tokenService.Set(token);
+            await _userService.SetCurrentUser(user);
         }
     }
 }
