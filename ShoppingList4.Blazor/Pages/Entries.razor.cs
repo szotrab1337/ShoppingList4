@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Components;
 using MudBlazor;
-using ShoppingList4.Blazor.Entities;
+using ShoppingList4.Blazor.Dtos;
 using ShoppingList4.Blazor.Interfaces;
 using ShoppingList4.Blazor.Models;
 using ShoppingList4.Blazor.Pages.Dialogs;
+using Entry = ShoppingList4.Domain.Entities.Entry;
 
 namespace ShoppingList4.Blazor.Pages
 {
@@ -11,20 +12,17 @@ namespace ShoppingList4.Blazor.Pages
     {
         [Parameter] public string? Id { get; set; }
 
-        [Inject] public IEntryService EntryService { get; set; } = default!;
-        [Inject] public ILogger<Entries> Logger { get; set; } = default!;
-        [Inject] public ITokenService TokenService { get; set; } = default!;
-        [Inject] public NavigationManager NavigationManager { get; set; } = default!;
-        [Inject] public IDialogService DialogService { get; set; } = default!;
-        [Inject] public ISnackbar Snackbar { get; set; } = default!;
+        [Inject] public IEntryService EntryService { get; set; } = null!;
+        [Inject] public ILogger<Entries> Logger { get; set; } = null!;
+        [Inject] public IUserService UserService { get; set; } = null!;
+        [Inject] public NavigationManager NavigationManager { get; set; } = null!;
+        [Inject] public IDialogService DialogService { get; set; } = null!;
+        [Inject] public ISnackbar Snackbar { get; set; } = null!;
 
-        public List<Entry> EntriesList { get; set; } = [];
-        public bool IsLoading { get; set; }
-
+        private List<Entry> EntriesList { get; set; } = [];
+        private bool IsLoading { get; set; }
 
         private int _id;
-
-        private bool _isAdding;
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
@@ -38,8 +36,8 @@ namespace ShoppingList4.Blazor.Pages
                 return;
             }
 
-            var tokenExists = await CheckUserAsync();
-            if (tokenExists)
+            var userExists = await CheckUser();
+            if (userExists)
             {
                 await GetEntries();
 
@@ -47,15 +45,15 @@ namespace ShoppingList4.Blazor.Pages
             }
         }
 
-        public async Task<bool> CheckUserAsync()
+        private async Task<bool> CheckUser()
         {
-            if (!await TokenService.Exists())
+            if (await UserService.ExistsCurrentUser())
             {
-                NavigationManager.NavigateTo("/Login");
-                return false;
+                return true;
             }
 
-            return true;
+            NavigationManager.NavigateTo("/Login");
+            return false;
         }
 
         private async Task GetEntries()
@@ -65,7 +63,7 @@ namespace ShoppingList4.Blazor.Pages
                 IsLoading = true;
                 StateHasChanged();
 
-                EntriesList = [.. (await EntryService.Get(_id)).OrderBy(x => x.IsBought)];
+                EntriesList = [.. (await EntryService.GetShoppingListEntries(_id)).OrderBy(x => x.IsBought)];
 
                 IsLoading = false;
                 StateHasChanged();
@@ -76,43 +74,51 @@ namespace ShoppingList4.Blazor.Pages
             }
         }
 
-        public async Task Delete(int entryId)
+        private async Task Delete(int entryId)
         {
             bool? isConfirmed = await DialogService.ShowMessageBox(
                 "Potwierdzenie",
-                "Czy chcesz usun¹æ wybran¹ pozycjê?",
-                yesText: "Usuñ", cancelText: "Anuluj");
+                "Czy chcesz usunÄ…Ä‡ wybranÄ… pozycjÄ™?",
+                yesText: "UsuÅ„", cancelText: "Anuluj");
 
             if (isConfirmed != true)
             {
                 return;
             }
 
-            var isDeleted = await EntryService.Delete(entryId);
-            if (isDeleted)
+            var result = await EntryService.Delete(entryId);
+            if (result)
             {
-                await GetEntries();
+                var entry = EntriesList.FirstOrDefault(x => x.Id == entryId);
+                if (entry is null)
+                {
+                    return;
+                }
+
+                EntriesList.Remove(entry);
 
                 Logger.LogInformation("User deleted entry with id {id}", entryId);
-                Snackbar.Add("Pozycja zosta³a usuniêta!", Severity.Success);
+                Snackbar.Add("Pozycja zostaÅ‚a usuniÄ™ta!", Severity.Success);
             }
         }
 
-        public async Task ChangeEntryState(int entryId)
+        private async Task ChangeEntryState(int entryId)
         {
             var entry = EntriesList.Find(x => x.Id == entryId);
-            if(entry is null)
+            if (entry is null)
             {
                 return;
             }
 
             entry.IsBought = !entry.IsBought;
-            await EntryService.Update(entry);
+
+            var dto = new EditEntryDto { Id = entry.Id, IsBought = entry.IsBought, Name = entry.Name };
+            await EntryService.Update(dto);
 
             StateHasChanged();
         }
 
-        public async Task Edit(int entryId)
+        private async Task Edit(int entryId)
         {
             var entry = EntriesList.Find(x => x.Id == entryId);
             if (entry is null)
@@ -122,8 +128,7 @@ namespace ShoppingList4.Blazor.Pages
 
             var parameters = new DialogParameters<SimpleDialog>
             {
-                { x => x.Text, entry.Name  },
-                { x => x.Title, "Edycja pozycji"  }
+                { x => x.Text, entry.Name }, { x => x.Title, "Edycja pozycji" }
             };
 
             var dialog = await DialogService.ShowAsync<SimpleDialog>("Edycja pozycji",
@@ -132,35 +137,35 @@ namespace ShoppingList4.Blazor.Pages
 
             var dialogResult = await dialog.Result;
 
-            if (!dialogResult.Canceled)
+            if (dialogResult is { Canceled: true } or null)
             {
-                var data = dialogResult.Data.ToString();
-                if (string.IsNullOrEmpty(data))
-                {
-                    return;
-                }
+                return;
+            }
 
-                entry.Name = data;
+            var data = dialogResult.Data?.ToString();
+            if (string.IsNullOrEmpty(data))
+            {
+                return;
+            }
 
-                var isUpdated = await EntryService.Update(entry);
-                if (isUpdated)
-                {
-                    await GetEntries();
+            var dto = new EditEntryDto { Id = entry.Id, Name = data };
+            var result = await EntryService.Update(dto);
 
-                    Logger.LogInformation("Updated entry with id {id}.", entry.Id);
-                    Snackbar.Add("Dokonano edycji pozycji!", Severity.Success);
-                }
+            if (result.Id > 0)
+            {
+                entry.Name = dto.Name;
+                StateHasChanged();
+
+                Logger.LogInformation("Updated entry with id {id}.", entry.Id);
+                Snackbar.Add("Dokonano edycji pozycji!", Severity.Success);
             }
         }
 
         public async Task Add()
         {
-            _isAdding = true;
-
             var parameters = new DialogParameters<SimpleDialog>
             {
-                { x => x.Text, string.Empty  },
-                { x => x.Title, "Nowa pozycja"  }
+                { x => x.Text, string.Empty }, { x => x.Title, "Nowa pozycja" }
             };
 
             var dialog = await DialogService.ShowAsync<SimpleDialog>("Nowa pozycja",
@@ -169,33 +174,36 @@ namespace ShoppingList4.Blazor.Pages
 
             var dialogResult = await dialog.Result;
 
-            if (!dialogResult.Canceled)
+            if (dialogResult is { Canceled: true } or null)
             {
-                var data = dialogResult.Data.ToString();
-                if (string.IsNullOrEmpty(data))
-                {
-                    return;
-                }
-
-                var isAdded = await EntryService.Add(data, _id);
-                if (isAdded)
-                {
-                    await GetEntries();
-
-                    Logger.LogInformation("Added new entry with name {name} to list {id}.", data, _id);
-                    Snackbar.Add("Dodano now¹ pozycjê!", Severity.Success);
-                }
+                return;
             }
 
-            _isAdding = false;
+            var data = dialogResult.Data?.ToString();
+            if (string.IsNullOrEmpty(data))
+            {
+                return;
+            }
+
+            var dto = new AddEntryDto { Name = data, ShoppingListId = _id };
+            var result = await EntryService.Add(dto);
+
+            if (result.Id > 0)
+            {
+                EntriesList.Add(result);
+                StateHasChanged();
+
+                Logger.LogInformation("Added new entry with name {name} to list {id}.", data, _id);
+                Snackbar.Add("Dodano nowÄ… pozycjÄ™!", Severity.Success);
+            }
         }
 
         public async Task DeleteAll()
         {
             bool? isConfirmed = await DialogService.ShowMessageBox(
                 "Potwierdzenie",
-                "Czy chcesz usun¹æ wszystkie pozycje?",
-                yesText: "Usuñ", cancelText: "Anuluj");
+                "Czy chcesz usunÄ…Ä‡ wszystkie pozycje?",
+                yesText: "UsuÅ„", cancelText: "Anuluj");
 
             if (isConfirmed != true)
             {
@@ -204,7 +212,7 @@ namespace ShoppingList4.Blazor.Pages
 
             await DeleteMultipleAsync(EntriesList.ToList());
 
-            Snackbar.Add("Wszystkie pozycje zosta³y usuniête!", Severity.Success);
+            Snackbar.Add("Wszystkie pozycje zostaÅ‚y usuniÄ™te!", Severity.Success);
         }
 
         private async Task DeleteMultipleAsync(List<Entry> entries)
@@ -229,8 +237,8 @@ namespace ShoppingList4.Blazor.Pages
         {
             bool? isConfirmed = await DialogService.ShowMessageBox(
                 "Potwierdzenie",
-                "Czy chcesz usun¹æ kupione pozycje?",
-                yesText: "Usuñ", cancelText: "Anuluj");
+                "Czy chcesz usunÄ…Ä‡ kupione pozycje?",
+                yesText: "UsuÅ„", cancelText: "Anuluj");
 
             if (isConfirmed != true)
             {
@@ -240,15 +248,7 @@ namespace ShoppingList4.Blazor.Pages
             var entries = EntriesList.Where(x => x.IsBought).ToList();
             await DeleteMultipleAsync(entries);
 
-            Snackbar.Add("Kupione pozycje zosta³y usuniête!", Severity.Success);
-        }
-
-        private async Task HandleAdd()
-        {
-            if (!_isAdding)
-            {
-                await Add();
-            }
+            Snackbar.Add("Kupione pozycje zostaÅ‚y usuniÄ™te!", Severity.Success);
         }
     }
 }

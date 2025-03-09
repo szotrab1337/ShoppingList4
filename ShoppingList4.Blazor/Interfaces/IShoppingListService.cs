@@ -1,12 +1,13 @@
-﻿using ShoppingList4.Blazor.Entities;
+﻿using ShoppingList4.Blazor.Dtos;
+using ShoppingList4.Domain.Entities;
 
 namespace ShoppingList4.Blazor.Interfaces
 {
     public interface IShoppingListService
     {
-        Task<bool> Add(string name);
+        Task<IEnumerable<ShoppingList>> GetAll();
+        Task<ShoppingList> Add(AddShoppingListDto dto);
         Task<bool> Delete(int id);
-        Task<List<ShoppingList>> GetAll();
-        Task<bool> Update(ShoppingList shoppingList);
+        Task<ShoppingList> Update(EditShoppingListDto dto);
     }
 }

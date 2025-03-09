@@ -1,14 +1,13 @@
 ﻿@page "/"
 
-@using ShoppingList4.Blazor.Components
-
 <PageTitle>ShoppingList4</PageTitle>
-<KeyboardShortcuts ShortcutKey="n" OnShortcutPressed="HandleAdd" />
 
 @if (!IsLoading)
 {
     <div class="d-flex justify-end">
-        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary" OnClick="Add">Dodaj</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Class="mb-3" Variant="Variant.Filled" Color="Color.Primary"
+                   OnClick="Add">Dodaj
+        </MudButton>
     </div>
 
     @foreach (var shoppingList in ShoppingLists)
@@ -19,12 +18,15 @@
                     <MudText Typo="Typo.h4">@shoppingList.Name</MudText>
                 </CardHeaderContent>
                 <CardHeaderActions>
-                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit" OnClick="@(() => Edit(shoppingList.Id))" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit" OnClick="@(() => Delete(shoppingList.Id))" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Inherit"
+                                   OnClick="@(() => Edit(shoppingList.Id))"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Inherit"
+                                   OnClick="@(() => Delete(shoppingList.Id))"/>
                 </CardHeaderActions>
             </MudCardHeader>
             <MudCardContent>
-                <MudText Class="pb-2" Typo="Typo.body1"><em>Liczba rzeczy do kupienia:</em> <b>@shoppingList.EntriesNotBought</b> z <b>@shoppingList.Entries.Count</b></MudText>
+                <MudText Class="pb-2" Typo="Typo.body1"><em>Kupiono:</em>
+                    <b>@shoppingList.ItemsBoughtCount</b> z <b>@shoppingList.ItemsCount</b></MudText>
             </MudCardContent>
         </MudCard>
     }
@@ -32,6 +34,6 @@
 else
 {
     <div class="d-flex justify-center mt-12 pt-12">
-        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+        <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true"/>
     </div>
 }

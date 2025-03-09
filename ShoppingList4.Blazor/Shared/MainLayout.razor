@@ -1,15 +1,16 @@
 ﻿@using ShoppingList4.Blazor.Pages
 @inherits LayoutComponentBase
 
-<PageTitle>ShoppingList4.Blazor</PageTitle>
+<PageTitle>Listy zakupów</PageTitle>
 
-<MudThemeProvider IsDarkMode="true" />
-<MudDialogProvider />
-<MudSnackbarProvider />
+<MudThemeProvider IsDarkMode="true"/>
+<MudDialogProvider/>
+<MudSnackbarProvider/>
+<MudPopoverProvider />
 
 <div class="page">
     <main>
-        <TopBar />
+        <TopBar/>
 
         <MudContainer MaxWidth="MaxWidth.Medium" Class="py-3 px-8">
             @Body

@@ -1,9 +1,7 @@
-﻿using ShoppingList4.Blazor.Entities;
-
-namespace ShoppingList4.Blazor.Interfaces
+﻿namespace ShoppingList4.Blazor.Interfaces
 {
     public interface IAccountService
     {
-        Task LoginAsync(User user);
+        Task Login(string email, string password);
     }
 }

@@ -5,21 +5,21 @@ namespace ShoppingList4.Blazor.Pages
 {
     public partial class TopBar
     {
-        [Inject] public ITokenService TokenService { get; set; } = default!;
+        [Inject] public IUserService UserService { get; set; } = null!;
 
-        public bool TokenExists { get; set; }
+        private bool UserExists { get; set; }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            TokenExists = await TokenService.Exists();
+            UserExists = await UserService.ExistsCurrentUser();
 
             StateHasChanged();
         }
 
-        public void Logout()
+        public async Task Logout()
         {
-            TokenService.Remove();
-            TokenExists = false;
+            await UserService.RemoveCurrentUser();
+            UserExists = false;
         }
     }
 }

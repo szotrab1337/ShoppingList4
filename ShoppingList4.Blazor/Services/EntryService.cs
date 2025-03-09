@@ -1,90 +1,86 @@
-﻿using Newtonsoft.Json;
-using ShoppingList4.Blazor.Entities;
+﻿using ShoppingList4.Blazor.Dtos;
 using ShoppingList4.Blazor.Interfaces;
-using ShoppingList4.Blazor.Models;
-using System.Net.Http.Headers;
-using System.Text;
+using ShoppingList4.Domain.Entities;
+using ShoppingList4.Domain.Interfaces;
 
 namespace ShoppingList4.Blazor.Services
 {
-    public class EntryService(IHttpClientFactory clientFactory, ITokenService tokenService) : IEntryService
+    public class EntryService(
+        IEntryRepository entryRepository,
+        IUserService userService,
+        ILogger<EntryService> logger) : IEntryService
     {
-        private readonly IHttpClientFactory _clientFactory = clientFactory;
-        private readonly ITokenService _tokenService = tokenService;
+        private readonly IEntryRepository _entryRepository = entryRepository;
+        private readonly IUserService _userService = userService;
+        private readonly ILogger<EntryService> _logger = logger;
 
-        public async Task<List<Entry>> Get(int shoppingListId)
+        public async Task<IEnumerable<Entry>> GetShoppingListEntries(int shoppingListId)
         {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
+            var user = await _userService.GetCurrentUser();
 
-            var token = await _tokenService.Get();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-            var response = await client.GetAsync($"api/shoppinglist/{shoppingListId}/entries");
-            var jsonEntries = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode || string.IsNullOrEmpty(jsonEntries))
-            {
-                return [];
-            }
-
-            return JsonConvert.DeserializeObject<List<Entry>>(jsonEntries)!;
+            return await _entryRepository.GetByShoppingListId(user?.ApiToken, shoppingListId);
         }
 
-        public async Task<bool> Update(Entry entry)
+        public async Task<Entry> Update(EditEntryDto dto)
         {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
+            var user = await _userService.GetCurrentUser();
 
-            var token = await _tokenService.Get();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var result = await _entryRepository.Edit(
+                user?.ApiToken,
+                dto);
 
-            var entryDto = new UpdateEntryDto(entry.Name, entry.IsBought);
-            var content = new StringContent(JsonConvert.SerializeObject(entryDto), Encoding.UTF8, "application/json");
-            var response = await client.PutAsync($"api/entry/{entry.Id}", content);
+            _logger.LogInformation("User {@User} created new entry {@Entry}.",
+                user, result.Item2);
 
-            return response.IsSuccessStatusCode;
+            return result.Item2;
         }
 
         public async Task<bool> Delete(int id)
         {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
+            var user = await _userService.GetCurrentUser();
 
-            var token = await _tokenService.Get();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var result = await _entryRepository.Delete(
+                user?.ApiToken,
+                id);
 
-            var response = await client.DeleteAsync($"api/entry/{id}");
+            if (result)
+            {
+                _logger.LogInformation("{@User} deleted entry {EntryId}.",
+                    user, id);
+            }
 
-            return response.IsSuccessStatusCode;
+            return result;
         }
 
-        public async Task<bool> DeleteMultiple(List<int> ids)
+        public async Task<bool> DeleteMultiple(IEnumerable<int> ids)
         {
-            using var client = _clientFactory.CreateClient("ShoppingList4");
+            var user = await _userService.GetCurrentUser();
 
-            var token = await _tokenService.Get();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var result = await _entryRepository.DeleteMultiple(
+                user?.ApiToken,
+                ids.ToArray());
 
-            var entries = new List<DeleteEntryDto>();
-            ids.ForEach(x => entries.Add(new DeleteEntryDto(x)));
+            if (result)
+            {
+                _logger.LogInformation("{@User} deleted entries {@Ids}.",
+                    user, ids);
+            }
 
-            var content = new StringContent(JsonConvert.SerializeObject(entries), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("api/entry/deleteMultiple", content);
-
-            return response.IsSuccessStatusCode;
+            return result;
         }
 
-        public async Task<bool> Add(string name, int shoppingListId)
+        public async Task<Entry> Add(AddEntryDto dto)
         {
-            var entry = new EntryDto(name, shoppingListId);
+            var user = await _userService.GetCurrentUser();
 
-            using var client = _clientFactory.CreateClient("ShoppingList4");
+            var result = await _entryRepository.Add(
+                user?.ApiToken,
+                dto);
 
-            var token = await _tokenService.Get();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            _logger.LogInformation("{@User} created new entry {@Entry}.",
+                user, result.Item2);
 
-            var content = new StringContent(JsonConvert.SerializeObject(entry), Encoding.UTF8, "application/json");
-            var response = await client.PostAsync("api/entry", content);
-
-            return response.IsSuccessStatusCode;
+            return result.Item2;
         }
     }
 }
