@@ -136,12 +136,16 @@ namespace ShoppingList4.Maui.ViewModel
             {
                 var vm = ShoppingLists.FirstOrDefault(x => x.Id == editedShoppingList.Id);
                 vm?.Update(editedShoppingList);
+                
+                query.Remove("EditedShoppingList");
             }
 
             if (query.TryGetValue("AddedShoppingList", out var addedShoppingListObj) &&
                 addedShoppingListObj is ShoppingList addedShoppingList)
             {
                 ShoppingLists.Add(new ShoppingListViewModel(addedShoppingList));
+                
+                query.Remove("AddedShoppingList");
             }
         }
     }

@@ -94,12 +94,16 @@ namespace ShoppingList4.Maui.ViewModel
             {
                 var vm = Entries.FirstOrDefault(x => x.Id == editedEntry.Id);
                 vm?.Update(editedEntry);
+                
+                query.Remove("EditedEntry");
             }
 
             if (query.TryGetValue("AddedEntry", out var addedEntryObj) &&
                 addedEntryObj is Entry addedEntry)
             {
                 Entries.Insert(0, new EntryViewModel(addedEntry));
+                
+                query.Remove("AddedEntry");
             }
         }
 
