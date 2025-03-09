@@ -87,7 +87,7 @@
 
                             <dxcv:SwipeContainer FullSwipeMode="None">
                                 <dxcv:SwipeContainer.ItemView>
-                                    <StackLayout>
+                                    <StackLayout Margin="0,0,0,3">
                                         <Frame Padding="0"
                                                CornerRadius="10"
                                                BackgroundColor="{DynamicResource Gray900}">

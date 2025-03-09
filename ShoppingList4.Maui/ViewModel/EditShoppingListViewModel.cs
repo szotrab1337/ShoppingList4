@@ -1,7 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingList4.Domain.Entities;
 using ShoppingList4.Maui.Dtos;
 using ShoppingList4.Maui.Interfaces;
 using ShoppingList4.Maui.ViewModel.Entities;

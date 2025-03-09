@@ -6,7 +6,8 @@ namespace ShoppingList4.Infrastructure.Extensions
 {
     public static class ServiceCollectionExtensions
     {
-        const string _baseAddress = "http://192.168.1.24:88/api/v1/";
+        // private const string _baseAddress = "http://192.168.1.24:88/api/v1/";
+        private const string _baseAddress = "https://shopping-list-4-app.azurewebsites.net/api/v1/";
 
         public static void AddInfrastructure(this IServiceCollection services)
         {
