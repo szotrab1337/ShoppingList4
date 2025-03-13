@@ -15,14 +15,13 @@ namespace ShoppingList4.Maui
                 .UseDevExpress(useLocalization: false)
                 .UseDevExpressControls()
                 .UseDevExpressCollectionView()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                 });
-
-            builder.UseMauiApp<App>().UseMauiCommunityToolkit();
-
+            
             builder.Services.AddInfrastructure();
             builder.Services.AddApplication();
 

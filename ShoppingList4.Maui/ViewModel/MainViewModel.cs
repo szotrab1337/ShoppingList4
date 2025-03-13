@@ -1,8 +1,9 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingList4.Domain.Entities;
+using ShoppingList4.Maui.Dtos;
 using ShoppingList4.Maui.Interfaces;
 using ShoppingList4.Maui.View;
+using ShoppingList4.Maui.View.Popups;
 using ShoppingList4.Maui.ViewModel.Entities;
 using System.Collections.ObjectModel;
 
@@ -11,11 +12,13 @@ namespace ShoppingList4.Maui.ViewModel
     public partial class MainViewModel(
         IUserService userService,
         IShoppingListService shoppingListService,
-        IMessageBoxService messageBoxService) : ObservableObject, IQueryAttributable
+        IMessageBoxService messageBoxService,
+        IDialogService dialogService) : ObservableObject
     {
         private readonly IUserService _userService = userService;
         private readonly IShoppingListService _shoppingListService = shoppingListService;
         private readonly IMessageBoxService _messageBoxService = messageBoxService;
+        private readonly IDialogService _dialogService = dialogService;
 
         private bool _loaded;
 
@@ -110,15 +113,32 @@ namespace ShoppingList4.Maui.ViewModel
         [RelayCommand]
         private async Task Edit(ShoppingListViewModel shoppingList)
         {
-            var navigationParam = new Dictionary<string, object> { { "ShoppingList", shoppingList } };
+            var popup = new InputPopup(shoppingList.Name);
+            var name = await _dialogService.ShowPromptAsync(popup) as string;
 
-            await Shell.Current.GoToAsync(nameof(EditShoppingListPage), navigationParam);
+            if (!string.IsNullOrEmpty(name))
+            {
+                var dto = new EditShoppingListDto { Id = shoppingList.Id, Name = name };
+                var result = await _shoppingListService.Update(dto);
+
+                var vm = ShoppingLists.FirstOrDefault(x => x.Id == shoppingList.Id);
+                vm?.Update(result);
+            }
         }
 
         [RelayCommand]
         private async Task Add()
         {
-            await Shell.Current.GoToAsync(nameof(AddShoppingListPage));
+            var popup = new InputPopup();
+            var name = await _dialogService.ShowPromptAsync(popup) as string;
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                var dto = new AddShoppingListDto { Name = name };
+                var result = await _shoppingListService.Add(dto);
+
+                ShoppingLists.Add(new ShoppingListViewModel(result));
+            }
         }
 
         [RelayCommand]
@@ -127,26 +147,6 @@ namespace ShoppingList4.Maui.ViewModel
             var navigationParam = new Dictionary<string, object> { { "ShoppingListId", shoppingList.Id } };
 
             await Shell.Current.GoToAsync(nameof(EntriesPage), navigationParam);
-        }
-
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
-        {
-            if (query.TryGetValue("EditedShoppingList", out var editedShoppingListObj) &&
-                editedShoppingListObj is ShoppingList editedShoppingList)
-            {
-                var vm = ShoppingLists.FirstOrDefault(x => x.Id == editedShoppingList.Id);
-                vm?.Update(editedShoppingList);
-                
-                query.Remove("EditedShoppingList");
-            }
-
-            if (query.TryGetValue("AddedShoppingList", out var addedShoppingListObj) &&
-                addedShoppingListObj is ShoppingList addedShoppingList)
-            {
-                ShoppingLists.Add(new ShoppingListViewModel(addedShoppingList));
-                
-                query.Remove("AddedShoppingList");
-            }
         }
     }
 }

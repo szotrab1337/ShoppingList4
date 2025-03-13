@@ -2,18 +2,14 @@
 
 namespace ShoppingList4.Maui
 {
-    public partial class AppShell : Shell
+    public partial class AppShell
     {
         public AppShell()
         {
             InitializeComponent();
 
             Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
-            Routing.RegisterRoute(nameof(AddShoppingListPage), typeof(AddShoppingListPage));
-            Routing.RegisterRoute(nameof(EditShoppingListPage), typeof(EditShoppingListPage));
             Routing.RegisterRoute(nameof(EntriesPage), typeof(EntriesPage));
-            Routing.RegisterRoute(nameof(AddEntryPage), typeof(AddEntryPage));
-            Routing.RegisterRoute(nameof(EditEntryPage), typeof(EditEntryPage));
         }
     }
 }

@@ -3,19 +3,20 @@ using CommunityToolkit.Mvvm.Input;
 using DevExpress.Maui.Core.Internal;
 using ShoppingList4.Maui.Dtos;
 using ShoppingList4.Maui.Interfaces;
-using ShoppingList4.Maui.View;
+using ShoppingList4.Maui.View.Popups;
 using ShoppingList4.Maui.ViewModel.Entities;
 using System.Collections.ObjectModel;
-using Entry = ShoppingList4.Domain.Entities.Entry;
 
 namespace ShoppingList4.Maui.ViewModel
 {
     public partial class EntriesViewModel(
         IEntryService entryService,
-        IMessageBoxService messageBoxService) : ObservableObject, IQueryAttributable
+        IMessageBoxService messageBoxService,
+        IDialogService dialogService) : ObservableObject, IQueryAttributable
     {
         private readonly IEntryService _entryService = entryService;
         private readonly IMessageBoxService _messageBoxService = messageBoxService;
+        private readonly IDialogService _dialogService = dialogService;
 
         private int _shoppingListId;
 
@@ -87,23 +88,6 @@ namespace ShoppingList4.Maui.ViewModel
                 shoppingListIdObj is int shoppingListId)
             {
                 _shoppingListId = shoppingListId;
-            }
-
-            if (query.TryGetValue("EditedEntry", out var editedEntryObj) &&
-                editedEntryObj is Entry editedEntry)
-            {
-                var vm = Entries.FirstOrDefault(x => x.Id == editedEntry.Id);
-                vm?.Update(editedEntry);
-                
-                query.Remove("EditedEntry");
-            }
-
-            if (query.TryGetValue("AddedEntry", out var addedEntryObj) &&
-                addedEntryObj is Entry addedEntry)
-            {
-                Entries.Insert(0, new EntryViewModel(addedEntry));
-                
-                query.Remove("AddedEntry");
             }
         }
 
@@ -186,17 +170,32 @@ namespace ShoppingList4.Maui.ViewModel
         [RelayCommand]
         private async Task Add()
         {
-            var navigationParam = new Dictionary<string, object> { { "ShoppingListId", _shoppingListId } };
+            var popup = new InputPopup();
+            var name = await _dialogService.ShowPromptAsync(popup) as string;
 
-            await Shell.Current.GoToAsync(nameof(AddEntryPage), navigationParam);
+            if (!string.IsNullOrEmpty(name))
+            {
+                var dto = new AddEntryDto { ShoppingListId = _shoppingListId, Name = name };
+                var result = await _entryService.Add(dto);
+
+                Entries.Insert(0, new EntryViewModel(result));
+            }
         }
 
         [RelayCommand]
         private async Task Edit(EntryViewModel entry)
         {
-            var navigationParam = new Dictionary<string, object> { { "Entry", entry } };
+            var popup = new InputPopup(entry.Name);
+            var name = await _dialogService.ShowPromptAsync(popup) as string;
 
-            await Shell.Current.GoToAsync(nameof(EditEntryPage), navigationParam);
+            if (!string.IsNullOrEmpty(name))
+            {
+                var dto = new EditEntryDto { Id = entry.Id, Name = name };
+                var result = await _entryService.Update(dto);
+
+                var vm = Entries.FirstOrDefault(x => x.Id == entry.Id);
+                vm?.Update(result);
+            }
         }
     }
 }
