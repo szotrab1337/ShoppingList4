@@ -24,7 +24,7 @@ namespace ShoppingList4.Maui.View.Popups
 
         private async void InputPopup_OnOpened(object? sender, PopupOpenedEventArgs e)
         {
-            await Task.Delay(50);
+            await Task.Delay(150);
             MainThread.BeginInvokeOnMainThread(() =>
             {
                 InputEntry.Focus();
