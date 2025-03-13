@@ -55,18 +55,6 @@
     <ProjectReference Include="..\ShoppingList4.Infrastructure\ShoppingList4.Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="View\AddEntryPage.xaml.cs">
-      <DependentUpon>AddEntryPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="View\AddShoppingListPage.xaml.cs">
-      <DependentUpon>AddShoppingListPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="View\EditEntryPage.xaml.cs">
-      <DependentUpon>EditEntryPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Update="View\EditShoppingListPage.xaml.cs">
-      <DependentUpon>EditShoppingListPage.xaml</DependentUpon>
-    </Compile>
     <Compile Update="View\EntriesPage.xaml.cs">
       <DependentUpon>EntriesPage.xaml</DependentUpon>
     </Compile>
@@ -75,18 +63,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <MauiXaml Update="View\AddEntryPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="View\AddShoppingListPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="View\EditEntryPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
-    <MauiXaml Update="View\EditShoppingListPage.xaml">
-      <Generator>MSBuild:Compile</Generator>
-    </MauiXaml>
     <MauiXaml Update="View\LoginPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </MauiXaml>

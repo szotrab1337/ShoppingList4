@@ -15,26 +15,15 @@ namespace ShoppingList4.Maui.Extensions
             services.AddTransient<LoginPage>();
             services.AddTransient<LoginPageViewModel>();
 
-            services.AddTransient<AddShoppingListPage>();
-            services.AddTransient<AddShoppingListViewModel>();
-
-            services.AddTransient<EditShoppingListPage>();
-            services.AddTransient<EditShoppingListViewModel>();
-
             services.AddTransient<EntriesPage>();
             services.AddTransient<EntriesViewModel>();
-
-            services.AddTransient<AddEntryPage>();
-            services.AddTransient<AddEntryViewModel>();
-
-            services.AddTransient<EditEntryPage>();
-            services.AddTransient<EditEntryViewModel>();
 
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IShoppingListService, ShoppingListService>();
             services.AddScoped<IEntryService, EntryService>();
             services.AddScoped<IMessageBoxService, MessageBoxService>();
+            services.AddScoped<IDialogService, DialogService>();
         }
     }
 }
