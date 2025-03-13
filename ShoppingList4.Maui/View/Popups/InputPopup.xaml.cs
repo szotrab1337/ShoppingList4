@@ -1,4 +1,6 @@
-﻿namespace ShoppingList4.Maui.View.Popups
+﻿using CommunityToolkit.Maui.Core;
+
+namespace ShoppingList4.Maui.View.Popups
 {
     public partial class InputPopup
     {
@@ -6,15 +8,27 @@
         {
             InitializeComponent();
 
-            if (!string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
             {
-                InputEntry.Text = value;
+                return;
             }
+
+            InputEntry.Text = value;
+            InputEntry.CursorPosition = InputEntry.Text.Length;
         }
 
         private async void OnOkClicked(object sender, EventArgs e)
         {
             await CloseAsync(InputEntry.Text, CancellationToken.None);
+        }
+
+        private async void InputPopup_OnOpened(object? sender, PopupOpenedEventArgs e)
+        {
+            await Task.Delay(50);
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                InputEntry.Focus();
+            });
         }
     }
 }
