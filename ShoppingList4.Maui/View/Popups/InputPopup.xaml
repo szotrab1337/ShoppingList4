@@ -8,6 +8,7 @@
     xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Class="ShoppingList4.Maui.View.Popups.InputPopup"
     Color="{DynamicResource Gray950}"
+    Opened="InputPopup_OnOpened"
     Size="300,200">
 
     <VerticalStackLayout
@@ -15,11 +16,10 @@
         Spacing="10">
         <Label
             Text="Wprowadź nazwę:"
-            TextColor="{DynamicResource Gray400}"/>
+            TextColor="{DynamicResource Gray400}" />
         <Entry
             x:Name="InputEntry"
             MaxLength="35"
-            ClearButtonVisibility="WhileEditing"
             Placeholder="Nazwa..." />
         <Button
             Text="OK"

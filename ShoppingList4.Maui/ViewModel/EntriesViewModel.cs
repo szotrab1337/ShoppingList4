@@ -178,7 +178,9 @@ namespace ShoppingList4.Maui.ViewModel
                 var dto = new AddEntryDto { ShoppingListId = _shoppingListId, Name = name };
                 var result = await _entryService.Add(dto);
 
-                Entries.Insert(0, new EntryViewModel(result));
+                var vm = new EntryViewModel(result);
+                vm.OnBoughtStatusChanged += OnEntryBoughtStatusChanged;
+                Entries.Insert(0, vm);
             }
         }
 
