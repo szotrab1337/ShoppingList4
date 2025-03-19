@@ -13,12 +13,14 @@ namespace ShoppingList4.Maui.ViewModel
         IUserService userService,
         IShoppingListService shoppingListService,
         IMessageBoxService messageBoxService,
-        IDialogService dialogService) : ObservableObject
+        IDialogService dialogService,
+        INavigationService navigationService) : ObservableObject
     {
         private readonly IUserService _userService = userService;
         private readonly IShoppingListService _shoppingListService = shoppingListService;
         private readonly IMessageBoxService _messageBoxService = messageBoxService;
         private readonly IDialogService _dialogService = dialogService;
+        private readonly INavigationService _navigationService = navigationService;
 
         private bool _loaded;
 
@@ -43,6 +45,10 @@ namespace ShoppingList4.Maui.ViewModel
             if (userExists)
             {
                 await LoadShoppingLists();
+            }
+            else
+            {
+                await _navigationService.NavigateTo("//Login");
             }
 
             IsInitializing = false;
@@ -101,13 +107,7 @@ namespace ShoppingList4.Maui.ViewModel
 
         private async Task<bool> CheckUser()
         {
-            if (await _userService.ExistsCurrentUser())
-            {
-                return true;
-            }
-
-            await Shell.Current.GoToAsync("//Login");
-            return false;
+            return await _userService.ExistsCurrentUser();
         }
 
         [RelayCommand]
@@ -146,7 +146,7 @@ namespace ShoppingList4.Maui.ViewModel
         {
             var navigationParam = new Dictionary<string, object> { { "ShoppingListId", shoppingList.Id } };
 
-            await Shell.Current.GoToAsync(nameof(EntriesPage), navigationParam);
+            await _navigationService.NavigateTo(nameof(EntriesPage), navigationParam);
         }
     }
 }

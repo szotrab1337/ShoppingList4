@@ -4,7 +4,7 @@ namespace ShoppingList4.Maui.View
 {
     public partial class LoginPage : ContentPage
     {
-        public LoginPage(LoginPageViewModel vm)
+        public LoginPage(LoginViewModel vm)
         {
             InitializeComponent();
             _viewModel = vm;
@@ -12,7 +12,7 @@ namespace ShoppingList4.Maui.View
             BindingContext = _viewModel;
         }
 
-        private readonly LoginPageViewModel _viewModel;
+        private readonly LoginViewModel _viewModel;
 
         protected override async void OnAppearing()
         {

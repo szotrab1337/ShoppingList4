@@ -30,7 +30,7 @@ namespace ShoppingList4.Maui.Services
                 user?.ApiToken,
                 dto);
 
-            _logger.LogInformation("User {@User} created new entry {@Entry}.",
+            _logger.LogInformation("User {@User} updated entry {@Entry}.",
                 user, result.Item2);
 
             return result.Item2;
