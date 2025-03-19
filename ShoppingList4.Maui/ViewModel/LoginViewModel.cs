@@ -5,13 +5,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingList4.Maui.ViewModel
 {
-    public partial class LoginPageViewModel(IAccountService accountService, IUserService userService,
-        IMessageBoxService messageBoxService) : ObservableValidator
+    public partial class LoginViewModel(
+        IAccountService accountService,
+        IUserService userService,
+        IMessageBoxService messageBoxService,
+        INavigationService navigationService) : ObservableValidator
     {
         private readonly IAccountService _accountService = accountService;
         private readonly IUserService _userService = userService;
         private readonly IMessageBoxService _messageBoxService = messageBoxService;
-
+        private readonly INavigationService _navigationService = navigationService;
 
         [ObservableProperty]
         private bool _userExists;
@@ -50,9 +53,9 @@ namespace ShoppingList4.Maui.ViewModel
                     return;
                 }
 
-                await Shell.Current.GoToAsync("//Main");
+                await _navigationService.NavigateTo("//Main");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
             }

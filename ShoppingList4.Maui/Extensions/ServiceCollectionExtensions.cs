@@ -13,7 +13,7 @@ namespace ShoppingList4.Maui.Extensions
             services.AddSingleton<MainViewModel>();
 
             services.AddTransient<LoginPage>();
-            services.AddTransient<LoginPageViewModel>();
+            services.AddTransient<LoginViewModel>();
 
             services.AddTransient<EntriesPage>();
             services.AddTransient<EntriesViewModel>();
@@ -24,6 +24,7 @@ namespace ShoppingList4.Maui.Extensions
             services.AddScoped<IEntryService, EntryService>();
             services.AddScoped<IMessageBoxService, MessageBoxService>();
             services.AddScoped<IDialogService, DialogService>();
+            services.AddScoped<INavigationService, NavigationService>();
         }
     }
 }
