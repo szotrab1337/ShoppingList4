@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using ShoppingList4.Api.Domain.Entities;
 
-namespace ShoppingList4.Api.Application.Extensions
+namespace ShoppingList4.Api.Infrastructure.Extensions
 {
     public static class LoggerExtensions
     {
