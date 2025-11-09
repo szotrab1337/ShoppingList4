@@ -1,11 +1,11 @@
 ﻿using FluentValidation;
-using ShoppingList4.Api.Infrastructure.Persistence;
+using ShoppingList4.Api.Domain.Interfaces;
 
 namespace ShoppingList4.Api.Application.Users.Commands.RegisterUser
 {
     public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
     {
-        public RegisterUserCommandValidator(ShoppingListDbContext dbContext)
+        public RegisterUserCommandValidator(IUserRepository userRepository)
         {
             RuleFor(x => x.Email)
                 .NotEmpty()
@@ -31,7 +31,7 @@ namespace ShoppingList4.Api.Application.Users.Commands.RegisterUser
             RuleFor(x => x.Email)
                 .Custom((value, context) =>
                 {
-                    var emailInUse = dbContext.Users.Any(x => x.Email == value);
+                    var emailInUse = userRepository.EmailExists(value);
 
                     if (emailInUse)
                     {
