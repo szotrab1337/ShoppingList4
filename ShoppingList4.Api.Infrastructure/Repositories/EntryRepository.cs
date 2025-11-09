@@ -36,6 +36,13 @@ namespace ShoppingList4.Api.Infrastructure.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id);
         }
 
+        public async Task<IEnumerable<Entry>> GetByShoppingListId(int shoppingListId)
+        {
+            return await _dbContext.Entries
+                .Where(x => x.ShoppingListId == shoppingListId)
+                .ToListAsync();
+        }
+
         public async Task Update(Entry entry)
         {
             await _dbContext.Entries
@@ -44,13 +51,6 @@ namespace ShoppingList4.Api.Infrastructure.Repositories
                     .SetProperty(z => z.Name, entry.Name)
                     .SetProperty(z => z.IsBought, entry.IsBought)
                 );
-        }
-
-        public async Task<IEnumerable<Entry>> GetByShoppingListId(int shoppingListId)
-        {
-            return await _dbContext.Entries
-                .Where(x => x.ShoppingListId == shoppingListId)
-                .ToListAsync();
         }
     }
 }

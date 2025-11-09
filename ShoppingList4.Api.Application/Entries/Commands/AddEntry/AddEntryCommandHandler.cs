@@ -15,8 +15,8 @@ namespace ShoppingList4.Api.Application.Entries.Commands.AddEntry
         IMediator mediator) : IRequestHandler<AddEntryCommand, EntryDto>
     {
         private readonly IEntryRepository _entryRepository = entryRepository;
-        private readonly IMapper _mapper = mapper;
         private readonly ILogger<AddEntryCommandHandler> _logger = logger;
+        private readonly IMapper _mapper = mapper;
         private readonly IMediator _mediator = mediator;
 
         public async Task<EntryDto> Handle(AddEntryCommand request, CancellationToken cancellationToken)

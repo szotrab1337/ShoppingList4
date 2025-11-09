@@ -1,4 +1,4 @@
-﻿namespace ShoppingList4.Api.Application.Common
+﻿namespace ShoppingList4.Api.Infrastructure.Authentication
 {
     public class JwtSettings
     {

@@ -16,6 +16,11 @@ namespace ShoppingList4.Api.Infrastructure.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public bool EmailExists(string email)
+        {
+            return _dbContext.Users.Any(x => x.Email == email);
+        }
+
         public async Task<User?> Get(int id)
         {
             return await _dbContext.Users

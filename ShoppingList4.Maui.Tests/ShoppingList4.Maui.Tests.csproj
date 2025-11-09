@@ -24,7 +24,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ShoppingList4.Api.Application\ShoppingList4.Api.Application.csproj" />
       <ProjectReference Include="..\ShoppingList4.Maui\ShoppingList4.Maui.csproj" />
     </ItemGroup>
 

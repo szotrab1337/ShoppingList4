@@ -11,7 +11,6 @@ builder.Logging.AddLogger(builder.Configuration);
 // Add services to the container.
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
-builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddVersioning();
 builder.Services.AddMiddlewares();
 

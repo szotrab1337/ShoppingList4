@@ -11,8 +11,8 @@ namespace ShoppingList4.Api.Application.ShoppingLists.Queries.GetShoppingListByI
         IShoppingListRepository shoppingListRepository,
         IMapper mapper) : IRequestHandler<GetShoppingListByIdQuery, ShoppingListDto>
     {
-        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
         private readonly IMapper _mapper = mapper;
+        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
 
         public async Task<ShoppingListDto> Handle(GetShoppingListByIdQuery request, CancellationToken cancellationToken)
         {

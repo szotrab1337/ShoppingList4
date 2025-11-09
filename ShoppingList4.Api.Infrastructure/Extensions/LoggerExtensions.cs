@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 using Serilog;
 using ShoppingList4.Api.Domain.Entities;
 
-namespace ShoppingList4.Api.Application.Extensions
+namespace ShoppingList4.Api.Infrastructure.Extensions
 {
     public static class LoggerExtensions
     {
@@ -21,30 +21,27 @@ namespace ShoppingList4.Api.Application.Extensions
 
         private static LoggerConfiguration AddDestructure(this LoggerConfiguration configuration)
         {
-            configuration.Destructure.ByTransforming<ShoppingList>(
-                x => new
-                {
-                    x.Id,
-                    x.Name,
-                    x.CreatedOn
-                });
+            configuration.Destructure.ByTransforming<ShoppingList>(x => new
+            {
+                x.Id,
+                x.Name,
+                x.CreatedOn
+            });
 
-            configuration.Destructure.ByTransforming<Entry>(
-                x => new
-                {
-                    x.Id,
-                    x.Name,
-                    x.CreatedOn,
-                    x.ShoppingListId
-                });
+            configuration.Destructure.ByTransforming<Entry>(x => new
+            {
+                x.Id,
+                x.Name,
+                x.CreatedOn,
+                x.ShoppingListId
+            });
 
-            configuration.Destructure.ByTransforming<User>(
-                x => new
-                {
-                    x.Id,
-                    x.Email,
-                    x.Name
-                });
+            configuration.Destructure.ByTransforming<User>(x => new
+            {
+                x.Id,
+                x.Email,
+                x.Name
+            });
 
             return configuration;
         }

@@ -15,20 +15,20 @@ namespace ShoppingList4.Api.Controllers
     {
         private readonly IMediator _mediator = mediator;
 
-        [HttpPost("register")]
-        public async Task<ActionResult> RegisterUser(RegisterUserCommand command)
-        {
-            await _mediator.Send(command);
-
-            return Ok();
-        }
-
         [HttpPost("login")]
         public async Task<ActionResult> Login(LoginCommand command)
         {
             var user = await _mediator.Send(command);
 
             return Ok(user);
+        }
+
+        [HttpPost("register")]
+        public async Task<ActionResult> RegisterUser(RegisterUserCommand command)
+        {
+            await _mediator.Send(command);
+
+            return Ok();
         }
     }
 }

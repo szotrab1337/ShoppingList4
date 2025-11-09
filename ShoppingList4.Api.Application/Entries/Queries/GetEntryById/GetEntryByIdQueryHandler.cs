@@ -17,7 +17,7 @@ namespace ShoppingList4.Api.Application.Entries.Queries.GetEntryById
         public async Task<EntryDto> Handle(GetEntryByIdQuery request, CancellationToken cancellationToken)
         {
             var entry = await _entryRepository.Get(request.Id)
-                ?? throw new NotFoundException(nameof(Entry), request.Id.ToString());
+                        ?? throw new NotFoundException(nameof(Entry), request.Id.ToString());
 
             return _mapper.Map<EntryDto>(entry);
         }
