@@ -9,20 +9,6 @@ namespace ShoppingList4.Api.Infrastructure.Repositories
     {
         private readonly ShoppingListDbContext _dbContext = dbContext;
 
-        public async Task<ShoppingList?> Get(int id)
-        {
-            return await _dbContext.ShoppingLists
-                .Include(x => x.Entries)
-                .FirstOrDefaultAsync(x => x.Id == id);
-        }
-
-        public async Task<IEnumerable<ShoppingList>> GetAll()
-        {
-            return await _dbContext.ShoppingLists
-                .Include(x => x.Entries)
-                .ToListAsync();
-        }
-
         public async Task Add(ShoppingList list)
         {
             _dbContext.Add(list);
@@ -35,6 +21,20 @@ namespace ShoppingList4.Api.Infrastructure.Repositories
             await _dbContext.ShoppingLists
                 .Where(x => x.Id == id)
                 .ExecuteDeleteAsync();
+        }
+
+        public async Task<ShoppingList?> Get(int id)
+        {
+            return await _dbContext.ShoppingLists
+                .Include(x => x.Entries)
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<IEnumerable<ShoppingList>> GetAll()
+        {
+            return await _dbContext.ShoppingLists
+                .Include(x => x.Entries)
+                .ToListAsync();
         }
 
         public async Task Update(ShoppingList list)

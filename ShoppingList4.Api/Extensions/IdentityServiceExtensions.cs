@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ShoppingList4.Api.Application.Common;
-using System.Text;
 
 namespace ShoppingList4.Api.Extensions
 {

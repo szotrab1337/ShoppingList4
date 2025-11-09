@@ -8,8 +8,8 @@ namespace ShoppingList4.Api.Application.ShoppingLists.Commands.DeleteShoppingLis
         IShoppingListRepository shoppingListRepository,
         ILogger<DeleteShoppingListCommandHandler> logger) : IRequestHandler<DeleteShoppingListCommand>
     {
-        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
         private readonly ILogger<DeleteShoppingListCommandHandler> _logger = logger;
+        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
 
         public async Task Handle(DeleteShoppingListCommand request, CancellationToken cancellationToken)
         {

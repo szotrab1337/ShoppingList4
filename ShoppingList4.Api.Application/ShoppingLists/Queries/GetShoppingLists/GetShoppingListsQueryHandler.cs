@@ -9,8 +9,8 @@ namespace ShoppingList4.Api.Application.ShoppingLists.Queries.GetShoppingLists
         IShoppingListRepository shoppingListRepository,
         IMapper mapper) : IRequestHandler<GetShoppingListsQuery, IEnumerable<ShoppingListDto>>
     {
-        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
         private readonly IMapper _mapper = mapper;
+        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
 
         public async Task<IEnumerable<ShoppingListDto>> Handle(GetShoppingListsQuery request,
             CancellationToken cancellationToken)

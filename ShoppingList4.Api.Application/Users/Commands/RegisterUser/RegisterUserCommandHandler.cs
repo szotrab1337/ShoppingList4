@@ -13,10 +13,10 @@ namespace ShoppingList4.Api.Application.Users.Commands.RegisterUser
         ILogger<RegisterUserCommandHandler> logger,
         IPasswordHasher<User> passwordHasher) : IRequestHandler<RegisterUserCommand>
     {
-        private readonly IUserRepository _userRepository = userRepository;
-        private readonly IMapper _mapper = mapper;
         private readonly ILogger<RegisterUserCommandHandler> _logger = logger;
+        private readonly IMapper _mapper = mapper;
         private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
+        private readonly IUserRepository _userRepository = userRepository;
 
         public async Task Handle(RegisterUserCommand request, CancellationToken cancellationToken)
         {

@@ -1,4 +1,7 @@
-﻿using MediatR;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -8,9 +11,6 @@ using ShoppingList4.Api.Application.Users.Dtos;
 using ShoppingList4.Api.Domain.Entities;
 using ShoppingList4.Api.Domain.Exceptions;
 using ShoppingList4.Api.Domain.Interfaces;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace ShoppingList4.Api.Application.Users.Commands.Login
 {
@@ -20,10 +20,10 @@ namespace ShoppingList4.Api.Application.Users.Commands.Login
         ILogger<LoginCommandHandler> logger,
         IPasswordHasher<User> passwordHasher) : IRequestHandler<LoginCommand, UserDto>
     {
-        private readonly IUserRepository _userRepository = userRepository;
         private readonly JwtSettings _jwtSettings = jwtSettings;
         private readonly ILogger<LoginCommandHandler> _logger = logger;
         private readonly IPasswordHasher<User> _passwordHasher = passwordHasher;
+        private readonly IUserRepository _userRepository = userRepository;
 
         public async Task<UserDto> Handle(LoginCommand request, CancellationToken cancellationToken)
         {
@@ -51,7 +51,7 @@ namespace ShoppingList4.Api.Application.Users.Commands.Login
                 Audience = _jwtSettings.Issuer,
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Today.AddDays(_jwtSettings.ExpireDays),
-                SigningCredentials = credentials,
+                SigningCredentials = credentials
             };
 
             var tokenHandler = new JwtSecurityTokenHandler();

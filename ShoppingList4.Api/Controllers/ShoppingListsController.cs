@@ -18,20 +18,20 @@ namespace ShoppingList4.Api.Controllers
     {
         private readonly IMediator _mediator = mediator;
 
-        [HttpGet("all")]
-        public async Task<ActionResult> GetAll()
-        {
-            var lists = await _mediator.Send(new GetShoppingListsQuery());
-
-            return Ok(lists);
-        }
-
         [HttpPost]
         public async Task<ActionResult> Add(AddShoppingListCommand command)
         {
             var list = await _mediator.Send(command);
 
             return Created($"/api/v1/shopping-lists/{list.Id}", list);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            await _mediator.Send(new DeleteShoppingListCommand(id));
+
+            return NoContent();
         }
 
         [HttpGet("{id}")]
@@ -42,12 +42,12 @@ namespace ShoppingList4.Api.Controllers
             return Ok(list);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        [HttpGet("all")]
+        public async Task<ActionResult> GetAll()
         {
-            await _mediator.Send(new DeleteShoppingListCommand(id));
+            var lists = await _mediator.Send(new GetShoppingListsQuery());
 
-            return NoContent();
+            return Ok(lists);
         }
 
         [HttpPut]

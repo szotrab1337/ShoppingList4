@@ -14,10 +14,10 @@ namespace ShoppingList4.Api.Application.ShoppingLists.Commands.AddShoppingList
         ILogger<AddShoppingListCommandHandler> logger,
         IMediator mediator) : IRequestHandler<AddShoppingListCommand, ShoppingListDto>
     {
-        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
-        private readonly IMapper _mapper = mapper;
         private readonly ILogger<AddShoppingListCommandHandler> _logger = logger;
+        private readonly IMapper _mapper = mapper;
         private readonly IMediator _mediator = mediator;
+        private readonly IShoppingListRepository _shoppingListRepository = shoppingListRepository;
 
         public async Task<ShoppingListDto> Handle(AddShoppingListCommand request, CancellationToken cancellationToken)
         {

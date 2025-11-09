@@ -36,22 +36,6 @@ namespace ShoppingList4.Api.Controllers
             return NoContent();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<EntryDto>> Get(int id)
-        {
-            var entry = await _mediator.Send(new GetEntryByIdQuery(id));
-
-            return Ok(entry);
-        }
-
-        [HttpPut]
-        public async Task<ActionResult> Update(EditEntryCommand command)
-        {
-            var entry = await _mediator.Send(command);
-
-            return Ok(entry);
-        }
-
         [HttpDelete("multiple")]
         public async Task<ActionResult> DeleteMultiple(IEnumerable<int> ids)
         {
@@ -60,12 +44,28 @@ namespace ShoppingList4.Api.Controllers
             return NoContent();
         }
 
+        [HttpGet("{id}")]
+        public async Task<ActionResult<EntryDto>> Get(int id)
+        {
+            var entry = await _mediator.Send(new GetEntryByIdQuery(id));
+
+            return Ok(entry);
+        }
+
         [HttpGet("shopping-list/{shoppingListId}")]
         public async Task<ActionResult> GetShoppingListEntries(int shoppingListId)
         {
             var entries = await _mediator.Send(new GetEntriesByShoppingListIdQuery(shoppingListId));
 
             return Ok(entries);
+        }
+
+        [HttpPut]
+        public async Task<ActionResult> Update(EditEntryCommand command)
+        {
+            var entry = await _mediator.Send(command);
+
+            return Ok(entry);
         }
     }
 }
