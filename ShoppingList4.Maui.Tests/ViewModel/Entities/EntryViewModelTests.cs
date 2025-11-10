@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using CommunityToolkit.Mvvm.Input;
+using FluentAssertions;
 using ShoppingList4.Maui.ViewModel.Entities;
 using Entry = ShoppingList4.Domain.Entities.Entry;
 
@@ -33,7 +34,7 @@ namespace ShoppingList4.Maui.Tests.ViewModel.Entities
         {
             // Arrange
             var entry = new Entry { Name = "Milk", IsBought = false };
-            var viewModel = new EntryViewModel(entry);
+            var viewModel = new EntryViewModel(entry, null);
 
             var updatedEntry = new Entry { Name = "Bread", IsBought = true };
 

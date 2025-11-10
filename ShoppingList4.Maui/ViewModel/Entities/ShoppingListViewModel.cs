@@ -5,6 +5,18 @@ namespace ShoppingList4.Maui.ViewModel.Entities
 {
     public partial class ShoppingListViewModel : ObservableObject
     {
+        [ObservableProperty]
+        private int _id;
+
+        [ObservableProperty]
+        private int _itemsBoughtCount;
+
+        [ObservableProperty]
+        private int _itemsCount;
+
+        [ObservableProperty]
+        private string _name;
+
         public ShoppingListViewModel(ShoppingList shoppingList)
         {
             Id = shoppingList.Id;
@@ -12,14 +24,6 @@ namespace ShoppingList4.Maui.ViewModel.Entities
             ItemsCount = shoppingList.ItemsCount;
             ItemsBoughtCount = shoppingList.ItemsBoughtCount;
         }
-
-        [ObservableProperty] private int _id;
-
-        [ObservableProperty] private string _name;
-
-        [ObservableProperty] private int _itemsCount;
-
-        [ObservableProperty] private int _itemsBoughtCount;
 
         public void Update(ShoppingList shoppingList)
         {

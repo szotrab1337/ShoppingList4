@@ -1,8 +1,8 @@
-﻿using ShoppingList4.Domain.Entities;
+﻿using System.Text;
+using System.Text.Json;
+using ShoppingList4.Domain.Entities;
 using ShoppingList4.Domain.Interfaces;
 using ShoppingList4.Infrastructure.Common;
-using System.Text;
-using System.Text.Json;
 
 namespace ShoppingList4.Infrastructure.Repositories
 {

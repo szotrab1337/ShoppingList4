@@ -1,7 +1,8 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.ComponentModel.DataAnnotations;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using ShoppingList4.Application.Interfaces;
 using ShoppingList4.Maui.Interfaces;
-using System.ComponentModel.DataAnnotations;
 
 namespace ShoppingList4.Maui.ViewModel
 {
@@ -12,12 +13,9 @@ namespace ShoppingList4.Maui.ViewModel
         INavigationService navigationService) : ObservableValidator
     {
         private readonly IAccountService _accountService = accountService;
-        private readonly IUserService _userService = userService;
         private readonly IMessageBoxService _messageBoxService = messageBoxService;
         private readonly INavigationService _navigationService = navigationService;
-
-        [ObservableProperty]
-        private bool _userExists;
+        private readonly IUserService _userService = userService;
 
         [ObservableProperty]
         [EmailAddress(ErrorMessage = "Nie jest to poprawny adres email.")]
@@ -33,11 +31,21 @@ namespace ShoppingList4.Maui.ViewModel
         [NotifyCanExecuteChangedFor(nameof(LoginCommand))]
         private string _password = string.Empty;
 
+        [ObservableProperty]
+        private bool _userExists;
+
         public async Task Initialize()
         {
             Email = string.Empty;
             Password = string.Empty;
             UserExists = await _userService.ExistsCurrentUser();
+        }
+
+        private bool CanLogin()
+        {
+            ValidateAllProperties();
+
+            return !HasErrors;
         }
 
         [RelayCommand(CanExecute = nameof(CanLogin))]
@@ -66,13 +74,6 @@ namespace ShoppingList4.Maui.ViewModel
         {
             _userService.RemoveCurrentUser();
             UserExists = false;
-        }
-
-        private bool CanLogin()
-        {
-            ValidateAllProperties();
-
-            return !HasErrors;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace ShoppingList4.Maui.Services
             await Shell.Current.GoToAsync(route);
         }
 
-        public async Task NavigateTo(ShellNavigationState state, IDictionary<string ,object> parameter)
+        public async Task NavigateTo(ShellNavigationState state, IDictionary<string, object> parameter)
         {
             await Shell.Current.GoToAsync(state, parameter);
         }

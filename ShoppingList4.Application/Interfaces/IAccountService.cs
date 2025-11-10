@@ -1,4 +1,4 @@
-﻿namespace ShoppingList4.Maui.Interfaces
+﻿namespace ShoppingList4.Application.Interfaces
 {
     public interface IAccountService
     {

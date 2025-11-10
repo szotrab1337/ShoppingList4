@@ -1,4 +1,4 @@
-﻿namespace ShoppingList4.Maui.Dtos
+﻿namespace ShoppingList4.Application.Dtos
 {
     public class EditShoppingListDto
     {

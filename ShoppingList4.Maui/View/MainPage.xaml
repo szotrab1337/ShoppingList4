@@ -49,7 +49,7 @@
                 </Label.Style>
             </Label>
 
-            <Frame
+            <Border
                 BackgroundColor="{DynamicResource Gray900}"
                 HeightRequest="120"
                 IsVisible="{Binding IsInitializing}"
@@ -68,7 +68,7 @@
                         HorizontalOptions="Center"
                         Text="Ładowanie...." />
                 </Grid>
-            </Frame>
+            </Border>
 
             <RefreshView
                 Command="{Binding RefreshCommand}"
@@ -82,10 +82,10 @@
                             <dxcv:SwipeContainer FullSwipeMode="None">
                                 <dxcv:SwipeContainer.ItemView>
                                     <StackLayout Margin="0,0,0,3">
-                                        <Frame
+                                        <Border
                                             Padding="15"
-                                            BackgroundColor="{DynamicResource Gray900}"
-                                            CornerRadius="10">
+                                            StrokeShape="RoundRectangle 10"
+                                            BackgroundColor="{DynamicResource Gray900}">
                                             <StackLayout
                                                 Margin="10,0,0,0"
                                                 Orientation="Horizontal">
@@ -133,13 +133,13 @@
                                                     </StackLayout>
                                                 </StackLayout>
                                             </StackLayout>
-                                            <Frame.GestureRecognizers>
+                                            <Border.GestureRecognizers>
                                                 <TapGestureRecognizer
                                                     Command="{Binding Path=BindingContext.OpenCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
                                                     CommandParameter="{Binding .}"
                                                     NumberOfTapsRequired="1" />
-                                            </Frame.GestureRecognizers>
-                                        </Frame>
+                                            </Border.GestureRecognizers>
+                                        </Border>
                                     </StackLayout>
                                 </dxcv:SwipeContainer.ItemView>
 
@@ -165,22 +165,24 @@
             </RefreshView>
         </Grid>
 
-        <Frame
+        <Border
             Padding="0"
-            AbsoluteLayout.LayoutBounds=".95,.95,60,60"
-            AbsoluteLayout.LayoutFlags="PositionProportional"
+            StrokeShape="RoundRectangle 75"
             BackgroundColor="{DynamicResource Primary}"
-            CornerRadius="75"
             HeightRequest="60"
+            WidthRequest="60"
             HorizontalOptions="Center"
-            IsClippedToBounds="True"
             VerticalOptions="Center"
-            WidthRequest="60">
+            AbsoluteLayout.LayoutBounds=".95,.95,60,60"
+            AbsoluteLayout.LayoutFlags="PositionProportional">
+
             <Button
                 Command="{Binding AddCommand}"
                 FontSize="25"
-                Text="+" />
-        </Frame>
+                Text="+"
+                HorizontalOptions="Center"
+                VerticalOptions="Center" />
+        </Border>
 
     </AbsoluteLayout>
 

@@ -1,11 +1,11 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using DevExpress.Maui.Core.Internal;
-using ShoppingList4.Maui.Dtos;
+using ShoppingList4.Application.Dtos;
+using ShoppingList4.Application.Interfaces;
 using ShoppingList4.Maui.Interfaces;
-using ShoppingList4.Maui.View.Popups;
 using ShoppingList4.Maui.ViewModel.Entities;
-using System.Collections.ObjectModel;
+using Entry = ShoppingList4.Domain.Entities.Entry;
 
 namespace ShoppingList4.Maui.ViewModel
 {
@@ -14,19 +14,32 @@ namespace ShoppingList4.Maui.ViewModel
         IMessageBoxService messageBoxService,
         IDialogService dialogService) : ObservableObject, IQueryAttributable
     {
+        private readonly IDialogService _dialogService = dialogService;
         private readonly IEntryService _entryService = entryService;
         private readonly IMessageBoxService _messageBoxService = messageBoxService;
-        private readonly IDialogService _dialogService = dialogService;
 
-        private int _shoppingListId;
+        [ObservableProperty]
+        private ObservableCollection<EntryViewModel> _entries = [];
+
+        [ObservableProperty]
+        private bool _isInitializing;
+
+        [ObservableProperty]
+        private bool _isRefreshing;
 
         private bool _loaded;
+        private int _shoppingListId;
 
-        [ObservableProperty] private ObservableCollection<EntryViewModel> _entries = [];
+        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            _shoppingListId = (int)query["ShoppingListId"];
 
-        [ObservableProperty] private bool _isRefreshing;
-
-        [ObservableProperty] private bool _isInitializing;
+            if (query.TryGetValue("ShoppingListId", out var shoppingListIdObj) &&
+                shoppingListIdObj is int shoppingListId)
+            {
+                _shoppingListId = shoppingListId;
+            }
+        }
 
         public async Task Initialize()
         {
@@ -42,53 +55,40 @@ namespace ShoppingList4.Maui.ViewModel
 
             IsInitializing = false;
             _loaded = true;
+
+            _entryService.EntryAdded += OnEntryAdded;
+            _entryService.EntryDeleted += OnEntryDeleted;
+            _entryService.EntryUpdated += OnEntryUpdated;
         }
 
         [RelayCommand]
-        private async Task Refresh()
+        private async Task Add()
         {
-            await GetEntries();
-            IsRefreshing = false;
-        }
+            var name = await _dialogService.ShowInputPopup();
 
-        private async Task GetEntries()
-        {
-            try
+            if (!string.IsNullOrEmpty(name))
             {
-                var entries = await _entryService.GetShoppingListEntries(_shoppingListId);
-                var vms = entries
-                    .Select(entry => new EntryViewModel(entry))
-                    .OrderBy(x => x.IsBought);
-
-                Entries = new ObservableCollection<EntryViewModel>(vms);
-                Entries.ForEach(x => x.OnBoughtStatusChanged += OnEntryBoughtStatusChanged);
-            }
-            catch (Exception)
-            {
-                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
+                var dto = new AddEntryDto { ShoppingListId = _shoppingListId, Name = name };
+                await _entryService.Add(dto);
             }
         }
 
-        private async void OnEntryBoughtStatusChanged(object? sender, EventArgs e)
+        [RelayCommand]
+        private async Task ChangeIsBoughtValue(EntryViewModel? viewModel)
         {
-            if (sender is not EntryViewModel entry)
+            if (viewModel is null)
             {
                 return;
             }
 
-            var dto = new EditEntryDto { Id = entry.Id, IsBought = entry.IsBought, Name = entry.Name };
-            await _entryService.Update(dto);
-        }
-
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
-        {
-            _shoppingListId = (int)query["ShoppingListId"];
-
-            if (query.TryGetValue("ShoppingListId", out var shoppingListIdObj) &&
-                shoppingListIdObj is int shoppingListId)
+            var dto = new EditEntryDto
             {
-                _shoppingListId = shoppingListId;
-            }
+                Id = viewModel.Id,
+                IsBought = viewModel.IsBought,
+                Name = viewModel.Name
+            };
+
+            await _entryService.Update(dto);
         }
 
         [RelayCommand]
@@ -96,12 +96,7 @@ namespace ShoppingList4.Maui.ViewModel
         {
             try
             {
-                var result = await _entryService.Delete(entry.Id);
-                if (result)
-                {
-                    entry.OnBoughtStatusChanged -= OnEntryBoughtStatusChanged;
-                    Entries.Remove(entry);
-                }
+                await _entryService.Delete(entry.Id);
             }
             catch (Exception)
             {
@@ -154,50 +149,68 @@ namespace ShoppingList4.Maui.ViewModel
 
         private async Task DeleteMultipleAsync(List<EntryViewModel> entries)
         {
-            var entriesIds = entries.Select(x => x.Id);
+            var entriesIds = entries.Select(x => x.Id).ToList();
 
-            var result = await _entryService.DeleteMultiple(entriesIds);
-            if (result)
-            {
-                foreach (var entry in entries)
-                {
-                    entry.OnBoughtStatusChanged -= OnEntryBoughtStatusChanged;
-                    Entries.Remove(entry);
-                }
-            }
-        }
-
-        [RelayCommand]
-        private async Task Add()
-        {
-            var popup = new InputPopup();
-            var name = await _dialogService.ShowPromptAsync(popup) as string;
-
-            if (!string.IsNullOrEmpty(name))
-            {
-                var dto = new AddEntryDto { ShoppingListId = _shoppingListId, Name = name };
-                var result = await _entryService.Add(dto);
-
-                var vm = new EntryViewModel(result);
-                vm.OnBoughtStatusChanged += OnEntryBoughtStatusChanged;
-                Entries.Insert(0, vm);
-            }
+            await _entryService.DeleteMultiple(entriesIds);
         }
 
         [RelayCommand]
         private async Task Edit(EntryViewModel entry)
         {
-            var popup = new InputPopup(entry.Name);
-            var name = await _dialogService.ShowPromptAsync(popup) as string;
+            var name = await _dialogService.ShowInputPopup(entry.Name);
 
             if (!string.IsNullOrEmpty(name))
             {
                 var dto = new EditEntryDto { Id = entry.Id, Name = name };
-                var result = await _entryService.Update(dto);
-
-                var vm = Entries.FirstOrDefault(x => x.Id == entry.Id);
-                vm?.Update(result);
+                await _entryService.Update(dto);
             }
+        }
+
+        private async Task GetEntries()
+        {
+            try
+            {
+                var entries = await _entryService.GetShoppingListEntries(_shoppingListId);
+                var vms = entries
+                    .Select(entry => new EntryViewModel(entry, ChangeIsBoughtValueCommand))
+                    .OrderBy(x => x.IsBought);
+
+                Entries = new ObservableCollection<EntryViewModel>(vms);
+            }
+            catch (Exception)
+            {
+                await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
+            }
+        }
+
+        private void OnEntryAdded(object? sender, Entry e)
+        {
+            var vm = new EntryViewModel(e, ChangeIsBoughtValueCommand);
+            Entries.Insert(0, vm);
+        }
+
+        private void OnEntryDeleted(object? sender, int e)
+        {
+            var entry = Entries.FirstOrDefault(x => x.Id == e);
+            if (entry is null)
+            {
+                return;
+            }
+
+            Entries.Remove(entry);
+        }
+
+        private void OnEntryUpdated(object? sender, Entry e)
+        {
+            var vm = Entries.FirstOrDefault(x => x.Id == e.Id);
+            vm?.Update(e);
+        }
+
+        [RelayCommand]
+        private async Task Refresh()
+        {
+            await GetEntries();
+            IsRefreshing = false;
         }
     }
 }
