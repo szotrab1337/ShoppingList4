@@ -11,28 +11,22 @@ namespace ShoppingList4.Infrastructure.Repositories
     {
         private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
 
-        public async Task<IEnumerable<Entry>> GetByShoppingListId(string? token, int shoppingListId,
-            CancellationToken? cancellationToken = null)
+        public async Task<(bool, Entry)> Add(string? token, object content, CancellationToken? cancellationToken = null)
         {
             using var client = _httpClientFactory.CreateClient("ShoppingList4Api").AddJwt(token);
 
-            return await HttpClientUtilities<Entry>
-                .GetMultiple(
-                    client,
-                    $"entries/shopping-list/{shoppingListId}",
-                    cancellationToken);
-        }
+            var result = await HttpClientUtilities<Entry>.Post(
+                client,
+                "entries",
+                content,
+                cancellationToken);
 
-        public async Task<Entry> Get(string? token, int id, CancellationToken? cancellationToken = null)
-        {
-            using var client = _httpClientFactory.CreateClient("ShoppingList4Api").AddJwt(token);
+            if (!result.Item1 || result.Item2 is null)
+            {
+                throw new InvalidOperationException();
+            }
 
-            return await HttpClientUtilities<Entry>
-                       .GetSingle(
-                           client,
-                           $"entries/{id}",
-                           cancellationToken)
-                   ?? throw new NotFoundException(nameof(Entry), id.ToString());
+            return result!;
         }
 
         public async Task<bool> Delete(string? token, int id, CancellationToken? cancellationToken = null)
@@ -57,24 +51,6 @@ namespace ShoppingList4.Infrastructure.Repositories
                 cancellationToken);
         }
 
-        public async Task<(bool, Entry)> Add(string? token, object content, CancellationToken? cancellationToken = null)
-        {
-            using var client = _httpClientFactory.CreateClient("ShoppingList4Api").AddJwt(token);
-
-            var result = await HttpClientUtilities<Entry>.Post(
-                client,
-                "entries",
-                content,
-                cancellationToken);
-
-            if (!result.Item1 || result.Item2 is null)
-            {
-                throw new InvalidOperationException();
-            }
-
-            return result!;
-        }
-
         public async Task<(bool, Entry)> Edit(string? token, object content,
             CancellationToken? cancellationToken = null)
         {
@@ -92,6 +68,30 @@ namespace ShoppingList4.Infrastructure.Repositories
             }
 
             return result!;
+        }
+
+        public async Task<Entry> Get(string? token, int id, CancellationToken? cancellationToken = null)
+        {
+            using var client = _httpClientFactory.CreateClient("ShoppingList4Api").AddJwt(token);
+
+            return await HttpClientUtilities<Entry>
+                       .GetSingle(
+                           client,
+                           $"entries/{id}",
+                           cancellationToken)
+                   ?? throw new NotFoundException(nameof(Entry), id.ToString());
+        }
+
+        public async Task<IEnumerable<Entry>> GetByShoppingListId(string? token, int shoppingListId,
+            CancellationToken? cancellationToken = null)
+        {
+            using var client = _httpClientFactory.CreateClient("ShoppingList4Api").AddJwt(token);
+
+            return await HttpClientUtilities<Entry>
+                .GetMultiple(
+                    client,
+                    $"entries/shopping-list/{shoppingListId}",
+                    cancellationToken);
         }
     }
 }

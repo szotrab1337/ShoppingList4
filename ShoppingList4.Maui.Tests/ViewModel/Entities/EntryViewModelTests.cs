@@ -1,4 +1,6 @@
-﻿using FluentAssertions;
+﻿using CommunityToolkit.Mvvm.Input;
+using FluentAssertions;
+using NSubstitute;
 using ShoppingList4.Maui.ViewModel.Entities;
 using Entry = ShoppingList4.Domain.Entities.Entry;
 
@@ -19,7 +21,7 @@ namespace ShoppingList4.Maui.Tests.ViewModel.Entities
             };
 
             // Act
-            var viewModel = new EntryViewModel(entry);
+            var viewModel = new EntryViewModel(entry, null!);
 
             // Assert
             viewModel.Id.Should().Be(1);
@@ -29,11 +31,40 @@ namespace ShoppingList4.Maui.Tests.ViewModel.Entities
         }
 
         [Fact]
+        public void OnIsBoughtChanged_ShouldExecuteCommand_WhenCommandIsProvided()
+        {
+            // Arrange
+            var entry = new Entry { Name = "Milk", IsBought = false };
+            var mockCommand = Substitute.For<IRelayCommand<EntryViewModel>>();
+            var viewModel = new EntryViewModel(entry, mockCommand);
+
+            // Act
+            viewModel.IsBought = true;
+
+            // Assert
+            mockCommand.Received(1).Execute(viewModel);
+        }
+
+        [Fact]
+        public void OnIsBoughtChanged_ShouldNotThrow_WhenCommandIsNull()
+        {
+            // Arrange
+            var entry = new Entry { Name = "Milk", IsBought = false };
+            var viewModel = new EntryViewModel(entry, null);
+
+            // Act
+            Action act = () => viewModel.IsBought = true;
+
+            // Assert
+            act.Should().NotThrow();
+        }
+
+        [Fact]
         public void Update_ShouldUpdatePropertiesCorrectly()
         {
             // Arrange
             var entry = new Entry { Name = "Milk", IsBought = false };
-            var viewModel = new EntryViewModel(entry);
+            var viewModel = new EntryViewModel(entry, null!);
 
             var updatedEntry = new Entry { Name = "Bread", IsBought = true };
 
@@ -43,23 +74,6 @@ namespace ShoppingList4.Maui.Tests.ViewModel.Entities
             // Assert
             viewModel.Name.Should().Be("Bread");
             viewModel.IsBought.Should().BeTrue();
-        }
-
-        [Fact]
-        public void OnIsBoughtChanged_ShouldTriggerEvent()
-        {
-            // Arrange
-            var entry = new Entry { Name = "Milk", IsBought = false };
-            var viewModel = new EntryViewModel(entry);
-            bool eventRaised = false;
-
-            viewModel.OnBoughtStatusChanged += (_, _) => eventRaised = true;
-
-            // Act
-            viewModel.IsBought = true; // should execute OnIsBoughtChanged
-
-            // Assert
-            eventRaised.Should().BeTrue();
         }
     }
 }

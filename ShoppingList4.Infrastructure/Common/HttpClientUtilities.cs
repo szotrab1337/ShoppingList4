@@ -1,11 +1,44 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.Json;
 
 namespace ShoppingList4.Infrastructure.Common
 {
     public static class HttpClientUtilities<T>
     {
+        public static async Task<bool> Delete(
+            HttpClient client,
+            string requestUri,
+            CancellationToken? cancellationToken)
+        {
+            var token = cancellationToken ?? CancellationToken.None;
+
+            var response = await client.DeleteAsync(
+                requestUri,
+                token);
+
+            return response.IsSuccessStatusCode;
+        }
+
+        public static async Task<bool> Delete(
+            HttpClient client,
+            string requestUri,
+            object content,
+            CancellationToken? cancellationToken)
+        {
+            var token = cancellationToken ?? CancellationToken.None;
+
+            var stringContent = new StringContent(
+                JsonSerializer.Serialize(content),
+                Encoding.UTF8,
+                "application/json");
+
+            var request = new HttpRequestMessage(HttpMethod.Delete, requestUri) { Content = stringContent };
+
+            var response = await client.SendAsync(request, token);
+
+            return response.IsSuccessStatusCode;
+        }
+
         public static async Task<IEnumerable<T>> GetMultiple(
             HttpClient client,
             string requestUri,
@@ -43,6 +76,32 @@ namespace ShoppingList4.Infrastructure.Common
             return JsonSerializer.Deserialize<T>(jsonResponse, JsonSerializerUtilities.BasicOptions);
         }
 
+        public static async Task<(bool, T?)> Patch(
+            HttpClient client,
+            string requestUri,
+            object? content,
+            CancellationToken? cancellationToken)
+        {
+            var token = cancellationToken ?? CancellationToken.None;
+
+            var stringContent = new StringContent(
+                JsonSerializer.Serialize(content),
+                Encoding.UTF8,
+                "application/json");
+
+            var response = await client.PatchAsync(
+                requestUri,
+                stringContent,
+                token);
+
+            var jsonResponse = await response.Content.ReadAsStringAsync(token);
+            var objectResponse = string.IsNullOrEmpty(jsonResponse)
+                ? default
+                : JsonSerializer.Deserialize<T>(jsonResponse, JsonSerializerUtilities.BasicOptions);
+
+            return (response.IsSuccessStatusCode, objectResponse);
+        }
+
         public static async Task<(bool, T?)> Post(
             HttpClient client,
             string requestUri,
@@ -67,40 +126,6 @@ namespace ShoppingList4.Infrastructure.Common
                 : JsonSerializer.Deserialize<T>(jsonResponse, JsonSerializerUtilities.BasicOptions);
 
             return (response.IsSuccessStatusCode, objectResponse);
-        }
-
-        public static async Task<bool> Delete(
-            HttpClient client,
-            string requestUri,
-            CancellationToken? cancellationToken)
-        {
-            var token = cancellationToken ?? CancellationToken.None;
-
-            var response = await client.DeleteAsync(
-                requestUri,
-                token);
-
-            return response.IsSuccessStatusCode;
-        }
-
-        public static async Task<bool> Delete(
-            HttpClient client,
-            string requestUri,
-            object content,
-            CancellationToken? cancellationToken)
-        {
-            var token = cancellationToken ?? CancellationToken.None;
-
-            var stringContent = new StringContent(
-                JsonSerializer.Serialize(content),
-                Encoding.UTF8,
-                "application/json");
-
-            var request = new HttpRequestMessage(HttpMethod.Delete, requestUri) { Content = stringContent };
-
-            var response = await client.SendAsync(request, token);
-
-            return response.IsSuccessStatusCode;
         }
 
         public static async Task<bool> PostWithoutResponse(
@@ -138,32 +163,6 @@ namespace ShoppingList4.Infrastructure.Common
                 "application/json");
 
             var response = await client.PutAsync(
-                requestUri,
-                stringContent,
-                token);
-
-            var jsonResponse = await response.Content.ReadAsStringAsync(token);
-            var objectResponse = string.IsNullOrEmpty(jsonResponse)
-                ? default
-                : JsonSerializer.Deserialize<T>(jsonResponse, JsonSerializerUtilities.BasicOptions);
-
-            return (response.IsSuccessStatusCode, objectResponse);
-        }
-
-        public static async Task<(bool, T?)> Patch(
-            HttpClient client,
-            string requestUri,
-            object? content,
-            CancellationToken? cancellationToken)
-        {
-            var token = cancellationToken ?? CancellationToken.None;
-
-            var stringContent = new StringContent(
-                JsonSerializer.Serialize(content),
-                Encoding.UTF8,
-                "application/json");
-
-            var response = await client.PatchAsync(
                 requestUri,
                 stringContent,
                 token);

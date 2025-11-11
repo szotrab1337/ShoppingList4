@@ -1,14 +1,14 @@
-﻿using ShoppingList4.Domain.Interfaces;
-using ShoppingList4.Maui.Interfaces;
+﻿using ShoppingList4.Application.Interfaces;
+using ShoppingList4.Domain.Interfaces;
 
-namespace ShoppingList4.Maui.Services
+namespace ShoppingList4.Application.Services
 {
     public class AccountService(
         IUsersRepository usersRepository,
         IUserService userService) : IAccountService
     {
-        private readonly IUsersRepository _usersRepository = usersRepository;
         private readonly IUserService _userService = userService;
+        private readonly IUsersRepository _usersRepository = usersRepository;
 
         public async Task Login(string email, string password)
         {

@@ -1,11 +1,12 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using ShoppingList4.Maui.Dtos;
+using ShoppingList4.Application.Dtos;
+using ShoppingList4.Application.Interfaces;
+using ShoppingList4.Domain.Entities;
 using ShoppingList4.Maui.Interfaces;
 using ShoppingList4.Maui.View;
-using ShoppingList4.Maui.View.Popups;
 using ShoppingList4.Maui.ViewModel.Entities;
-using System.Collections.ObjectModel;
 
 namespace ShoppingList4.Maui.ViewModel
 {
@@ -16,19 +17,22 @@ namespace ShoppingList4.Maui.ViewModel
         IDialogService dialogService,
         INavigationService navigationService) : ObservableObject
     {
-        private readonly IUserService _userService = userService;
-        private readonly IShoppingListService _shoppingListService = shoppingListService;
-        private readonly IMessageBoxService _messageBoxService = messageBoxService;
         private readonly IDialogService _dialogService = dialogService;
+        private readonly IMessageBoxService _messageBoxService = messageBoxService;
         private readonly INavigationService _navigationService = navigationService;
+        private readonly IShoppingListService _shoppingListService = shoppingListService;
+        private readonly IUserService _userService = userService;
+
+        [ObservableProperty]
+        private bool _isInitializing;
+
+        [ObservableProperty]
+        private bool _isRefreshing;
 
         private bool _loaded;
 
-        [ObservableProperty] private ObservableCollection<ShoppingListViewModel> _shoppingLists = [];
-
-        [ObservableProperty] private bool _isRefreshing;
-
-        [ObservableProperty] private bool _isInitializing;
+        [ObservableProperty]
+        private ObservableCollection<ShoppingListViewModel> _shoppingLists = [];
 
         public async Task Initialize()
         {
@@ -53,12 +57,27 @@ namespace ShoppingList4.Maui.ViewModel
 
             IsInitializing = false;
             _loaded = true;
+
+            _shoppingListService.ShoppingListAdded += OnShoppingListAdded;
+            _shoppingListService.ShoppingListDeleted += OnShoppingListDeleted;
+            _shoppingListService.ShoppingListUpdated += OnShoppingListUpdated;
         }
 
         [RelayCommand]
-        private async Task Refresh()
+        private async Task Add()
         {
-            await LoadShoppingLists();
+            var name = await _dialogService.ShowInputPopup();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                var dto = new AddShoppingListDto { Name = name };
+                await _shoppingListService.Add(dto);
+            }
+        }
+
+        private async Task<bool> CheckUser()
+        {
+            return await _userService.ExistsCurrentUser();
         }
 
         [RelayCommand]
@@ -74,15 +93,23 @@ namespace ShoppingList4.Maui.ViewModel
                     return;
                 }
 
-                var result = await _shoppingListService.Delete(shoppingList.Id);
-                if (result)
-                {
-                    ShoppingLists.Remove(shoppingList);
-                }
+                await _shoppingListService.Delete(shoppingList.Id);
             }
             catch (Exception)
             {
                 await _messageBoxService.ShowAlert("Błąd", "Wystąpił błąd. Spróbuj ponownie.", "OK");
+            }
+        }
+
+        [RelayCommand]
+        private async Task Edit(ShoppingListViewModel shoppingList)
+        {
+            var name = await _dialogService.ShowInputPopup(shoppingList.Name);
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                var dto = new EditShoppingListDto { Id = shoppingList.Id, Name = name };
+                await _shoppingListService.Update(dto);
             }
         }
 
@@ -105,40 +132,25 @@ namespace ShoppingList4.Maui.ViewModel
             }
         }
 
-        private async Task<bool> CheckUser()
+        private void OnShoppingListAdded(object? sender, ShoppingList e)
         {
-            return await _userService.ExistsCurrentUser();
+            ShoppingLists.Add(new ShoppingListViewModel(e));
         }
 
-        [RelayCommand]
-        private async Task Edit(ShoppingListViewModel shoppingList)
+        private void OnShoppingListDeleted(object? sender, int e)
         {
-            var popup = new InputPopup(shoppingList.Name);
-            var name = await _dialogService.ShowPromptAsync(popup) as string;
+            var shoppingList = ShoppingLists.FirstOrDefault(x => x.Id == e);
 
-            if (!string.IsNullOrEmpty(name))
+            if (shoppingList is not null)
             {
-                var dto = new EditShoppingListDto { Id = shoppingList.Id, Name = name };
-                var result = await _shoppingListService.Update(dto);
-
-                var vm = ShoppingLists.FirstOrDefault(x => x.Id == shoppingList.Id);
-                vm?.Update(result);
+                ShoppingLists.Remove(shoppingList);
             }
         }
 
-        [RelayCommand]
-        private async Task Add()
+        private void OnShoppingListUpdated(object? sender, ShoppingList e)
         {
-            var popup = new InputPopup();
-            var name = await _dialogService.ShowPromptAsync(popup) as string;
-
-            if (!string.IsNullOrEmpty(name))
-            {
-                var dto = new AddShoppingListDto { Name = name };
-                var result = await _shoppingListService.Add(dto);
-
-                ShoppingLists.Add(new ShoppingListViewModel(result));
-            }
+            var vm = ShoppingLists.FirstOrDefault(x => x.Id == e.Id);
+            vm?.Update(e);
         }
 
         [RelayCommand]
@@ -147,6 +159,12 @@ namespace ShoppingList4.Maui.ViewModel
             var navigationParam = new Dictionary<string, object> { { "ShoppingListId", shoppingList.Id } };
 
             await _navigationService.NavigateTo(nameof(EntriesPage), navigationParam);
+        }
+
+        [RelayCommand]
+        private async Task Refresh()
+        {
+            await LoadShoppingLists();
         }
     }
 }

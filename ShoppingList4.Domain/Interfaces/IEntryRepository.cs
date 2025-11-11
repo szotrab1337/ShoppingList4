@@ -9,6 +9,8 @@ namespace ShoppingList4.Domain.Interfaces
         Task<bool> DeleteMultiple(string? token, IEnumerable<int> ids, CancellationToken? cancellationToken = null);
         Task<(bool, Entry)> Edit(string? token, object content, CancellationToken? cancellationToken = null);
         Task<Entry> Get(string? token, int id, CancellationToken? cancellationToken = null);
-        Task<IEnumerable<Entry>> GetByShoppingListId(string? token, int shoppingListId, CancellationToken? cancellationToken = null);
+
+        Task<IEnumerable<Entry>> GetByShoppingListId(string? token, int shoppingListId,
+            CancellationToken? cancellationToken = null);
     }
 }

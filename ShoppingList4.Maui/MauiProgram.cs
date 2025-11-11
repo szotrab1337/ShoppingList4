@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using DevExpress.Maui;
+using ShoppingList4.Application.Extensions;
 using ShoppingList4.Infrastructure.Extensions;
 using ShoppingList4.Maui.Extensions;
 
@@ -23,6 +24,7 @@ namespace ShoppingList4.Maui
                 });
             
             builder.Services.AddInfrastructure();
+            builder.Services.AddMaui();
             builder.Services.AddApplication();
 
             return builder.Build();
