@@ -11,21 +11,22 @@ namespace ShoppingList4.Maui.Tests.ViewModel
 {
     public class EntriesViewModelTests
     {
-        private readonly Mock<IDialogService> _dialogServiceMock;
         private readonly Mock<IEntryService> _entryServiceMock;
         private readonly Mock<IMessageBoxService> _messageBoxServiceMock;
+        private readonly Mock<IAppPopupService> _appPopupServiceMock;
+        
         private readonly EntriesViewModel _viewModel;
 
         public EntriesViewModelTests()
         {
             _entryServiceMock = new Mock<IEntryService>();
             _messageBoxServiceMock = new Mock<IMessageBoxService>();
-            _dialogServiceMock = new Mock<IDialogService>();
+            _appPopupServiceMock = new Mock<IAppPopupService>();
 
             _viewModel = new EntriesViewModel(
                 _entryServiceMock.Object,
                 _messageBoxServiceMock.Object,
-                _dialogServiceMock.Object
+                _appPopupServiceMock.Object
             );
         }
 
@@ -34,7 +35,7 @@ namespace ShoppingList4.Maui.Tests.ViewModel
         {
             // Arrange
             _viewModel.ApplyQueryAttributes(new Dictionary<string, object> { { "ShoppingListId", 1 } });
-            _dialogServiceMock.Setup(d => d.ShowInputPopup(null)).ReturnsAsync("Masło");
+            _appPopupServiceMock.Setup(d => d.ShowInputPopup(null)).ReturnsAsync("Masło");
 
             // Act
             await _viewModel.AddCommand.ExecuteAsync(null);
@@ -48,7 +49,7 @@ namespace ShoppingList4.Maui.Tests.ViewModel
         public async Task AddCommand_ShouldNotAddEntry_WhenNameIsEmpty()
         {
             // Arrange
-            _dialogServiceMock.Setup(d => d.ShowInputPopup(null)).ReturnsAsync(string.Empty);
+            _appPopupServiceMock.Setup(d => d.ShowInputPopup(null)).ReturnsAsync(string.Empty);
 
             // Act
             await _viewModel.AddCommand.ExecuteAsync(null);
@@ -237,7 +238,7 @@ namespace ShoppingList4.Maui.Tests.ViewModel
             var entry = new Entry { Id = 1, Name = "Mleko", IsBought = false, ShoppingListId = 1 };
             var entryViewModel = new EntryViewModel(entry, _viewModel.ChangeIsBoughtValueCommand);
 
-            _dialogServiceMock.Setup(d => d.ShowInputPopup(It.IsAny<string>())).ReturnsAsync(string.Empty);
+            _appPopupServiceMock.Setup(d => d.ShowInputPopup(It.IsAny<string>())).ReturnsAsync(string.Empty);
 
             // Act
             await _viewModel.EditCommand.ExecuteAsync(entryViewModel);
@@ -253,7 +254,7 @@ namespace ShoppingList4.Maui.Tests.ViewModel
             var entry = new Entry { Id = 1, Name = "Mleko", IsBought = false, ShoppingListId = 1 };
             var entryViewModel = new EntryViewModel(entry, _viewModel.ChangeIsBoughtValueCommand);
 
-            _dialogServiceMock.Setup(d => d.ShowInputPopup("Mleko")).ReturnsAsync("Mleko 2%");
+            _appPopupServiceMock.Setup(d => d.ShowInputPopup("Mleko")).ReturnsAsync("Mleko 2%");
 
             // Act
             await _viewModel.EditCommand.ExecuteAsync(entryViewModel);

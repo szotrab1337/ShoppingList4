@@ -1,8 +1,11 @@
-﻿using ShoppingList4.Application.Interfaces;
+﻿using CommunityToolkit.Maui;
+using ShoppingList4.Application.Interfaces;
 using ShoppingList4.Maui.Interfaces;
 using ShoppingList4.Maui.Services;
 using ShoppingList4.Maui.View;
+using ShoppingList4.Maui.View.Popups;
 using ShoppingList4.Maui.ViewModel;
+using ShoppingList4.Maui.ViewModel.Popups;
 
 namespace ShoppingList4.Maui.Extensions
 {
@@ -19,10 +22,12 @@ namespace ShoppingList4.Maui.Extensions
             services.AddTransient<EntriesPage>();
             services.AddTransient<EntriesViewModel>();
 
-            services.AddSingleton<IDialogService, DialogService>();
+            services.AddSingleton<IAppPopupService, AppPopupService>();
             services.AddSingleton<IUserService, UserService>();
             services.AddSingleton<IMessageBoxService, MessageBoxService>();
             services.AddSingleton<INavigationService, NavigationService>();
+
+            services.AddTransientPopup<InputPopup, InputPopupViewModel>();
         }
     }
 }

@@ -1,31 +1,34 @@
-﻿<?xml
-    version="1.0"
-    encoding="utf-8"?>
+﻿<?xml version="1.0"
+      encoding="utf-8"?>
 
-<toolkit:Popup
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-    x:Class="ShoppingList4.Maui.View.Popups.InputPopup"
-    BackgroundColor="{DynamicResource Gray950}"
-    Opened="InputPopup_OnOpened"
-    Height="300"
-    Width="200">
+<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+               xmlns:system="clr-namespace:System;assembly=System.Runtime"
+               Padding="0"
+               WidthRequest="300"
+               xmlns:viewModel="clr-namespace:ShoppingList4.Maui.ViewModel.Popups"
+               x:Class="ShoppingList4.Maui.View.Popups.InputPopup"
+               HorizontalOptions="Center"
+               Background="{DynamicResource Gray950}"
+               VerticalOptions="Start"
+               Opened="InputPopup_OnOpened"
+               x:DataType="viewModel:InputPopupViewModel"
+               x:TypeArguments="system:String">
 
-    <VerticalStackLayout
-        Padding="20"
-        Spacing="10">
-        <Label
-            Text="Wprowadź nazwę:"
-            TextColor="{DynamicResource Gray400}" />
-        <Entry
-            x:Name="InputEntry"
-            MaxLength="35"
-            Placeholder="Nazwa..." />
-        <Button
-            Text="OK"
-            Margin="0,30,0,0"
-            VerticalOptions="End"
-            Clicked="OnOkClicked" />
+    <VerticalStackLayout Spacing="10">
+        <Label Text="Wprowadź nazwę"
+               TextColor="{DynamicResource Gray400}" />
+        <Entry Text="{Binding Text}"
+               x:Name="InputEntry"
+               MaxLength="35"
+               Width="300"
+               Placeholder="Nazwa..." />
+
+        <Button Text="OK"
+                Command="{Binding SaveCommand}"
+                Margin="0,30,0,0"
+                VerticalOptions="End" />
     </VerticalStackLayout>
+
 </toolkit:Popup>

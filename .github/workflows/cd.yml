@@ -13,9 +13,9 @@ jobs:
            echo "${{ secrets.KEYSTORE_FILE }}" > shoppinglist4.keystore.asc
            gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" --batch shoppinglist4.keystore.asc > shoppinglist4.keystore
        - name: Setup .NET Core SDK
-         uses: actions/setup-dotnet@v3.2.0
+         uses: actions/setup-dotnet@v3
          with: 
-            dotnet-version: 8.0.x
+            dotnet-version: 9.0.x
        - name: Install .NET MAUI
          run: dotnet workload install maui
        - name: Add DevExpress NuGet Source
@@ -38,7 +38,7 @@ jobs:
            name: api-artifact
            path: ${{ env.DOTNET_ROOT }}\api
        - name: Build MAUI
-         run: dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net8.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
+         run: dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
        - name: Upload Maui artifact
          uses: actions/upload-artifact@v4
          with:

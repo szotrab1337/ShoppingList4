@@ -12,9 +12,9 @@ namespace ShoppingList4.Maui.ViewModel
     public partial class EntriesViewModel(
         IEntryService entryService,
         IMessageBoxService messageBoxService,
-        IDialogService dialogService) : ObservableObject, IQueryAttributable
+        IAppPopupService appPopupService) : ObservableObject, IQueryAttributable
     {
-        private readonly IDialogService _dialogService = dialogService;
+        private readonly IAppPopupService _appPopupService = appPopupService;
         private readonly IEntryService _entryService = entryService;
         private readonly IMessageBoxService _messageBoxService = messageBoxService;
 
@@ -64,13 +64,14 @@ namespace ShoppingList4.Maui.ViewModel
         [RelayCommand]
         private async Task Add()
         {
-            var name = await _dialogService.ShowInputPopup();
-
-            if (!string.IsNullOrEmpty(name))
+            var result = await _appPopupService.ShowInputPopup(string.Empty);
+            if (string.IsNullOrWhiteSpace(result))
             {
-                var dto = new AddEntryDto { ShoppingListId = _shoppingListId, Name = name };
-                await _entryService.Add(dto);
+                return;
             }
+
+            var dto = new AddEntryDto { ShoppingListId = _shoppingListId, Name = result };
+            await _entryService.Add(dto);
         }
 
         [RelayCommand]
@@ -157,13 +158,14 @@ namespace ShoppingList4.Maui.ViewModel
         [RelayCommand]
         private async Task Edit(EntryViewModel entry)
         {
-            var name = await _dialogService.ShowInputPopup(entry.Name);
-
-            if (!string.IsNullOrEmpty(name))
+            var result = await _appPopupService.ShowInputPopup(entry.Name);
+            if (string.IsNullOrWhiteSpace(result))
             {
-                var dto = new EditEntryDto { Id = entry.Id, Name = name };
-                await _entryService.Update(dto);
+                return;
             }
+
+            var dto = new EditEntryDto { Id = entry.Id, Name = result };
+            await _entryService.Update(dto);
         }
 
         private async Task GetEntries()
