@@ -14,10 +14,10 @@ namespace ShoppingList4.Maui.ViewModel
         IUserService userService,
         IShoppingListService shoppingListService,
         IMessageBoxService messageBoxService,
-        IDialogService dialogService,
+        IAppPopupService appPopupService,
         INavigationService navigationService) : ObservableObject
     {
-        private readonly IDialogService _dialogService = dialogService;
+        private readonly IAppPopupService _appPopupService = appPopupService;
         private readonly IMessageBoxService _messageBoxService = messageBoxService;
         private readonly INavigationService _navigationService = navigationService;
         private readonly IShoppingListService _shoppingListService = shoppingListService;
@@ -66,13 +66,14 @@ namespace ShoppingList4.Maui.ViewModel
         [RelayCommand]
         private async Task Add()
         {
-            var name = await _dialogService.ShowInputPopup();
-
-            if (!string.IsNullOrEmpty(name))
+            var result = await _appPopupService.ShowInputPopup(string.Empty);
+            if (string.IsNullOrWhiteSpace(result))
             {
-                var dto = new AddShoppingListDto { Name = name };
-                await _shoppingListService.Add(dto);
+                return;
             }
+
+            var dto = new AddShoppingListDto { Name = result };
+            await _shoppingListService.Add(dto);
         }
 
         private async Task<bool> CheckUser()
@@ -104,13 +105,14 @@ namespace ShoppingList4.Maui.ViewModel
         [RelayCommand]
         private async Task Edit(ShoppingListViewModel shoppingList)
         {
-            var name = await _dialogService.ShowInputPopup(shoppingList.Name);
-
-            if (!string.IsNullOrEmpty(name))
+            var result = await _appPopupService.ShowInputPopup(shoppingList.Name);
+            if (string.IsNullOrWhiteSpace(result))
             {
-                var dto = new EditShoppingListDto { Id = shoppingList.Id, Name = name };
-                await _shoppingListService.Update(dto);
+                return;
             }
+
+            var dto = new EditShoppingListDto { Id = shoppingList.Id, Name = result };
+            await _shoppingListService.Update(dto);
         }
 
         private async Task LoadShoppingLists()
