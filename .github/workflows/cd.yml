@@ -79,7 +79,7 @@ jobs:
       - name: Build MAUI
         run: |
           cd ./ShoppingList4.Maui
-          dotnet build ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=../shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}"
+          dotnet build ShoppingList4.Maui.csproj -c Release -f net9.0-android35.0 /p:AndroidSigningKeyStore=../shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}"
           cd ..
 
       - name: Upload Maui artifact
