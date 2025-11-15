@@ -52,13 +52,16 @@ jobs:
 
       - name: Force .NET 9 SDK for MAUI
         run: |
-          echo '{"sdk":{"version":"9.0.100","rollForward":"latestMinor"}}' > ./ShoppingList4.Maui/global.json
+          cd ./ShoppingList4.Maui
+          dotnet new globaljson --sdk-version 9.0.100 --roll-forward latestMinor --force
+          cd ..
 
       - name: Build MAUI
         run: |
-          $env:MSBuildSDKsPath = "C:\Program Files\dotnet\sdk\9.0.100\Sdks"
+          cd ./ShoppingList4.Maui
           dotnet --version
-          dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
+          dotnet build ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=../shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
+          cd ..
 
       - name: Upload Maui artifact
         uses: actions/upload-artifact@v4
