@@ -51,7 +51,12 @@ jobs:
           path: ${{ env.DOTNET_ROOT }}\api
 
       - name: Build MAUI
-        run: dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
+        shell: pwsh
+        run: |
+          $env:DOTNET_ROOT = "C:\Program Files\dotnet"
+          $env:PATH = "C:\Program Files\dotnet\sdk\9.0.101;$env:PATH"
+          dotnet --version
+          dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
 
       - name: Upload Maui artifact
         uses: actions/upload-artifact@v4
