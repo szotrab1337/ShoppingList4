@@ -16,6 +16,7 @@ namespace ShoppingList4.Maui
                 .UseDevExpress(false)
                 .UseDevExpressControls()
                 .UseDevExpressCollectionView()
+                .UseDevExpressEditors()
                 .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
