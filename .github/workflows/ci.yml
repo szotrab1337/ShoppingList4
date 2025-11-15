@@ -1,31 +1,25 @@
 name: CI
 on:
-  push:
+  pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-      - name: Setup Keystore File
-        run: |
-          echo "${{ secrets.KEYSTORE_FILE }}" > shoppinglist4.keystore.asc
-          gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" --batch shoppinglist4.keystore.asc > shoppinglist4.keystore
+      - name: Setup .NET 9 SDK (primary)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
 
       - name: Setup .NET 10 SDK for API
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-
-      - name: Setup .NET 9 SDK for MAUI/Blazor
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.0.x
-
-      - name: Install .NET MAUI
-        run: dotnet workload install maui
 
       - name: Add DevExpress NuGet Source
         run: |
@@ -38,42 +32,21 @@ jobs:
       - name: Restore dependencies from NuGet.org and DevExpress
         run: dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api"
 
-      - name: Build API
-        run: dotnet build ./ShoppingList4.Api/ShoppingList4.Api.csproj --no-restore
+      - name: Setup global.json for API (.NET 10)
+        run: |
+          cd ./ShoppingList4.Api
+          dotnet new globaljson --sdk-version 10.0.100 --roll-forward latestMinor --force
+          cd ..
 
-      - name: Publish API
-        run: dotnet publish ./ShoppingList4.Api/ShoppingList4.Api.csproj -c Release -o '${{ env.DOTNET_ROOT }}\api'
+      - name: Setup global.json for MAUI (.NET 9)
+        run: |
+          cd ./ShoppingList4.Maui
+          dotnet new globaljson --sdk-version 9.0.100 --roll-forward latestMinor --force
+          dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api"
+          cd ..
 
-      - name: Upload API artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-artifact
-          path: ${{ env.DOTNET_ROOT }}\api
+      - name: Build
+        run: dotnet build --no-restore
 
-      - name: Build MAUI
-        run: dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
-
-      - name: Upload Maui artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: maui-artifact
-          path: ./**/*.apk
-  
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    environment:
-      name: 'Prod'
-      url: ${{ steps.deploy-to-azure.outputs.webapp-url }}
-    steps:
-      - name: Download a Build Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: api-artifact
-
-      - name: Azure WebApp deploy
-        id: deploy-to-azure
-        uses: Azure/webapps-deploy@v2.2.10
-        with:
-          app-name: 'shopping-list-4-app'
-          publish-profile: ${{ secrets.PUBLISH_PROFILE }}
+      - name: Run Tests
+        run: dotnet test --logger "trx" --results-directory TestResults
