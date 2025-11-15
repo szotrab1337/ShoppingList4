@@ -50,11 +50,13 @@ jobs:
           name: api-artifact
           path: ${{ env.DOTNET_ROOT }}\api
 
-      - name: Build MAUI
-        shell: pwsh
+      - name: Force .NET 9 SDK for MAUI
         run: |
-          $env:DOTNET_ROOT = "C:\Program Files\dotnet"
-          $env:PATH = "C:\Program Files\dotnet\sdk\9.0.101;$env:PATH"
+          echo '{"sdk":{"version":"9.0.100","rollForward":"latestMinor"}}' > ./ShoppingList4.Maui/global.json
+
+      - name: Build MAUI
+        run: |
+          $env:MSBuildSDKsPath = "C:\Program Files\dotnet\sdk\9.0.100\Sdks"
           dotnet --version
           dotnet build ./ShoppingList4.Maui/ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
 
