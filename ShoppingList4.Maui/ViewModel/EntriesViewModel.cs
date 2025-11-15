@@ -1,9 +1,11 @@
 ﻿using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ShoppingList4.Application.Dtos;
 using ShoppingList4.Application.Interfaces;
 using ShoppingList4.Maui.Interfaces;
+using ShoppingList4.Maui.Models;
 using ShoppingList4.Maui.ViewModel.Entities;
 using Entry = ShoppingList4.Domain.Entities.Entry;
 
@@ -22,12 +24,22 @@ namespace ShoppingList4.Maui.ViewModel
         private ObservableCollection<EntryViewModel> _entries = [];
 
         [ObservableProperty]
+        private string _filter = string.Empty;
+
+        [ObservableProperty]
+        private ObservableCollection<FilterItem> _filterItems = [];
+
+        [ObservableProperty]
         private bool _isInitializing;
 
         [ObservableProperty]
         private bool _isRefreshing;
 
         private bool _loaded;
+
+        [ObservableProperty]
+        private ObservableCollection<FilterItem> _selectedFilterItems = [];
+
         private int _shoppingListId;
 
         public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -49,6 +61,8 @@ namespace ShoppingList4.Maui.ViewModel
             }
 
             IsInitializing = true;
+
+            InitializeFilterItems();
 
             await Task.Delay(400);
             await GetEntries();
@@ -185,6 +199,17 @@ namespace ShoppingList4.Maui.ViewModel
             }
         }
 
+        private void InitializeFilterItems()
+        {
+            FilterItems =
+            [
+                new FilterItem("Do kupienia", "[IsBought] = false"),
+                new FilterItem("Kupione", "[IsBought] = true")
+            ];
+
+            SelectedFilterItems.CollectionChanged += SelectedFilterItemsOnCollectionChanged;
+        }
+
         private void OnEntryAdded(object? sender, Entry e)
         {
             var vm = new EntryViewModel(e, ChangeIsBoughtValueCommand);
@@ -213,6 +238,13 @@ namespace ShoppingList4.Maui.ViewModel
         {
             await GetEntries();
             IsRefreshing = false;
+        }
+
+        private void SelectedFilterItemsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            Filter = SelectedFilterItems.Count == 1
+                ? SelectedFilterItems.FirstOrDefault()?.Filter ?? string.Empty
+                : string.Empty;
         }
     }
 }

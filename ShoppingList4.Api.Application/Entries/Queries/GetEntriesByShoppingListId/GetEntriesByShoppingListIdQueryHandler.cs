@@ -15,7 +15,9 @@ namespace ShoppingList4.Api.Application.Entries.Queries.GetEntriesByShoppingList
         public async Task<IEnumerable<EntryDto>> Handle(GetEntriesByShoppingListIdQuery request,
             CancellationToken cancellationToken)
         {
-            var entries = await _entryRepository.GetByShoppingListId(request.ShoppingListId);
+            var entries = (await _entryRepository.GetByShoppingListId(request.ShoppingListId))
+                .OrderBy(x => x.IsBought)
+                .ThenBy(x => x.Name);
 
             return _mapper.Map<IEnumerable<EntryDto>>(entries);
         }
