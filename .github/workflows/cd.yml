@@ -24,8 +24,11 @@ jobs:
         with:
           dotnet-version: 10.0.x
 
-      - name: Install .NET MAUI
-        run: dotnet workload install maui
+      - name: Install .NET MAUI workload for .NET 9
+        run: |
+          dotnet --version
+          $env:DOTNET_ROOT = "C:\Program Files\dotnet"
+          & "C:\Program Files\dotnet\dotnet.exe" workload install maui --sdk-version 9.0.100
 
       - name: Add DevExpress NuGet Source
         run: |
@@ -35,13 +38,21 @@ jobs:
             --password "${{ secrets.DEVEXPRESS_API_KEY_1 }}" `
             --store-password-in-clear-text
 
-      - name: Restore dependencies from NuGet.org and DevExpress
-        run: dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api"
+      - name: Setup global.json for API (.NET 10)
+        run: |
+          cd ./ShoppingList4.Api
+          dotnet new globaljson --sdk-version 10.0.100 --roll-forward latestMinor --force
+          cd ..
+
+      - name: Restore API dependencies
+        run: |
+          cd ./ShoppingList4.Api
+          dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api"
+          cd ..
 
       - name: Build API with .NET 10
         run: |
           cd ./ShoppingList4.Api
-          dotnet new globaljson --sdk-version 10.0.100 --roll-forward latestMinor --force
           dotnet build ShoppingList4.Api.csproj --no-restore
           cd ..
 
