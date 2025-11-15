@@ -14,15 +14,15 @@ jobs:
           echo "${{ secrets.KEYSTORE_FILE }}" > shoppinglist4.keystore.asc
           gpg -d --passphrase "${{ secrets.KEYSTORE_PASSWORD }}" --batch shoppinglist4.keystore.asc > shoppinglist4.keystore
 
+      - name: Setup .NET 9 SDK (primary)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
       - name: Setup .NET 10 SDK for API
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-
-      - name: Setup .NET 9 SDK for MAUI/Blazor
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 9.0.x
 
       - name: Install .NET MAUI
         run: dotnet workload install maui
@@ -38,11 +38,18 @@ jobs:
       - name: Restore dependencies from NuGet.org and DevExpress
         run: dotnet restore --source "https://api.nuget.org/v3/index.json" --source "https://nuget.devexpress.com/${{ secrets.DEVEXPRESS_API_KEY_1 }}/api"
 
-      - name: Build API
-        run: dotnet build ./ShoppingList4.Api/ShoppingList4.Api.csproj --no-restore
+      - name: Build API with .NET 10
+        run: |
+          cd ./ShoppingList4.Api
+          dotnet new globaljson --sdk-version 10.0.100 --roll-forward latestMinor --force
+          dotnet build ShoppingList4.Api.csproj --no-restore
+          cd ..
 
       - name: Publish API
-        run: dotnet publish ./ShoppingList4.Api/ShoppingList4.Api.csproj -c Release -o '${{ env.DOTNET_ROOT }}\api' --self-contained true -r win-x86
+        run: |
+          cd ./ShoppingList4.Api
+          dotnet publish ShoppingList4.Api.csproj -c Release -o '${{ env.DOTNET_ROOT }}\api' --self-contained true -r win-x86
+          cd ..
 
       - name: Upload API artifact
         uses: actions/upload-artifact@v4
@@ -54,12 +61,12 @@ jobs:
         run: |
           cd ./ShoppingList4.Maui
           dotnet new globaljson --sdk-version 9.0.100 --roll-forward latestMinor --force
+          dotnet --version
           cd ..
 
       - name: Build MAUI
         run: |
           cd ./ShoppingList4.Maui
-          dotnet --version
           dotnet build ShoppingList4.Maui.csproj -c Release -f net9.0-android /p:AndroidSigningKeyStore=../shoppinglist4.keystore /p:AndroidSigningKeyAlias=ghactionskey /p:AndroidSigningKeyPass="${{ secrets.KEYSTORE_PASSWORD }}" /p:AndroidSigningStorePass="${{ secrets.KEYSTORE_PASSWORD }}" --no-restore
           cd ..
 
