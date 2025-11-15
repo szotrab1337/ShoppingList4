@@ -16,16 +16,13 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
+      - name: Install .NET MAUI workload
+        run: dotnet workload install maui
+
       - name: Setup .NET 10 SDK for API
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 10.0.x
-
-      - name: Install .NET MAUI workload for .NET 9
-        run: |
-          dotnet --version
-          $env:DOTNET_ROOT = "C:\Program Files\dotnet"
-          & "C:\Program Files\dotnet\dotnet.exe" workload install maui --sdk-version 9.0.100
 
       - name: Add DevExpress NuGet Source
         run: |
