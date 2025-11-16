@@ -4,9 +4,9 @@
 A mobile and web application created for allowing you to easily manage your shopping lists.
 
 ## General Information
-- Backend - REST API made in .NET 8
-- Mobile - app made in MAUI .NET 8
-- Web - app made in Blazor Server Side .NET 8 published localy on IIS server 
+- Backend - REST API made in .NET 10
+- Mobile - app made in MAUI .NET 9
+- Web - app made in Blazor Server Side .NET 9 published localy on IIS server 
 - Web Api and database were published on Azure
 - CI and CD pipelines were used in the repository
 
@@ -22,6 +22,7 @@ A mobile and web application created for allowing you to easily manage your shop
 - Community Toolkit MVVM
 - Community Toolkit MAUI
 - Newtonsoft.Json
+- Devexpress MAUI
 
 ### Blazor App
 - MudBlazor

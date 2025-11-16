@@ -35,7 +35,7 @@ namespace ShoppingList4.Maui.Tests.ViewModel
         {
             // Arrange
             _viewModel.ApplyQueryAttributes(new Dictionary<string, object> { { "ShoppingListId", 1 } });
-            _appPopupServiceMock.Setup(d => d.ShowInputPopup(null)).ReturnsAsync("Masło");
+            _appPopupServiceMock.Setup(d => d.ShowInputPopup(string.Empty)).ReturnsAsync("Masło");
 
             // Act
             await _viewModel.AddCommand.ExecuteAsync(null);
@@ -49,29 +49,13 @@ namespace ShoppingList4.Maui.Tests.ViewModel
         public async Task AddCommand_ShouldNotAddEntry_WhenNameIsEmpty()
         {
             // Arrange
-            _appPopupServiceMock.Setup(d => d.ShowInputPopup(null)).ReturnsAsync(string.Empty);
+            _appPopupServiceMock.Setup(d => d.ShowInputPopup(string.Empty)).ReturnsAsync(string.Empty);
 
             // Act
             await _viewModel.AddCommand.ExecuteAsync(null);
 
             // Assert
             _entryServiceMock.Verify(s => s.Add(It.IsAny<AddEntryDto>()), Times.Never);
-        }
-
-        [Fact]
-        public void ApplyQueryAttributes_ShouldSetShoppingListId()
-        {
-            // Arrange
-            var query = new Dictionary<string, object>
-            {
-                { "ShoppingListId", 123 }
-            };
-
-            // Act
-            _viewModel.ApplyQueryAttributes(query);
-
-            // Assert
-            // ShoppingListId jest prywatne, więc sprawdzimy to pośrednio w Initialize
         }
 
         [Fact]
