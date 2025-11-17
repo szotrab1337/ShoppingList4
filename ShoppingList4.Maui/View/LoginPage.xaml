@@ -1,13 +1,15 @@
-<?xml version="1.0"
-      encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 
-<ContentPage x:Class="ShoppingList4.Maui.View.LoginPage"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-             BackgroundColor="{DynamicResource Gray950}"
-             NavigationPage.HasBackButton="false"
-             Shell.NavBarIsVisible="False">
+<ContentPage
+    x:Class="ShoppingList4.Maui.View.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewModel="clr-namespace:ShoppingList4.Maui.ViewModel"
+    x:DataType="viewModel:LoginViewModel"
+    NavigationPage.HasBackButton="false"
+    Shell.NavBarIsVisible="False"
+    Style="{StaticResource CommonPage}">
 
     <ScrollView>
         <Grid>
@@ -20,51 +22,57 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <Label Grid.Row="0"
-                   Margin="0,50,0,20"
-                   FontSize="20"
-                   HorizontalTextAlignment="Center"
-                   Text="LOGOWANIE"
-                   TextColor="{DynamicResource Gray100}" />
+            <Label
+                Grid.Row="0"
+                Margin="0,50,0,20"
+                HorizontalTextAlignment="Center"
+                Style="{StaticResource TitleLabel}"
+                Text="LOGOWANIE" />
 
-            <Entry Grid.Row="1"
-                   Margin="10,50,10,10"
-                   ClearButtonVisibility="WhileEditing"
-                   FontSize="16"
-                   Placeholder="Email"
-                   Text="{Binding Email, Mode=TwoWay}">
+            <Entry
+                Grid.Row="1"
+                Margin="10,50,10,10"
+                ClearButtonVisibility="WhileEditing"
+                Placeholder="Email"
+                Style="{StaticResource BasicEntry}"
+                Text="{Binding Email, Mode=TwoWay}">
                 <Entry.Behaviors>
-                    <toolkit:EmailValidationBehavior Flags="ValidateOnValueChanged,ValidateOnAttaching"
-                                                     InvalidStyle="{StaticResource InvalidEntryStyle}" />
+                    <toolkit:EmailValidationBehavior
+                        Flags="ValidateOnValueChanged,ValidateOnAttaching"
+                        InvalidStyle="{StaticResource InvalidEntryStyle}"
+                        ValidStyle="{StaticResource ValidEntryStyle}" />
                 </Entry.Behaviors>
             </Entry>
 
-            <Entry Grid.Row="2"
-                   Margin="10"
-                   ClearButtonVisibility="WhileEditing"
-                   FontSize="16"
-                   IsPassword="True"
-                   Placeholder="Hasło"
-                   Text="{Binding Password, Mode=TwoWay}">
+            <Entry
+                Grid.Row="2"
+                Margin="10"
+                ClearButtonVisibility="WhileEditing"
+                IsPassword="True"
+                Placeholder="Hasło"
+                Style="{StaticResource BasicEntry}"
+                Text="{Binding Password, Mode=TwoWay}">
                 <Entry.Behaviors>
-                    <toolkit:TextValidationBehavior Flags="ValidateOnValueChanged,ValidateOnAttaching"
-                                                    InvalidStyle="{StaticResource InvalidEntryStyle}"
-                                                    MinimumLength="6" />
+                    <toolkit:TextValidationBehavior
+                        Flags="ValidateOnValueChanged,ValidateOnAttaching"
+                        InvalidStyle="{StaticResource InvalidEntryStyle}"
+                        MinimumLength="6"
+                        ValidStyle="{StaticResource ValidEntryStyle}" />
                 </Entry.Behaviors>
             </Entry>
 
-            <Button Grid.Row="4"
-                    Margin="10,30,10,10"
-                    Command="{Binding LogoutCommand}"
-                    IsVisible="{Binding UserExists}"
-                    Text="Wyloguj"
-                    TextColor="{DynamicResource Gray100}" />
+            <Button
+                Grid.Row="4"
+                Margin="10,30,10,10"
+                Command="{Binding LogoutCommand}"
+                IsVisible="{Binding UserExists}"
+                Text="Wyloguj" />
 
-            <Button Grid.Row="5"
-                    Margin="10,10,10,20"
-                    Command="{Binding LoginCommand}"
-                    Text="Zaloguj"
-                    TextColor="{DynamicResource Gray100}" />
+            <Button
+                Grid.Row="5"
+                Margin="10,10,10,20"
+                Command="{Binding LoginCommand}"
+                Text="Zaloguj" />
         </Grid>
     </ScrollView>
 
