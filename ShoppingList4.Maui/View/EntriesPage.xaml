@@ -7,17 +7,10 @@
     xmlns:dxcv="clr-namespace:DevExpress.Maui.CollectionView;assembly=DevExpress.Maui.CollectionView"
     xmlns:dxe="clr-namespace:DevExpress.Maui.Editors;assembly=DevExpress.Maui.Editors"
     xmlns:entities="clr-namespace:ShoppingList4.Maui.ViewModel.Entities"
-    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewModel="clr-namespace:ShoppingList4.Maui.ViewModel"
     Title="Lista zakupów"
     x:DataType="viewModel:EntriesViewModel"
-    BackgroundColor="{DynamicResource Gray950}">
-
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
+    Style="{StaticResource CommonPage}">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -44,14 +37,11 @@
             <Label
                 Grid.Row="0"
                 Grid.RowSpan="2"
-                FontSize="20"
-                HorizontalOptions="CenterAndExpand"
-                HorizontalTextAlignment="Center"
-                Text="Brak przedmiotów do kupienia!"
-                TextColor="#616161"
-                VerticalOptions="CenterAndExpand">
+                Text="Brak przedmiotów do kupienia!">
                 <Label.Style>
-                    <Style TargetType="Label">
+                    <Style
+                        BasedOn="{StaticResource BackgroundInfoLabel}"
+                        TargetType="Label">
                         <Setter Property="IsVisible" Value="False" />
                         <Style.Triggers>
                             <DataTrigger
@@ -74,12 +64,8 @@
             <Border
                 Grid.Row="0"
                 Grid.RowSpan="2"
-                BackgroundColor="{DynamicResource Gray900}"
-                HeightRequest="120"
                 IsVisible="{Binding IsInitializing}"
-                Stroke="Transparent"
-                StrokeShape="RoundRectangle 10"
-                WidthRequest="150">
+                Style="{StaticResource LoaderBorder}">
                 <Grid HorizontalOptions="CenterAndExpand">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
@@ -104,118 +90,86 @@
                 DisplayMember="DisplayText"
                 IsMultiline="True"
                 ItemsSource="{Binding FilterItems}"
-                SelectedItems="{Binding SelectedFilterItems, Mode=TwoWay}" />
+                SelectedItems="{Binding SelectedFilterItems, Mode=TwoWay}">
+                <dxe:FilterChipGroup.Style>
+                    <Style TargetType="dxe:FilterChipGroup">
+                        <Style.Triggers>
+                            <DataTrigger
+                                Binding="{Binding Entries.Count}"
+                                TargetType="dxe:FilterChipGroup"
+                                Value="0">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger
+                                Binding="{Binding IsInitializing}"
+                                TargetType="dxe:FilterChipGroup"
+                                Value="True">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </dxe:FilterChipGroup.Style>
+            </dxe:FilterChipGroup>
 
-            <RefreshView
+            <dxcv:DXCollectionView
                 Grid.Row="1"
-                Command="{Binding Path=BindingContext.RefreshCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                FilterString="{Binding Filter, Mode=TwoWay}"
+                IsPullToRefreshEnabled="True"
                 IsRefreshing="{Binding IsRefreshing}"
-                IsVisible="{Binding IsInitializing, Converter={StaticResource InvertedBoolConverter}}">
+                ItemsSource="{Binding Entries}"
+                PullToRefreshCommand="{Binding RefreshCommand}"
+                UseRippleEffect="True">
+                <dxcv:DXCollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="entities:EntryViewModel">
 
-                <dxcv:DXCollectionView FilterString="{Binding Filter, Mode=TwoWay}" ItemsSource="{Binding Entries}">
-                    <dxcv:DXCollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="entities:EntryViewModel">
+                        <dxcv:SwipeContainer FullSwipeMode="None">
+                            <dxcv:SwipeContainer.ItemView>
+                                <StackLayout Margin="0,0,0,3">
+                                    <Border
+                                        Padding="0"
+                                        Style="{StaticResource BuyableElementBorder}">
 
-                            <dxcv:SwipeContainer FullSwipeMode="None">
-                                <dxcv:SwipeContainer.ItemView>
-                                    <StackLayout Margin="0,0,0,3">
-                                        <Border
-                                            Padding="0"
-                                            BackgroundColor="{DynamicResource Gray900}"
-                                            Stroke="Transparent"
-                                            StrokeShape="RoundRectangle 10">
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Style.Triggers>
-                                                        <DataTrigger
-                                                            Binding="{Binding IsBought}"
-                                                            TargetType="Border"
-                                                            Value="True">
-                                                            <Setter Property="BackgroundColor" Value="{DynamicResource Gray950}" />
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
+                                        <StackLayout
+                                            Margin="8"
+                                            Orientation="Horizontal">
 
-                                            <StackLayout Margin="8" Orientation="Horizontal">
+                                            <CheckBox
+                                                IsChecked="{Binding IsBought}"
+                                                Style="{StaticResource BuyableCheckbox}" />
 
-                                                <CheckBox
-                                                    HeightRequest="35"
-                                                    HorizontalOptions="Center"
-                                                    IsChecked="{Binding IsBought}"
-                                                    VerticalOptions="Center"
-                                                    WidthRequest="40">
-                                                    <CheckBox.Style>
-                                                        <Style TargetType="CheckBox">
-                                                            <Style.Triggers>
-                                                                <Trigger TargetType="CheckBox" Property="IsChecked" Value="True">
-                                                                    <Setter Property="Color" Value="{DynamicResource Gray400}" />
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </CheckBox.Style>
-                                                </CheckBox>
+                                            <Label
+                                                Margin="0,5,0,5"
+                                                Style="{StaticResource BuyableLabel}"
+                                                Text="{Binding Name}" />
 
-                                                <Label
-                                                    Margin="0,5,0,5"
-                                                    FontSize="20"
-                                                    Text="{Binding Name}"
-                                                    TextColor="{DynamicResource Gray100}"
-                                                    VerticalOptions="CenterAndExpand">
-                                                    <Label.Style>
-                                                        <Style TargetType="Label">
-                                                            <Style.Triggers>
-                                                                <DataTrigger
-                                                                    Binding="{Binding IsBought}"
-                                                                    TargetType="Label"
-                                                                    Value="True">
-                                                                    <Setter Property="TextColor" Value="{DynamicResource Gray400}" />
-                                                                    <Setter Property="TextDecorations" Value="Strikethrough" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Label.Style>
-                                                </Label>
+                                        </StackLayout>
+                                    </Border>
+                                </StackLayout>
+                            </dxcv:SwipeContainer.ItemView>
 
-                                            </StackLayout>
-                                        </Border>
-                                    </StackLayout>
-                                </dxcv:SwipeContainer.ItemView>
+                            <dxcv:SwipeContainer.EndSwipeItems>
+                                <dxcv:SwipeContainerItem
+                                    Caption="Usuń"
+                                    Command="{Binding Path=BindingContext.DeleteCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                    CommandParameter="{Binding .}"
+                                    Style="{StaticResource SwipeItem}" />
+                                <dxcv:SwipeContainerItem
+                                    Caption="Edytuj"
+                                    Command="{Binding Path=BindingContext.EditCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
+                                    CommandParameter="{Binding .}"
+                                    Style="{StaticResource SwipeItem}" />
+                            </dxcv:SwipeContainer.EndSwipeItems>
+                        </dxcv:SwipeContainer>
 
-                                <dxcv:SwipeContainer.EndSwipeItems>
-                                    <dxcv:SwipeContainerItem
-                                        BackgroundColor="{DynamicResource Gray950}"
-                                        Caption="Usuń"
-                                        Command="{Binding Path=BindingContext.DeleteCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
-                                        CommandParameter="{Binding .}"
-                                        FontColor="{DynamicResource Gray100}" />
-                                    <dxcv:SwipeContainerItem
-                                        BackgroundColor="{DynamicResource Gray950}"
-                                        Caption="Edytuj"
-                                        Command="{Binding Path=BindingContext.EditCommand, Source={RelativeSource AncestorType={x:Type Page}}}"
-                                        CommandParameter="{Binding .}"
-                                        FontColor="{DynamicResource Gray100}" />
-                                </dxcv:SwipeContainer.EndSwipeItems>
-                            </dxcv:SwipeContainer>
-
-                        </DataTemplate>
-                    </dxcv:DXCollectionView.ItemTemplate>
-                </dxcv:DXCollectionView>
-
-            </RefreshView>
+                    </DataTemplate>
+                </dxcv:DXCollectionView.ItemTemplate>
+            </dxcv:DXCollectionView>
         </Grid>
 
         <Border
-            Padding="0"
             AbsoluteLayout.LayoutBounds=".95,.95,60,60"
             AbsoluteLayout.LayoutFlags="PositionProportional"
-            BackgroundColor="{DynamicResource Primary}"
-            HeightRequest="60"
-            HorizontalOptions="Center"
-            Stroke="Transparent"
-            StrokeShape="RoundRectangle 75"
-            VerticalOptions="Center"
-            WidthRequest="60">
+            Style="{StaticResource ButtonBorder}">
             <Button
                 Command="{Binding AddCommand}"
                 FontSize="25"

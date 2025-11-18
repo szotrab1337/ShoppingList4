@@ -1,34 +1,37 @@
-﻿<?xml version="1.0"
-      encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 
-<toolkit:Popup xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-               xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-               xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
-               xmlns:system="clr-namespace:System;assembly=System.Runtime"
-               Padding="0"
-               WidthRequest="300"
-               xmlns:viewModel="clr-namespace:ShoppingList4.Maui.ViewModel.Popups"
-               x:Class="ShoppingList4.Maui.View.Popups.InputPopup"
-               HorizontalOptions="Center"
-               Background="{DynamicResource Gray950}"
-               VerticalOptions="Start"
-               Opened="InputPopup_OnOpened"
-               x:DataType="viewModel:InputPopupViewModel"
-               x:TypeArguments="system:String">
+<toolkit:Popup
+    x:Class="ShoppingList4.Maui.View.Popups.InputPopup"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:system="clr-namespace:System;assembly=System.Runtime"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:viewModel="clr-namespace:ShoppingList4.Maui.ViewModel.Popups"
+    Padding="0"
+    x:DataType="viewModel:InputPopupViewModel"
+    x:TypeArguments="system:String"
+    HorizontalOptions="Center"
+    Style="{StaticResource CommonPage}"
+    VerticalOptions="Start"
+    WidthRequest="300">
 
     <VerticalStackLayout Spacing="10">
-        <Label Text="Wprowadź nazwę"
-               TextColor="{DynamicResource Gray400}" />
-        <Entry Text="{Binding Text}"
-               x:Name="InputEntry"
-               MaxLength="35"
-               Width="300"
-               Placeholder="Nazwa..." />
+        <Label
+            FontAttributes="Bold"
+            Style="{StaticResource BaseLabel}"
+            Text="Wprowadź nazwę" />
+        <Entry
+            x:Name="InputEntry"
+            MaxLength="35"
+            Placeholder="Nazwa..."
+            Style="{StaticResource BasicEntry}"
+            Text="{Binding Text}" />
 
-        <Button Text="OK"
-                Command="{Binding SaveCommand}"
-                Margin="0,30,0,0"
-                VerticalOptions="End" />
+        <Button
+            Margin="0,30,0,0"
+            Command="{Binding SaveCommand}"
+            Text="Zapisz"
+            VerticalOptions="End" />
     </VerticalStackLayout>
 
 </toolkit:Popup>
