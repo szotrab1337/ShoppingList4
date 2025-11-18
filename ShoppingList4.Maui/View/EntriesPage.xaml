@@ -7,10 +7,17 @@
     xmlns:dxcv="clr-namespace:DevExpress.Maui.CollectionView;assembly=DevExpress.Maui.CollectionView"
     xmlns:dxe="clr-namespace:DevExpress.Maui.Editors;assembly=DevExpress.Maui.Editors"
     xmlns:entities="clr-namespace:ShoppingList4.Maui.ViewModel.Entities"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     xmlns:viewModel="clr-namespace:ShoppingList4.Maui.ViewModel"
     Title="Lista zakupów"
     x:DataType="viewModel:EntriesViewModel"
     Style="{StaticResource CommonPage}">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <toolkit:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
     <ContentPage.ToolbarItems>
         <ToolbarItem
@@ -169,6 +176,7 @@
         <Border
             AbsoluteLayout.LayoutBounds=".95,.95,60,60"
             AbsoluteLayout.LayoutFlags="PositionProportional"
+            IsVisible="{Binding IsPopupVisible, Converter={StaticResource InvertedBoolConverter}}"
             Style="{StaticResource ButtonBorder}">
             <Button
                 Command="{Binding AddCommand}"
