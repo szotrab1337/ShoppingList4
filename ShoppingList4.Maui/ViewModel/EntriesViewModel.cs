@@ -33,6 +33,9 @@ namespace ShoppingList4.Maui.ViewModel
         private bool _isInitializing;
 
         [ObservableProperty]
+        private bool _isPopupVisible;
+
+        [ObservableProperty]
         private bool _isRefreshing;
 
         private bool _loaded;
@@ -73,6 +76,7 @@ namespace ShoppingList4.Maui.ViewModel
             _entryService.EntryAdded += OnEntryAdded;
             _entryService.EntryDeleted += OnEntryDeleted;
             _entryService.EntryUpdated += OnEntryUpdated;
+            _appPopupService.PopupVisibilityChanged += OnPopupVisibilityChanged;
         }
 
         [RelayCommand]
@@ -231,6 +235,11 @@ namespace ShoppingList4.Maui.ViewModel
         {
             var vm = Entries.FirstOrDefault(x => x.Id == e.Id);
             vm?.Update(e);
+        }
+
+        private void OnPopupVisibilityChanged(object? sender, bool e)
+        {
+            IsPopupVisible = e;
         }
 
         [RelayCommand]

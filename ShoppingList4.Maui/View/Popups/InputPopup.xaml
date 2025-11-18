@@ -10,9 +10,10 @@
     Padding="0"
     x:DataType="viewModel:InputPopupViewModel"
     x:TypeArguments="system:String"
+    Opened="InputPopup_OnOpened"
     HorizontalOptions="Center"
     Style="{StaticResource CommonPage}"
-    VerticalOptions="Start"
+    VerticalOptions="Center"
     WidthRequest="300">
 
     <VerticalStackLayout Spacing="10">
