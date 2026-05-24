@@ -21,6 +21,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<RouteOptions>(options => options.LowercaseUrls = true);
 
+Directory.CreateDirectory("/home/data");
 var app = builder.Build();
 
 using var scope = app.Services.CreateScope();
