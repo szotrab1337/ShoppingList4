@@ -16,10 +16,6 @@ namespace ShoppingList4.Api.Infrastructure.Persistence
                 .HasMaxLength(35);
 
             modelBuilder.Entity<ShoppingList>()
-                .Property(x => x.CreatedOn)
-                .HasDefaultValueSql("GetDate()");
-
-            modelBuilder.Entity<ShoppingList>()
                 .HasMany(x => x.Entries)
                 .WithOne(z => z.ShoppingList)
                 .HasForeignKey(z => z.ShoppingListId);
@@ -27,10 +23,6 @@ namespace ShoppingList4.Api.Infrastructure.Persistence
             modelBuilder.Entity<Entry>()
                 .Property(x => x.Name)
                 .HasMaxLength(35);
-
-            modelBuilder.Entity<Entry>()
-                .Property(x => x.CreatedOn)
-                .HasDefaultValueSql("GetDate()");
 
             modelBuilder.Entity<User>()
                 .Property(x => x.Name)

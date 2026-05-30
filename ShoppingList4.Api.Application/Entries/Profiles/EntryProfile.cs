@@ -12,7 +12,8 @@ namespace ShoppingList4.Api.Application.Entries.Profiles
         {
             CreateMap<Entry, EntryDto>();
 
-            CreateMap<AddEntryCommand, Entry>();
+            CreateMap<AddEntryCommand, Entry>()
+                .ForMember(x => x.CreatedOn, z => z.MapFrom(_ => DateTime.Now));
 
             CreateMap<EditEntryCommand, Entry>();
         }
