@@ -14,7 +14,8 @@ namespace ShoppingList4.Api.Application.ShoppingLists.Profiles
                 .ForMember(x => x.ItemsCount, opt => opt.MapFrom(z => z.Entries.Count))
                 .ForMember(x => x.ItemsBoughtCount, opt => opt.MapFrom(z => z.Entries.Count(x => x.IsBought)));
 
-            CreateMap<AddShoppingListCommand, ShoppingList>();
+            CreateMap<AddShoppingListCommand, ShoppingList>()
+                .ForMember(x => x.CreatedOn, z => z.MapFrom(_ => DateTime.Now));
 
             CreateMap<EditShoppingListCommand, ShoppingList>();
         }
